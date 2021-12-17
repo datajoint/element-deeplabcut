@@ -1,8 +1,10 @@
 import datajoint as dj
 import inspect
 import importlib
+from pathlib import Path
 
 schema = dj.schema()
+
 
 def activate(schema_name, *, create_schema=True, create_tables=True, linking_module=None):
   """
@@ -88,7 +90,7 @@ class RecordingType(dj.Lookup):
     """
 
 @schema
-class BehTrackRecording(dj.Imported)
+class BehTrackRecording(dj.Imported):
   definition = """
   -> session.SessionDirectory
   recording_id: varchar(16)
@@ -108,7 +110,7 @@ class BehTrackRecording(dj.Imported)
     beh_dir_full = find_full_path(root_data_dir,beh_sess_dir)
 
     for beh_pattern, beh_file_type in zip(['*mat','*XXX'],
-                                          ['bpod','Kepecs Standard'])
+                                          ['bpod','Kepecs Standard']):
       beh_filepaths = [fp for fp in beh_dir_full.rglob(beh_pattern)]
       if beh_filepaths:
         filetype = beh_file_type
@@ -129,7 +131,7 @@ class BehTrackRecording(dj.Imported)
         # Waiting on more info from Kepecs Lab
     # elif filetype == "other standard??" what others?
     else:
-    raise NotImplementedError(f'Behavioral file of type {filetype}'
+      raise NotImplementedError(f'Behavioral file of type {filetype}'
                               ' is not yet implemented')
 
 @schema
