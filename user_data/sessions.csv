@@ -1,0 +1,3 @@
+subject,session_datetime,session_dir,session_note
+subject5,2020-04-15 11:16:38,/subject5/session1,"Successful data collection, no notes"
+subject6,2021-06-02 14:04:22,/subject6/session1,"Ambient temp abnormally low"

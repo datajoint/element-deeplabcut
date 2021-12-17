@@ -1,0 +1,7 @@
+datajoint>=0.13.0
+element-lab
+element-animal
+element-session
+element-behavior
+ipykernel
+pynwb
