@@ -111,4 +111,5 @@ dj_local_con*.json
 **/#*#
 **/.#*
 
+.DS_Store
 docker-compose.y*ml
