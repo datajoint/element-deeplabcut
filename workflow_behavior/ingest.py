@@ -52,7 +52,7 @@ def ingest_sessions(session_csv_path='./user_data/sessions.csv'):
     session.SessionDirectory.insert(sess_dir_list, skip_duplicates=True)
 
     print(f'\n---- Insert {len(probe_list)} entry(s) into probe.Probe ----')
-    pose.DLCModel.insert(model_list, skip_duplicates=True)
+    dlc.DLCModel.insert(model_list, skip_duplicates=True)
 
     print('\n---- Successfully completed workflow_behavior/ingest.py ----')
 

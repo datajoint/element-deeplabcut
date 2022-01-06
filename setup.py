@@ -1,24 +1,29 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 from os import path
-import sys
 
+
+pkg_name = 'workflow_behavior'
 here = path.abspath(path.dirname(__file__))
 
 long_description = """"
-# Workflow for monitoring behavior
+# Workflow for monitoring  continuous behavior
 
-Build a workflow for continuous behavioral data using DataJoint Elements
-+ [elements-session](https://github.com/datajoint/element-session)
-+ [elements-behavior](https://github.com/datajoint/element-behavior)
++ [element-lab](https://github.com/datajoint/element-lab)
++ [element-animal](https://github.com/datajoint/element-animal)
++ [element-session](https://github.com/datajoint/element-session)
++ [element-behavior](https://github.com/datajoint/element-behavior)
 """
 
 with open(path.join(here, 'requirements.txt')) as f:
     requirements = f.read().splitlines()
 
+with open(path.join(here, pkg_name, 'version.py')) as f:
+    exec(f.read())
+
 setup(
     name='workflow-behavior',
-    version='0.0.1',
+    version='0.0.0b1',
     description="DataJoint Elements for Continous Behavior",
     long_description=long_description,
     author='DataJoint NEURO',
