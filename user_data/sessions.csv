@@ -1,3 +1,4 @@
 subject,session_datetime,session_dir,session_note
-subject5,2020-04-15 11:16:38,/subject5/session1,"Successful data collection, no notes"
-subject6,2021-06-02 14:04:22,/subject6/session1,"Ambient temp abnormally low"
+subject5,2020-04-15 11:16:38,"Reaching-Mackenzie-2018-08-30/","Successful data collection, no notes"
+subject6,2021-06-02 14:04:22,"openfield-Pranav-2018-10-30/","Ambient temp abnormally low"
+subject6,2021-06-03 14:04:22,"demo-me-2021-07-14/","multi-animal"

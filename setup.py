@@ -23,11 +23,11 @@ with open(path.join(here, pkg_name, 'version.py')) as f:
 
 setup(
     name='workflow-behavior',
-    version='0.0.0b1',
+    version=__version__,
     description="DataJoint Elements for Continous Behavior",
     long_description=long_description,
-    author='DataJoint NEURO',
-    author_email='info@vathes.com',
+    author='DataJoint',
+    author_email='info@DataJoint.com',
     license='MIT',
     url='https://github.com/datajoint/workflow-behavior',
     keywords='neuroscience behavior deeplabcut datajoint',

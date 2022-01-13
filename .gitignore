@@ -112,6 +112,7 @@ dj_local_con*.json
 **/.#*
 
 docker-compose.y*ml
+*backup.y*ml
 .DS_Store
 */temp*
 temp*
