@@ -1,8 +1,36 @@
-## To do:
-Review:
+## Notes:
+
+Status quo
+- dlc.py schema assumes 1:M video:model mapping.
+   - The syntax of DLC permits mutliple videos for a given model, and suggests that this is optimal for 3D.
+   - DLC does not offer out-of-the-box examples for these cases. I'm actively seeking models try ingesting.
+   - Likely solution: make second schema
+- dlc.py schema asks user to supply framerate when manually entering recording information.
+   - This could be imported via DLC files, but it's more conceptually related to the recording.
+   - Framerate isn't used for any current calculations, so it could be dropped as a foreign key.
+   - Future work with NWB export might want fps for timeseries data.
+- Precursor project inserted as numpy arrays, and current draft follows that convention.
+    - Should future drafts should remove this dependency?
+    - Precursor projects provides functions to calculate trajectories with those trajectories
+- DLC permits multi-animal models (3 free-moving mice in an arena)
+   - Structure of element-session and element-animal assume 1:1 animal:session
+   - Would multianimal datasets require putting session upstream of animal?
+
+DLC models can be:
+- 2D or 3D
+- single- or multi-animal
+
+Current tables support:
+- 2D, but not 3D
+- Single-animal, not sure about multiple
+
+
+Precursor projects:
 - DLC-2-DJ : https://github.dev/vathes/dj-mathis-sharing
 - DLC-2-NWB: https://github.com/DeepLabCut/DLC2NWB
 - Treadmill: https://github.com/vathes/project-treadmill/
+
+***
 
 # DataJoint Element - Behavior
 
