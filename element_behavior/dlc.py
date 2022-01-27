@@ -10,10 +10,6 @@ from deeplabcut.version import __version__ as dlc_version
 import deeplabcut.utils.auxiliaryfunctions as dlc_aux
 import importlib
 import inspect
-# import os
-# import glob
-# import shutil
-# import pickle
 from datetime import datetime
 import pandas as pd
 import numpy as np
