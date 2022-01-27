@@ -1,0 +1,32 @@
+# docker-compose -f docker-compose-dev.yaml up -d --build
+# docker-compose -f docker-compose-dev.yaml down
+
+version: "2.4"
+x-net: &net
+  networks:
+      - main
+services:
+  db:
+    <<: *net
+    image: datajoint/mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=simple
+  workflow:
+    <<: *net
+    build:
+      context: ../
+      dockerfile: ./workflow-behavior/Dockerfile.dev
+    env_file: .env
+    image: workflow_session_dev:0.0.0b2
+    volumes:
+      - ./apt_requirements.txt:/tmp/apt_requirements.txt
+      - ../element-lab:/main/element-lab
+      - ../element-animal:/main/element-animal
+      - ../element-session:/main/element-session
+      - ../element-behavior:/main/element-behavior
+      - .:/main/workflow-behavior
+    depends_on:
+      db:
+        condition: service_healthy
+networks:
+  main:

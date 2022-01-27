@@ -4,6 +4,8 @@
     3. Assert subject link to session
 '''
 
+__all__ = ['pipeline']
+
 from . import pipeline
 
 

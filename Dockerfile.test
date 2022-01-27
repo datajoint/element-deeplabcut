@@ -1,0 +1,39 @@
+FROM datajoint/djlab:py3.8-debian
+
+USER root
+RUN apt-get update -y
+RUN apt-get install git -y
+
+USER anaconda
+WORKDIR /main/workflow-behavior
+
+# Option 1 - Install DataJoint's remote fork of the workflow and elements
+# RUN git clone https://github.com/datajoint/workflow-behavior.git /main/workflow-behavior
+
+# Option 2 - Install user's remote fork of element and workflow
+#            or an unreleased version of the element
+# RUN pip install git+https://github.com/<user>/element-lab.git
+# RUN pip install git+https://github.com/<user>/element-animal.git
+# RUN pip install git+https://github.com/<user>/element-session.git
+# RUN pip install git+https://github.com/<user>/element-behavior.git
+# RUN git clone https://github.com/<user>/workflow-behavior.git /main/workflow-behavior
+
+# Option 3 - Install user's local fork of element and workflow
+RUN mkdir /main/element-lab
+COPY --chown=anaconda:anaconda ./element-lab /main/element-lab
+RUN pip install -e /main/element-lab
+RUN mkdir /main/element-animal
+COPY --chown=anaconda:anaconda ./element-animal /main/element-animal
+RUN pip install -e /main/element-animal
+RUN mkdir /main/element-session
+COPY --chown=anaconda:anaconda ./element-session /main/element-session
+RUN pip install -e /main/element-session
+RUN mkdir /main/element-behavior
+COPY --chown=anaconda:anaconda ./element-behavior /main/element-behavior
+RUN pip install -e /main/element-behavior
+COPY --chown=anaconda:anaconda ./workflow-behavior /main/workflow-behavior
+# RUN rm -f /main/workflow-behavior/dj_local_conf.json
+
+# Install the workflow
+RUN pip install /main/workflow-behavior
+RUN pip install -r /main/workflow-behavior/requirements_test.txt

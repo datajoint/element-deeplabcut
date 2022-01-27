@@ -3,6 +3,9 @@
     2. Assert exact matches of inserted data fore key tables
 '''
 
+__all__ = ['dj_config', 'pipeline', 'subjects_csv', 'ingest_subjects', 'sessions_csv',
+           'ingest_sessions', ]
+
 from . import (dj_config, pipeline,
                subjects_csv, ingest_subjects,
                sessions_csv, ingest_sessions)

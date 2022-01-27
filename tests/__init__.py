@@ -59,7 +59,7 @@ def pipeline():
            'trial': pipeline.trial,
            'subject': pipeline.subject,
            'session': pipeline.session,
-           'lab': pipeline.lab,}
+           'lab': pipeline.lab}
 
     if _tear_down:
         pipeline.event.BehaviorEvent.delete()

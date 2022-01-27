@@ -1,16 +1,17 @@
 import datajoint as dj
-
-from element_lab import lab
 from element_animal import subject
+from element_lab import lab
 from element_session import session
 from element_behavior import dlc
 
 from element_animal.subject import Subject
 from element_lab.lab import Source, Lab, Protocol, User, Project
 from element_session.session import Session
-from element_behavior.dlc import Recording, Config, Model
 
-from .paths import get_beh_root_dir, get_session_dir, get_beh_output_dir
+from .paths import get_beh_root_data_dir, get_session_dir, get_beh_output_dir
+
+__all__ = ['get_beh_root_data_dir', 'get_session_dir', 'get_beh_output_dir',
+           'Subject', 'Source', 'Lab', 'Protocol', 'User', 'Project', 'Session']
 
 if 'custom' not in dj.config:
     dj.config['custom'] = {}
