@@ -17,7 +17,7 @@ services:
       context: ../
       dockerfile: ./workflow-behavior/Dockerfile.test
     env_file: .env
-    image: workflow_behavior:0.0.0b2
+    image: workflow_behavior:0.0.0a1
     environment:
       - DJ_HOST=db
       - DJ_USER=root

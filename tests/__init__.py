@@ -118,3 +118,7 @@ def ingest_sessions(ingest_subjects, sessions_csv):
     _, session_csv_path = sessions_csv
     ingest_sessions(session_csv_path=session_csv_path)
     return
+
+''' TO DO
+- Add csv and ingestion fixtures for config params and recordings
+'''

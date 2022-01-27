@@ -30,4 +30,3 @@ session.activate(db_prefix + 'session', linking_module=__name__)
 # Activate "behavior" schema -----------------------------------
 
 dlc.activate(db_prefix + 'dlc', linking_module=__name__)
-# treadmill.activate(db_prefix + 'treadmill', linking_module=__name__)

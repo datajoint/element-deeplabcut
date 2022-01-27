@@ -7,7 +7,7 @@ pkg_name = 'workflow_behavior'
 here = path.abspath(path.dirname(__file__))
 
 long_description = """"
-# Workflow for monitoring  continuous behavior
+# Workflow for monitoring DeepLabCut post estimaton
 
 + [element-lab](https://github.com/datajoint/element-lab)
 + [element-animal](https://github.com/datajoint/element-animal)
@@ -24,7 +24,7 @@ with open(path.join(here, pkg_name, 'version.py')) as f:
 setup(
     name='workflow-behavior',
     version=__version__,
-    description="DataJoint Elements for Continous Behavior",
+    description="DataJoint Elements for DeepLabCut pose estimation",
     long_description=long_description,
     author='DataJoint',
     author_email='info@DataJoint.com',

@@ -17,7 +17,7 @@ services:
       context: ../
       dockerfile: ./workflow-behavior/Dockerfile.dev
     env_file: .env
-    image: workflow_session_dev:0.0.0b2
+    image: workflow_session_dev:0.0.0a1
     volumes:
       - ./apt_requirements.txt:/tmp/apt_requirements.txt
       - ../element-lab:/main/element-lab
