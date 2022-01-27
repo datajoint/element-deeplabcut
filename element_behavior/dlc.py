@@ -224,6 +224,9 @@ class Model(dj.Imported):
         cfg.update(cfg_paramset)
         # Multianimal in the config may be blank if single-animal
         cfg['multianimalproject'] = bool(cfg['multianimalproject'])
+        if cfg['multianimalproject']:
+            raise NotImplementedError('dlc.Model.Data cannot yet accomodate '
+                                      + 'multi-animal models.')
 
         train_fraction = (ConfigParamSet & key).fetch1('train_fraction')
         if train_fraction not in cfg['TrainingFraction']:
