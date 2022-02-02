@@ -8,5 +8,5 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## 0.0.0a1 - 2021-11-15
 ### Added
-+ First draft begins
++ Drafts from a collection of precursor pipelines, including [DataJoint_Demo_DeepLabCut](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) graciously provided by the Mathis Lab.
 + Support for 2d single-animal models
