@@ -8,7 +8,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## 0.0.0a1 - 2021-12-15
 ### Added
-+ First draft begins
++ First draft begins, reflecting precursor pipelines
 + Added Docker files
-+ Dragt integration tests
++ Draft integration tests
 + Add example data featuring DLC examples
