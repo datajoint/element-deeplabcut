@@ -5,44 +5,39 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
 
 import datajoint as dj
-import deeplabcut
+from deeplabcut.pose_estimation_tensorflow import analyze_videos as dlc_analyze_videos
+from deeplabcut.version import __version__ as dlc_version
 import deeplabcut.utils.auxiliaryfunctions as dlc_aux
 import importlib
 import inspect
-import os
-# import glob
-# import shutil
-import pickle
 from datetime import datetime
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from . import treadmill
-from element_data_loader.utils import find_full_path
+from element_interface.utils import find_full_path, dict_to_uuid
 
 # set constant file paths (edit to where you want data to go):
 schema = dj.schema()
 _linking_module = None
 
 
-def activate(dlc_schema_name, treadmill_schema_name=None, *,
-             create_schema=True, create_tables=True, linking_module=None):
+def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
+             linking_module=None):
     """
     activate(schema_name, *, create_schema=True, create_tables=True,
              linking_module=None)
-        :param schema_name: schema name on the database server to activate
-                            the `behavior` element
-        :param create_schema: when True (default), create schema in the
-                              database if it does not yet exist.
-        :param create_tables: when True (default), create tables in the
-                              database if they do not yet exist.
-        :param linking_module: a module (or name) containing the required
-                               dependencies to activate the `session` element:
+        :param schema_name: schema name on the database server to activate the
+                            `behavior` element
+        :param create_schema: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param create_tables: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param linking_module: a module (or name) containing the required dependencies
+                               to activate the `session` element:
             Upstream tables:
-                + Session: parent table to DLCRecording, identifying a
-                           recording session.
+                + Session: parent table to Recording, identifying a recording session
             Functions:
-                + get_beh_root_dir() -> list
+                + get_beh_root_data_dir() -> list
                     Retrieve the root data director(y/ies) with behavioral
                     recordings for all subject/sessions.
                     :return: a string for full path to the root data directory
@@ -67,10 +62,6 @@ def activate(dlc_schema_name, treadmill_schema_name=None, *,
     _linking_module = linking_module
 
     # activate
-    if treadmill_schema_name is not None:
-        treadmill.activate(treadmill_schema_name,
-                           create_schema=create_schema,
-                           create_tables=create_tables)
     schema.activate(dlc_schema_name, create_schema=create_schema,
                     create_tables=create_tables,
                     add_objects=_linking_module.__dict__)
@@ -78,20 +69,20 @@ def activate(dlc_schema_name, treadmill_schema_name=None, *,
 
 # -------------- Functions required by the elements-ephys  ---------------
 
-def get_beh_root_dir() -> list:
+def get_beh_root_data_dir() -> list:
     """
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
     root(s) may vary between data modalities and user machines
 
-    get_beh_root_dir() -> list
+    get_beh_root_data_dir() -> list
         This user-provided function retrieves the possible root data
         director(y/ies) containing continuous behavioral data for all subjects
         and sessions (e.g. acquired video or treadmill raw files)
         :return: a string for full path to the behavioral root data directory,
          or list of strings for possible root data directories
     """
-    return _linking_module.get_beh_root_dir()
+    return _linking_module.get_beh_root_data_dir()
 
 
 def get_session_dir(session_key: dict) -> str:
@@ -120,7 +111,6 @@ def get_beh_output_dir(session_key: dict) -> str:
     else:
         return None
 
-
 # ----------------------------- Table declarations ----------------------
 
 
@@ -131,20 +121,58 @@ class Recording(dj.Manual):
     video_path : varchar(128) # raw video path relative to session_dir
     ---
     camera_id  : tinyint      # which camera
-    frame_rate : float        # fps, Hz
     """
 
 
 @schema
-class Config(dj.Manual):
-    definition = """                 # Info required to specify 1 model
-    -> Recording
-    config_path      : varchar(1024) # config.yaml relative to session_dir
-    shuffle=1        : int           # shuffle number to use (usually 1)
-    train_index=0    : int           # train fract of those in yaml, 0-indexed
-    snapshot_index=-1: int           # snapshot index, -1 for most recent
+class ConfigParamSet(dj.Lookup):
+    definition = """
+    # Parameters that uniquely identify a DLC model
+    paramset_idx    : smallint
     ---
-    config_notes=''  : varchar(1024)
+    shuffle         : int         # shuffle number to use (usually 1)
+    train_fraction  : float       # training fraction
+    snapshot_index  : int         # snapshot index, -1 for most recent
+    filter_type=""  : varchar(16) # filter type, blank if none (e.g., median, arima)
+    track_method="" : varchar(16) # tracking method, blank if none (e.g,. box, ellipse)
+    scorer_legacy='False' : enum('True','False')  # legacy naming for DLC < v2.1.0
+    param_set_hash  : uuid        # hash identifying this parameterset
+    unique index (param_set_hash)
+    """
+
+    @classmethod
+    def insert_new_params(cls, paramset_idx: int, shuffle: int, train_fraction: int,
+                          snapshot_index: int, filter_type: str, track_method: str,
+                          scorer_legacy=False, skip_duplicates=False):
+        param_dict = {'paramset_idx': paramset_idx, 'shuffle': shuffle,
+                      'train_fraction': train_fraction,
+                      'snapshot_index': snapshot_index, 'filter_type': filter_type,
+                      'track_method': track_method, 'scorer_legacy': scorer_legacy}
+
+        param_set_hash = dict_to_uuid(param_dict)
+        param_query = cls & {'param_set_hash': param_set_hash}
+
+        if param_query:  # If the specified param-set already exists
+            existing_paramset_idx = param_query.fetch1('paramset_idx')
+            if skip_duplicates or existing_paramset_idx == paramset_idx:
+                return  # If the existing set has the same paramset_idx: job done
+            else:       # If not: human error adding same paramset with new index
+                raise dj.DataJointError(
+                    'The specified parameter set already exists - paramset_idx: '
+                    + f'{existing_paramset_idx}')
+        else:
+            param_dict.update({'param_set_hash': param_set_hash})
+            cls.insert1(param_dict, skip_duplicates=skip_duplicates)
+
+
+@schema
+class Config(dj.Manual):
+    definition = """                  # Info required to specify 1 model
+    -> Recording
+    -> ConfigParamSet
+    config_path       : varchar(1024) # config.yaml relative to session_dir
+    ---
+    config_notes=''   : varchar(1024)
     """
 
 
@@ -154,14 +182,14 @@ class Model(dj.Imported):
     -> Config
     ---
     task            : varchar(32) # task description
-    scorer          : varchar(32) # scorer/network name in config
+    scorer          : varchar(32) # scorer/network name in config, human labeler
     multianimal     : bool        # true for multi-animal
-    train_fraction  : float       # training fraction specified by train_index
     iteration       : int         # iteration number
     pcutoff         : float       # threshold of likelihood
-    model           : varchar(64) # DLC's updated GetScorerName()
+    model           : varchar(64) # DLC's GetScorerName()
     start_time      : datetime    # When the model started training
     run_duration    : float       # Seconds model run
+    fps             : float       # Source video framerate, frames per second
     dlc_version     : varchar(8)  # keeps the deeplabcut version
     """
 
@@ -176,13 +204,15 @@ class Model(dj.Imported):
         likelihood  : longblob
         """
 
-    def make(self, key, skip_duplicates=False, ingest_data=True):
+    def make(self, key, skip_duplicates=False, ingest_data=True, analyze_videos=True):
         """
+        Params maintained for testing only, to be removed after alpha
         :param skip_duplicates: Skip duplicates on insertion of master & part
         :param ingest_data: Ingest data from model. Set to False if unavailable
+        :param analyze_videos: If no output exists, attempt to run DLC's analyze_videos
         """
         # ---------------------- Source video directory ----------------------
-        session_dir_full = find_full_path(get_beh_root_dir(),
+        session_dir_full = find_full_path(get_beh_root_data_dir(),
                                           get_session_dir(key))
         video_path_relative = Path((Recording & key).fetch1('video_path'))
         video_path = Path(session_dir_full, video_path_relative)
@@ -190,75 +220,75 @@ class Model(dj.Imported):
         # ------------------ Gather config file information ------------------
         config_path_full = Path(session_dir_full, key['config_path'])
         cfg = dlc_aux.read_config(config_path_full)
-        cfg_backup = str(config_path_full).replace('.yaml', '_backup.yaml')
-        dlc_aux.write_config(Path(cfg_backup), cfg)
-        cfg_adds = ['shuffle', 'train_index', 'snapshot_index']
-        cfg.update({item: key[item] for item in cfg_adds})
+        cfg_paramset = (ConfigParamSet & key).fetch1()
+        cfg.update(cfg_paramset)
         # Multianimal in the config may be blank if single-animal
         cfg['multianimalproject'] = bool(cfg['multianimalproject'])
-        # Of train_fractions listed, selected the indexed one
-        cfg['train_fraction'] = cfg['TrainingFraction'][key['train_index']]
+        if cfg['multianimalproject']:
+            raise NotImplementedError('dlc.Model.Data cannot yet accomodate '
+                                      + 'multi-animal models.')
 
-        # GetScorerName() returns two model names [*updated*, legacy]
+        train_fraction = (ConfigParamSet & key).fetch1('train_fraction')
+        if train_fraction not in cfg['TrainingFraction']:
+            # Config lists fractions used. If user provided val not exist, raise Err
+            raise FileNotFoundError(f'Training fraction {train_fraction} was not found '
+                                    + f'in the config file\n{config_path_full}')
+        cfg['train_fraction'] = train_fraction
+        # GetScorerName() returns two model names [updated, legacy]
+        scorer_legacy = 0 if ((ConfigParamSet & key).fetch1('scorer_legacy')
+                              ) == 'False' else 1
         cfg['model'] = dlc_aux.GetScorerName(cfg, cfg['shuffle'],
-                                             cfg['train_fraction'])[0]
+                                             cfg['train_fraction'])[scorer_legacy]
 
         # ---------------------- Output directory/files ----------------------
-        if get_beh_output_dir(key) is not None:
+        if get_beh_output_dir(key):
             output_dir = get_beh_output_dir(key)
         else:
             output_dir = video_path.parent
         # Standard DLC outputs: h5, meta.pickle
-        dlc_output_h5 = Path(output_dir, video_path.stem
-                             + cfg['model'] + '.h5')
-        dlc_output_pickle = Path(str(dlc_output_h5.parent),
-                                 str(dlc_output_h5.stem + '_meta.pickle'))
-        with open(dlc_output_pickle, 'rb') as f:
-            dlc_meta_data = pickle.load(f)['data']
-        # Info in meta: start_time, stop_time, run_duration, fps,
-        #               batch_size, frame_dimensions, crop_bool, crop_param
+        try:
+            dlc_output_h5, _, _ = dlc_aux.find_analyzed_data(
+                folder=output_dir, videoname=video_path.stem, scorer=cfg['model'],
+                filtered=False if len(cfg['filter_type']) == 0 else cfg['filter_type'],
+                track_method=cfg['track_method'])
+        except FileNotFoundError as err:
+            print(f'{err}\nDataJoint will attempt to run the analysis...')
+            if analyze_videos:
+                try:
+                    dlc_analyze_videos(config_path_full, [str(video_path)])
+                except FileNotFoundError as err:
+                    print(f'{err}\nDataJoint will continue to next ingestion...')
+                    return  # Stop processing current key, continue to next
+        dlc_meta_data = dlc_aux.load_video_metadata(folder=output_dir,
+                                                    videoname=video_path.stem,
+                                                    scorer=cfg['model'])['data']
+        # Info in meta: start_time, stop_time, run_duration, batch_size,
+        #               frame_dimensions, crop_bool, crop_param
         cfg['start_time'] = datetime.fromtimestamp(dlc_meta_data['start'])
         cfg['run_duration'] = dlc_meta_data['run_duration']
+        cfg['fps'] = dlc_meta_data['fps']
         cfg['nframes'] = dlc_meta_data['nframes']
-
-        # If outputh5 not exist, run DLC and remove config backup
-        if not os.path.isfile(dlc_output_h5):
-            dlc_h5_basename = os.path.basename(dlc_output_h5)
-            if dj.utils.user_choice(f'{dlc_h5_basename} not found. Analyze '
-                                    + 'videos?', default='no') == 'yes':
-                try:
-                    deeplabcut.analyze_videos(cfg_backup, [str(video_path)])
-                # If model hasn't been trained, dlc FileNotFoundError
-                except FileNotFoundError as err:
-                    if dj.utils.user_choice(f'{err}\n Proceed with DataJoint '
-                                            + 'model ingestion?', default='no'
-                                            ) != 'yes':
-                        # Should stop processing current key, continue to next
-                        return
-                    else:
-                        # Can ingest model, but will need to skip data
-                        ingest_data = False
-        if os.path.isfile(cfg_backup):
-            os.remove(cfg_backup)
 
         # -------------- Insert into DataJoint dlc.Model table --------------
         self.insert1(dict(key,
                           task=cfg['Task'],
                           scorer=cfg['scorer'],
                           multianimal=cfg['multianimalproject'],
-                          train_fraction=cfg['train_fraction'],
+                          fps=cfg['fps'],
                           iteration=cfg['iteration'],
                           pcutoff=cfg['pcutoff'],
                           model=cfg['model'],
                           start_time=cfg['start_time'],
                           run_duration=cfg['run_duration'],
-                          dlc_version=deeplabcut.__version__,
+                          dlc_version=dlc_version,
                           ),
                      skip_duplicates=skip_duplicates)
 
         # ------------ Insert into DataJoint dlc.Model.Data table ------------
         if ingest_data:
-            # Load h5 data
+            # Load h5 data. Future to do: swap pd for h5py?
+            # CURRENTLY FAILS ON MULTIANIMAL. WOULD NEED TO LOOP THRU EACH ANIMAL
+            # FOR MULTIANIMAL get_level_values(1) is animal name, (2) is bodypart
             dlc_data = pd.read_hdf(dlc_output_h5)
             body_parts = dlc_data.columns.get_level_values(1)
             _, idx = np.unique(body_parts, return_index=True)
@@ -277,41 +307,38 @@ class Model(dj.Imported):
                                                               ].values
                                        ),
                                   skip_duplicates=skip_duplicates)
-            print(f'\nPopulated Model and Data tables from: {key}\n')
+            print('Populated Model and Data tables from: '
+                  + f'{Path(dlc_output_h5).stem}\n')
         else:
-            print(f'\nPopulated Model table from: {key}\n')
+            print(f'Populated Model table from: {Path(dlc_output_h5).stem}\n')
 
-
-'''
-    def get2dJointsTrajectory(self, joint_name=[None]):
+    def Get2DTrajectory(self, joint_name=[None]):
         """
         :param self: A query specifying one subject, else error is thrown.
-                     Use primary keys to choose the scorer, version etc.
-        :param camera_id: camera index as an integer 1 or 2.
-                          1 is side camera and 2 is front camera
+                     Use primary keys to choose the model, version etc.
         :param joint_name: joint(s) as a list or None if all joints
-        returns df: multi index dataframe with scorer names, body_parts
+        returns df: multi index dataframe with DLC scorer names, body_parts
                     and x/y coordinates of each joint name for a camera_id,
                     similar to output of DLC dataframe.
-            e.g. df = (dlc.DeepLabCut3D() & "mouse_name= 'Xerus'" & 'day=2'
-                       & 'attempt=1' & "camera_id = 1"
+            e.g. df = (dlc.Model & "subject = 'subject5'"
+                       & 'session_datetime > "2021-06-03"'
                        ).get2dJointsTrajectory('backhand')
 
         """
-        scorer = np.unique(self.fetch('scorer'))[0]
+        model = np.unique(self.fetch('model'))[0]
         if joint_name is None:
-            body_parts = self.fetch('joint_name')
+            body_parts = self.Data().fetch('joint_name')
         else:
             body_parts = list(joint_name)
             dataFrame = None
         for bodypart in body_parts:
-            x_pos = (self & ("joint_name='%s'" % bodypart)).fetch1('x_pos')
-            y_pos = (self & ("joint_name='%s'" % bodypart)).fetch1('y_pos')
-            likelihood = (self & ("joint_name='%s'" % bodypart)
+            x_pos = (self.Data() & ("joint_name='%s'" % bodypart)).fetch1('x_pos')
+            y_pos = (self.Data() & ("joint_name='%s'" % bodypart)).fetch1('y_pos')
+            likelihood = (self.Data() & ("joint_name='%s'" % bodypart)
                           ).fetch1('likelihood')
             a = np.vstack((x_pos, y_pos, likelihood))
             a = a.T
-            pdindex = pd.MultiIndex.from_product([[scorer], [bodypart],
+            pdindex = pd.MultiIndex.from_product([[model], [bodypart],
                                                  ['x', 'y', 'likelihood']],
                                                  names=['scorer', 'body_parts',
                                                         'coords'])
@@ -320,6 +347,8 @@ class Model(dj.Imported):
             dataFrame = pd.concat([dataFrame, frame], axis=1)
             return(dataFrame)
 
+
+'''
 @schema
 class 3DModel(dj.Manual):
     definition = """

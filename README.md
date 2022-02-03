@@ -1,71 +1,44 @@
-## Notes:
+# DataJoint Element - DeepLabCut
 
-Status quo
-- dlc.py schema assumes 1:M video:model mapping.
-   - The syntax of DLC permits mutliple videos for a given model, and suggests that this is optimal for 3D.
-   - DLC does not offer out-of-the-box examples for these cases. I'm actively seeking models try ingesting.
-   - Likely solution: make second schema
-- dlc.py schema asks user to supply framerate when manually entering recording information.
-   - This could be imported via DLC files, but it's more conceptually related to the recording.
-   - Framerate isn't used for any current calculations, so it could be dropped as a foreign key.
-   - Future work with NWB export might want fps for timeseries data.
-- Precursor project inserted as numpy arrays, and current draft follows that convention.
-    - Should future drafts should remove this dependency?
-    - Precursor projects provides functions to calculate trajectories with those trajectories
-- DLC permits multi-animal models (3 free-moving mice in an arena)
-   - Structure of element-session and element-animal assume 1:1 animal:session
-   - Would multianimal datasets require putting session upstream of animal?
+This repository features a draft of a DataJoint pipeline design for behavior tracking
+and pose estimation via ***DeepLabCut***. This project is a part of our U24 initiative.
 
-DLC models can be:
-- 2D or 3D
-- single- or multi-animal
+The pipeline presented here is not a complete pipeline by itself, but rather a modular
+design of tables and dependencies specific to the behavior tracking workflow. This
+modular pipeline element can be flexibly attached downstream to any particular design of
+experiment session, thus assembling a fully functional behavior pipeline (see the
+example [workflow-deeplabcut](https://github.com/datajoint/workflow-deeplabcut)).
 
-Current tables support:
-- 2D, but not 3D
-- Single-animal, not sure about multiple
-
-
-Precursor projects:
-- DLC-2-DJ : https://github.dev/vathes/dj-mathis-sharing
-- DLC-2-NWB: https://github.com/DeepLabCut/DLC2NWB
-- Treadmill: https://github.com/vathes/project-treadmill/
-
-***
-
-# DataJoint Element - Behavior
-
-This repository features a draft of a DataJoint pipeline design for behavior tracking and pose estimation, including ***DeepLabCut***. This project is a part of our U24 itiative.
-
-The pipeline presented here is not a complete pipeline by itself, but rather a modular design of tables and dependencies specific to the behavior tracking workflow. This modular pipeline element can be flexibly attached downstream to any particular design of experiment session, thus assembling a fully functional
-behavior pipeline (see the example [workflow-behavior](https://github.com/datajoint/workflow-behavior)).
+This Element currently supports single-animal, single-camera 2D models, and does not yet support multi-animal, multi-camera, or 3D models.
 
 ## The Pipeline Architecture
 
-![element-behavior diagram](images/MISSING_DIAGRAM.svg)
+![element-deeplabcut diagram](images/diagram_dlc.svg)
 
-As the diagram depicts, the array ephys element starts immediately downstream from ***Session***.
+As the diagram depicts, the DeepLabCut element starts immediately downstream from ***Session***, with the following tables.
 
-### DeepLabCut recordings
-
-+ ***DLCModel*** -
-+ ***OtherTable*** -
++ ***Recording***: All recordings from a given session.
++ ***ConfigParamSet***: A collection of model parameters, represented by an index.
++ ***Config***: A pairing of model parameters and a recording, with a `config.yaml` file.
++ ***Model***: A DLC model, as described by a `config.yaml` file.
++ ***Model.Data***: A part table storing model data, with one table for each body part represented in the model.
 
 
 ## Installation
 
-+ Install `element-behavior`
++ Install `element-deeplabcut`
     ```
-    pip install element-behavior
+    pip install element-deeplabcut
     ```
 
-+ Upgrade `element-behavior` previously installed with `pip`
++ Upgrade `element-deeplabcut` previously installed with `pip`
     ```
-    pip install --upgrade element-behavior
+    pip install --upgrade element-deeplabcut
     ```
 
 + Install `element-data-loader`
 
-    + `element-data-loader` is a dependency of `element-behavior`, however it is not contained within `requirements.txt`.
+    + `element-data-loader` is a dependency of `element-deeplabcut`, however it is not contained within `requirements.txt`.
 
     ```
     pip install "element-data-loader @ git+https://github.com/datajoint/element-data-loader"
@@ -75,7 +48,7 @@ As the diagram depicts, the array ephys element starts immediately downstream fr
 
 ### Element activation
 
-To activate the `element-behavior`, one needs to provide:
+To activate the `element-deeplabcut`, one needs to provide:
 
 1. Schema names
     + schema name for the dlc module
@@ -89,10 +62,10 @@ To activate the `element-behavior`, one needs to provide:
     + get_session_directory()
     + optional: get_beh_root_output_dir()
 
-For more detail, check the docstring of the `element-behavior`:
+For more detail, check the docstring of the `element-deeplabcut`:
 ```python
 help(dlc.activate)
 ```
 ### Example usage
 
-See [this project](https://github.com/datajoint/workflow-behavior) for an example usage of this Behavior Element.
+See [this project](https://github.com/datajoint/workflow-deeplabcut) for an example usage of this DeepLabCut Element.
