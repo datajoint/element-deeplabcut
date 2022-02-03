@@ -1,0 +1,44 @@
+# docker-compose -f docker-compose-test.yaml up --build
+# docker-compose -f docker-compose-test.yaml down
+
+version: "2.4"
+x-net: &net
+  networks:
+      - main
+services:
+  db:
+    <<: *net
+    image: datajoint/mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=simple
+  workflow:
+    <<: *net
+    build:
+      context: ../
+      dockerfile: ./workflow-behavior/Dockerfile.test
+    env_file: .env
+    image: workflow_behavior:0.0.0a1
+    environment:
+      - DJ_HOST=db
+      - DJ_USER=root
+      - DJ_PASS=simple
+      - DATABASE_PREFIX=test_
+    command:
+      - bash
+      - -c
+      - |
+        echo "------ INTEGRATION TESTS ------"
+        pytest -sv --cov-report term-missing --cov=workflow-behavior -p no:warnings
+        tail -f /dev/null
+    volumes:
+      - ./apt_requirements.txt:/tmp/apt_requirements.txt
+      - ../element-lab:/main/element-lab
+      - ../element-animal:/main/element-animal
+      - ../element-session:/main/element-session
+      - ../element-behavior:/main/element-behavior
+      - .:/main/workflow-behavior
+    depends_on:
+      db:
+        condition: service_healthy
+networks:
+  main:

@@ -3,6 +3,9 @@
     2. Assert exact matches of inserted data fore key tables
 '''
 
+__all__ = ['dj_config', 'pipeline', 'subjects_csv', 'ingest_subjects', 'sessions_csv',
+           'ingest_sessions', ]
+
 from . import (dj_config, pipeline,
                subjects_csv, ingest_subjects,
                sessions_csv, ingest_sessions)
@@ -31,3 +34,12 @@ def test_ingest_sessions(pipeline, sessions_csv, ingest_sessions):
         assert (session.SessionDirectory
                 & {'subject': sess[0]}
                 ).fetch1('session_dir') == sess[2]
+
+
+''' TO DO
+- add ingestion of recordings and config params
+- test launch of analyze videos
+- Encode analysis outcome specifcs from Model.Data
+   e.g. assert mean(Model.Data & "joint_name = 'Finger1'").fetch('x_pos')) == Value
+- post example data to djarchive?
+'''

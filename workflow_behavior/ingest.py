@@ -2,8 +2,8 @@
 import csv
 
 from workflow_behavior.pipeline import subject, session, dlc
-# from workflow_behavior.paths import get_root_data_dir
-# from element_data_loader.utils import find_full_path
+# from workflow_behavior.paths import get_beh_root_data_dir
+# from element-interface.utils import find_full_path
 
 
 def ingest_general(csvs, tables,
@@ -54,13 +54,21 @@ def ingest_sessions(session_csv_path='./user_data/sessions.csv',
 
 
 def ingest_dlc_configs(recording_csv_path='./user_data/recordings.csv',
+                       config_params_csv_path='./user_data/config_params.csv',
                        skip_duplicates=True):
     """
     Ingests to DLC schema from ./user_data/recordings.csv
     """
-    csvs = [recording_csv_path,recording_csv_path]
-    tables = [dlc.Recording(),dlc.Config()]
+    # First, ConfigParamSet
+    with open(config_params_csv_path, newline='') as f:
+        config_params = list(csv.DictReader(f, delimiter=','))
+        for paramset in config_params:
+            dlc.ConfigParamSet.insert_new_params(**paramset,
+                                                 skip_duplicates=skip_duplicates)
 
+    # Next, recordings and config files
+    csvs = [recording_csv_path, recording_csv_path]
+    tables = [dlc.Recording(), dlc.Config()]
     ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
 
 
@@ -68,53 +76,3 @@ if __name__ == '__main__':
     ingest_subjects()
     ingest_sessions()
     ingest_dlc_configs()
-
-'''
-# Folder structure: root / subject / session / [fill in here]
-# session_list, sess_dir_list = [], []
-
-for sess in input_sessions:
-    sess_dir = element_data_loader.utils.find_full_path(
-                                                get_root_data_dir(),
-                                                sess['session_dir'])
-    session_datetimes, dlcmodel_list = [], []
-
-    # search session dir and determine acquisition software
-    for file_pattern, acq_type in zip(['*.yaml', '*.other'],
-                                      ['DeepLabCut', 'OtherUnspecified']):
-        beh_model_filepaths = [fp for fp in sess_dir.rglob(file_pattern)]
-        if len(beh_model_filepaths):
-            acq_software = acq_type
-            break
-    else:
-        raise FileNotFoundError('Recording files not found! Checked for '
-                                + f'files found in: {sess_dir}')
-
-    if acq_software == 'DeepLabCut':
-        pass
-        # NEEDS WORK HERE
-    else:
-        raise NotImplementedError('Unknown acquisition software: '
-                                  + f'{acq_software}')
-
-    # new session/probe-insertion
-    session_key = {'subject': sess['subject'],
-                   'session_datetime': min(session_datetimes)}
-    if session_key not in session.Session():
-        session_list.append(session_key)
-        root_dir = element_data_loader.utils.find_root_directory(
-                                                get_root_data_dir(),
-                                                sess_dir)
-        sess_dir_list.append({**session_key,
-                              'session_dir': sess_dir.\
-                              relative_to(root_dir).as_posix()})
-
-print(f'\n---- Insert {len(session_list)} entry(s) '
-      + 'into session.Session ----')
-session.Session.insert(session_list, skip_duplicates=True)
-session.SessionDirectory.insert(sess_dir_list, skip_duplicates=True)
-
-print(f'\n---- Insert {len(dlcmodel_list)} entry(s) '
-      + 'into dlc.DLCModel ----')
-dlc.DLCModel.insert(dlcmodel_list, skip_duplicates=True)
-'''

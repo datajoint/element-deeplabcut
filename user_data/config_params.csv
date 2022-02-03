@@ -1,0 +1,3 @@
+paramset_idx,shuffle,train_fraction,snapshot_index,filter_type,track_method,scorer_legacy
+0,1,.95,-1,,,False
+1,0,.95,-1,median,ellipse,False
