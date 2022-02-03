@@ -166,14 +166,27 @@ class ConfigParamSet(dj.Lookup):
 
 
 @schema
-class Config(dj.Manual):
+class TrainingTask(dj.Manual):
     definition = """                  # Info required to specify 1 model
     -> Recording
     -> ConfigParamSet
-    config_path       : varchar(1024) # config.yaml relative to session_dir
+    training_id       : UUID          #
     ---
+    config_path       : varchar(1024) # config.yaml relative to session_dir
     config_notes=''   : varchar(1024)
     """
+
+
+@schema
+class ModelTraining(dj.Computed):
+    definition = """
+    -> TrainingTask
+    ---
+    snapshot_exact  : int unsigned   # exact snapshot index (i.e., never -1)
+    config_template : longblog       # stored full config file
+    """
+    """TODO: ingestion of config w/ understanding that
+        config gets updated on snapshots"""
 
 
 @schema
@@ -348,97 +361,3 @@ class Model(dj.Imported):
             return(dataFrame)
 
 
-'''
-@schema
-class 3DModel(dj.Manual):
-    definition = """
-    # Keeps the model info for 3D DeepLabCut pose estimation
-    # Training index and shuffle numbers pased as lists (e.g.[0,0] or [1,1])
-    -> session.Session
-    config_path     : varchar(1024) # path project config in deeplabcut_weights
-    scorer          : varchar(512)  # scorer/network name for 3d project.
-    pcutoff         : float         # specifies threshold of the likelihood
-    ---
-    trainingindex   : longblob      # index of Training fract for each camera
-    shuffle         : longblob      # shuffle #s for each camera
-    """
-
-
-@schema
-class DeepLabCut3D(dj.Computed):
-    definition = """ # uses DLC to extract the 3D position of the body_parts.
-    -> DLC3DModel
-    version         : varchar(8) # keeps the deeplabcut version
-    joint_name      : varchar(512) # Name of the joints
-    ---
-    x_pos           : longblob
-    y_pos           : longblob
-    z_pos           : longblob
-    """
-
-    def make(self,  key):
-        videos = (DLCRecording() & key).fetch('video_path')
-        cfg3d = key['config_path']
-        model = key['scorer']
-        try:
-            deeplabcut.triangulate(cfg3d, [videos], destfolder=save_dlc_path)
-            string_to_search = str('*mouse-'+key['mouse_name']+'_day-'
-                                   + str(key['day'])+'_attempt-'
-                                   + str(key['attempt'])
-                                   + '*' + key['scorer']+'.h5')
-            dlc_output_h5_filename = glob.glob(os.path.join(save_dlc_path,
-                                                           string_to_search)
-                                              )[0]
-            df = pd.read_hdf(dlc_output_h5_filename, 'df_with_missing')
-            body_parts = df.columns.get_level_values(1)
-            _, idx = np.unique(body_parts, return_index=True)
-            body_parts = body_parts[np.sort(idx)]
-            dlc_data = key.copy()
-            dlc_data['version'] = deeplabcut.__version__
-            for bp in body_parts:
-                dlc_data['joint_name'] = bp
-                dlc_data['x_pos'] = dlc_data[model][bp]['x'].values
-                dlc_data['y_pos'] = dlc_data[model][bp]['y'].values
-                dlc_data['z_pos'] = dlc_data[model][bp]['z'].values
-                self.insert1(dlc_data)
-
-            print("\n")
-            print(f'Populated 3D data from {key}')
-            print("mouse = %s // day = %d // attempt = %d" %
-                  (key['mouse_name'], key['day'], key['attempt']))
-        except FileNotFoundError:
-            print(f'No videos found for {key}')
-
-    def get3dJointsTrajectory(self, joint_name=[None]):
-        """
-        :param self: query identifying one mouse
-                    Use primary keys to choose right scorer or version etc.
-        :param joint_name: joint(s) as a list or None if all joints
-        returns df: multi index dataframe with scorer names, body_parts
-                    and x, y, z coordinates of each joint name,
-                    similar to output of DLC dataframe.
-            e.g. df = (dlc.DeepLabCut3D() & "mouse_name= 'Xerus'" & 'day=2'
-                       & 'attempt=1').get3dJointsTrajectory(None)
-
-        """
-        scorer = np.unique(self.fetch('scorer'))[0]
-        if joint_name[0] is None:
-            body_parts = self.fetch('joint_name')
-        else:
-            body_parts = list(joint_name)
-
-        dataFrame = None
-        for bodypart in body_parts:
-            x_pos = (self & ("joint_name='%s'" % bodypart)).fetch1('x_pos')
-            y_pos = (self & ("joint_name='%s'" % bodypart)).fetch1('y_pos')
-            z_pos = (self & ("joint_name='%s'" % bodypart)).fetch1('z_pos')
-        a = np.vstack((x_pos, y_pos, z_pos))
-        a = a.T
-        pdindex = pd.MultiIndex.from_product(
-                  [[scorer], [bodypart], ['x', 'y', 'z']],
-                  names=['scorer', 'body_parts', 'coords'])
-        frame = pd.DataFrame(a, columns=pdindex,
-                             index=range(0, a.shape[0]))
-        dataFrame = pd.concat([dataFrame, frame], axis=1)
-        return(dataFrame)
-'''
