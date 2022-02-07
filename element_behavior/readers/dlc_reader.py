@@ -63,6 +63,8 @@ class DLCLoader:
 
         self.fps = self.pkl['data']['fps']
 
+        self.creation_time = self.h5_path.stat().st_mtime
+
     @property
     def pkl(self):
         if self._pkl is None:
