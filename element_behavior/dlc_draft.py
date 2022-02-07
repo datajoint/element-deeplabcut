@@ -97,10 +97,22 @@ class Model(dj.Manual):
 
 
 @schema
-class PoseEstimation(dj.Computed):
+class PoseEstimationTask(dj.Computed):
     definition = """
     -> VideoRecording
     -> Model
+    ---
+    dlc_output_dir='': varchar(255)  # output directory of the DLC results relative to the root data directory
+    task_mode='load': enum('load', 'trigger')  # 'load': load computed analysis results, 'trigger': trigger computation
+    """
+
+
+@schema
+class PoseEstimation(dj.Computed):
+    definition = """
+    -> PoseEstimationTask
+    ---
+    post_estimation_time: datetime  # time of generation of this set of DLC results 
     """
 
     class BodyPartPosition(dj.Part):
@@ -116,4 +128,29 @@ class PoseEstimation(dj.Computed):
         """
 
     def make(self, key):
-        raise NotImplementedError
+        task_mode, output_dir = (PoseEstimationTask & key).fetch1('task_mode', 'dlc_output_dir')
+        dlc_model = (Model & key).fetch1()
+
+        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+
+        video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp)
+                           for fp in (VideoRecording.File & key).fetch('file_path')]
+
+        project_path = find_full_path(get_dlc_root_data_dir(), dlc_model['project_path'])
+
+        if task_mode == 'trigger':
+            do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir)
+
+        dlc_result = dlc_reader.DLCLoader(output_dir)
+
+        body_parts = [{**key,
+                       'body_part': k,
+                       'frame_index': v['frame_index'],
+                       'x_pos': v['x_pos'],
+                       'y_pos': v['y_pos'],
+                       'likelihood': v['likelihood']}
+                      for k, v in dlc_result.data.items()]
+
+        self.insert1({**key, 'post_estimation_time': dlc_result.creation_time})
+        self.BodyPartPosition.insert(body_parts)
+        
