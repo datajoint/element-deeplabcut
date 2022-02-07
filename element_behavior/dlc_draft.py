@@ -9,9 +9,13 @@ class VideoRecording(dj.Manual):
     -> Session
     -> Device
     recording_start_time: datetime
-    ---
-    video_path : varchar(128) # raw video path relative to session_dir
     """
+
+    class File(dj.Part):
+        definition = """
+        -> master
+        file_path: varchar(255)  # filepath of the video, relative to root data directory
+        """
 
 
 @schema
@@ -35,7 +39,7 @@ class TrainingTask(dj.Manual):
     definition = """                  # Info required to specify 1 model
     -> VideoRecording                 # labeled video for training
     -> ConfigParamSet
-    training_id       : int           #
+    training_id: int           
     """
 
 
@@ -58,6 +62,15 @@ class ModelTraining(dj.Computed):
 
 
 @schema
+class BodyPart(dj.Lookup):
+    definition = """
+    body_part: varchar(32)
+    ---
+    body_part_description='': varchar(1000)
+    """
+
+
+@schema
 class Model(dj.Manual):
     definition = """
     model_name           : varchar(32) # user-friendly model name
@@ -76,25 +89,31 @@ class Model(dj.Manual):
     -> [nullable] ModelTraining
     """
 
+    class BodyPart(dj.Part):
+        definition = """
+        -> master
+        -> BodyPart
+        """
+
 
 @schema
-class Prediction(dj.Computed):
+class PoseEstimation(dj.Computed):
     definition = """
     -> VideoRecording
     -> Model
     """
 
-    class JointPosition(dj.Part):
+    class BodyPartPosition(dj.Part):
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
-        joint_name  : varchar(64)  # Name of the joints
+        -> Model.BodyPart
         ---
         frame_index : longblob     # frame index in model
         x_pos       : longblob
         y_pos       : longblob
+        z_pos=null  : longblob
         likelihood  : longblob
         """
-
 
     def make(self, key):
         raise NotImplementedError
