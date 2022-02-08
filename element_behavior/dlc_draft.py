@@ -1,6 +1,115 @@
 import datatajoint as dj
+import importlib
+import inspect
+from datetime import datetime
+import pandas as pd
+import numpy as np
+from element_interface.utils import find_full_path, dict_to_uuid
 
-schema = dj.Schema()
+
+schema = dj.schema()
+_linking_module = None
+
+
+def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
+             linking_module=None):
+    """
+    activate(schema_name, *, create_schema=True, create_tables=True,
+             linking_module=None)
+        :param schema_name: schema name on the database server to activate the
+                            `behavior` element
+        :param create_schema: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param create_tables: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param linking_module: a module (or name) containing the required dependencies
+                               to activate the `session` element:
+            Upstream tables:
+                + Session: parent table to Recording, identifying a recording session
+            Functions:
+                + get_dlc_root_data_dir() -> list
+                    Retrieve the root data director(y/ies) with behavioral
+                    recordings for all subject/sessions.
+                    :return: a string for full path to the root data directory
+                + get_session_directory(session_key: dict) -> str
+                    Retrieve the session directory containing the recording(s)
+                    for a given Session
+                    :param session_key: a dictionary of one Session `key`
+                    :return: a string for full path to the session directory
+                + get_dlc_processed_data_dir(session_key: dict) -> str
+                    Optional function to retrive the desired output directory
+                    for DeepLabCut files for a given session. If unspecified,
+                    output stored in the session video folder, per DLC default
+                    :return: a string for the absolute path of output directory
+    """
+
+    if isinstance(linking_module, str):
+        linking_module = importlib.import_module(linking_module)
+    assert inspect.ismodule(linking_module),\
+        "The argument 'dependency' must be a module's name or a module"
+
+    global _linking_module
+    _linking_module = linking_module
+
+    # activate
+    schema.activate(dlc_schema_name, create_schema=create_schema,
+                    create_tables=create_tables,
+                    add_objects=_linking_module.__dict__)
+
+
+# -------------- Functions required by the elements-ephys  ---------------
+
+def get_dlc_root_data_dir() -> list:
+    """
+    It is recommended that all paths in DataJoint Elements stored as relative
+    paths, with respect to some user-configured "root" director(y/ies). The
+    root(s) may vary between data modalities and user machines
+
+    get_dlc_root_data_dir() -> list
+        This user-provided function retrieves the possible root data
+        director(y/ies) containing continuous behavioral data for all subjects
+        and sessions (e.g. acquired video or treadmill raw files)
+        :return: a string for full path to the behavioral root data directory,
+         or list of strings for possible root data directories
+    """
+    root_directories = _linking_module.get_dlc_root_data_dir()
+    if isinstance(root_directories, (str, pathlib.Path)):
+        root_directories = [root_directories]
+
+    if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
+        root_directories.append(_linking_module.get_dlc_processed_data_dir())
+
+    return root_directories
+
+
+def get_session_directory(session_key: dict) -> str:
+    """
+    get_session_directory(session_key: dict) -> str
+        Retrieve the session directory containing the
+         recorded Neuropixels data for a given Session
+        :param session_key: a dictionary of one Session `key`
+        :return: a string for full path to the session directory
+    """
+    return _linking_module.get_session_directory(session_key)
+
+
+def get_dlc_processed_data_dir() -> str:
+    """
+    If specified by the user, this function provides DeepLabCut with an output
+    directory for processed files. If unspecified, output files will be stored
+    in the session directory 'videos' folder, per DeepLabCut default
+
+    get_dlc_processed_data_dir -> str
+        This user-provided function specifies where DeepLabCut output files
+        will be stores.
+    """
+    if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
+        return _linking_module.get_dlc_processed_data_dir()
+    else:
+        return get_ephys_root_data_dir()[0]
+
+
+# ----------------------------- Table declarations ----------------------
 
 
 @schema
