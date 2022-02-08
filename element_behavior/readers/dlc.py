@@ -7,7 +7,7 @@ import pickle
 import ruamel.yaml as yaml
 
 
-class DLCLoader:
+class PoseEstimation:
 
     def __init__(self, dlc_dir=None, pkl_path=None, h5_path=None, yml_path=None, filename_prefix=''):
         if dlc_dir is None:
@@ -62,6 +62,7 @@ class DLCLoader:
                       'training_iteration': int(self.pkl['data']['Scorer'].split('_')[-1])}
 
         self.fps = self.pkl['data']['fps']
+        self.nframes = self.pkl['data']['nframes']
 
         self.creation_time = self.h5_path.stat().st_mtime
 
@@ -99,8 +100,36 @@ class DLCLoader:
         dlc_df = self.rawdata.get(top_level)
         body_parts = dlc_df.columns.levels[0]
 
-        dlc_data = {}
+        body_parts_position = {}
         for body_part in body_parts:
-            dlc_data[body_part] = {c: dlc_df.get(body_part).get(c).values for c in dlc_df.get(body_part).columns}
+            body_parts_position[body_part] = {c: dlc_df.get(body_part).get(c).values
+                                              for c in dlc_df.get(body_part).columns}
 
-        return dlc_data
+        return body_parts_position
+
+
+def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir):
+    import deeplabcut
+
+    # ---- Build and save DLC configuration (yaml) file ----
+    dlc_config = dlc_model['config_template']
+    dlc_project_path = pathlib.Path(project_path)
+
+    assert dlc_project_path.exists(), f'DLC project path ({dlc_project_path}) not found on this machine'
+
+    dlc_config['project_path'] = dlc_project_path.as_posix()
+
+    # ---- Write DLC and basefolder yaml (config) files ----
+
+    # Write dlc config file to base (data) folder
+    # This is important for parsing the DLC in datajoint imaging
+    output_dir.mkdir(exist_ok=True)
+    dlc_cfg_filepath = output_dir / 'dlc_config_file.yaml'
+    with open(dlc_cfg_filepath, 'w') as f:
+        yaml.dump(dlc_config, f)
+
+    # ---- Trigger DLC prediction job ----
+    deeplabcut.analyze_videos(config=dlc_cfg_filepath, videos=video_filepaths,
+                              shuffle=dlc_model['shuffle'],
+                              trainingsetindex=dlc_model['trainingsetindex'],
+                              destfolder=output_dir)
