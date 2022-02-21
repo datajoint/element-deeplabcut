@@ -1,5 +1,6 @@
 # from pathlib import Path
 import csv
+from distutils.util import strtobool
 
 from workflow_behavior.pipeline import subject, session, dlc
 # from workflow_behavior.paths import get_beh_root_data_dir
@@ -63,12 +64,13 @@ def ingest_dlc_configs(recording_csv_path='./user_data/recordings.csv',
     with open(config_params_csv_path, newline='') as f:
         config_params = list(csv.DictReader(f, delimiter=','))
         for paramset in config_params:
+            paramset['scorer_legacy'] = bool(strtobool(paramset['scorer_legacy']))
             dlc.ConfigParamSet.insert_new_params(**paramset,
                                                  skip_duplicates=skip_duplicates)
 
     # Next, recordings and config files
     csvs = [recording_csv_path, recording_csv_path]
-    tables = [dlc.Recording(), dlc.Config()]
+    tables = [dlc.VideoRecording(), dlc.VideoRecording.File()]
     ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
 
 
