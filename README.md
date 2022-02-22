@@ -9,7 +9,7 @@ modular pipeline element can be flexibly attached downstream to any particular d
 experiment session, thus assembling a fully functional behavior pipeline (see the
 example [workflow-deeplabcut](https://github.com/datajoint/workflow-deeplabcut)).
 
-This Element currently supports single-animal, single-camera 2D models, and does not yet support multi-animal, multi-camera, or 3D models.
+This Element currently supports single-animal, single-camera 2D models, and does not yet support multi-animal or multi-camera models.
 
 ## The Pipeline Architecture
 
@@ -17,12 +17,17 @@ This Element currently supports single-animal, single-camera 2D models, and does
 
 As the diagram depicts, the DeepLabCut element starts immediately downstream from ***Session***, with the following tables.
 
-+ ***Recording***: All recordings from a given session.
++ ***VideoRecording***: All recordings from a given session.
 + ***ConfigParamSet***: A collection of model parameters, represented by an index.
-+ ***Config***: A pairing of model parameters and a recording, with a `config.yaml` file.
-+ ***Model***: A DLC model, as described by a `config.yaml` file.
-+ ***Model.Data***: A part table storing model data, with one table for each body part represented in the model.
++ ***TrainingTask***: A set of tasks specifying models to train
++ ***ModelTraining***: A record of training iterations for a given model.
++ ***Model***: A central table for storing unique models
++ ***ModelEval***: Evaluation parameters for each model
++ ***BodyPart***: Unique body parts and descriptions thereof (a.k.a. joints) in a given model.
++ ***PoseEstimationTask***: A series of pose estimation tasks to be completed. This is where one would list videos of experimental sessions.
++ ***PoseEstimation***: Results of pose estimation using a given model. The part table here has a method for directly fetching the results as a pandas dataframe.
 
+A ***Device*** table must be declared elsewhere to uniqely identify cameras.
 
 ## Installation
 
