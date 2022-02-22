@@ -46,6 +46,8 @@ class PoseEstimation:
         # config file: yaml - configuration for invoking the DLC post estimation step
         if yml_path is None:
             yml_paths = list(self.dlc_dir.parent.glob(f'{filename_prefix}*.yaml'))
+            # remove the one we save
+            yml_paths = [val for val in yml_paths if not val.stem == "dlc_config_file"]
             assert len(yml_paths) == 1, ('Unable to find one unique .yaml file in: '
                                          + f'{dlc_dir} - Found: {len(yml_paths)}')
             self.yml_path = yml_paths[0]
@@ -128,7 +130,19 @@ class PoseEstimation:
         return body_parts_position
 
 
-def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir):
+def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir,
+                       videotype=None, gputouse=None, save_as_csv=False, batchsize=None,
+                       cropping=None, TFGPUinference=True, dynamic=(False, 0.5, 10),
+                       robust_nframes=False, allow_growth=False, use_shelve=False,
+                       modelprefix="",  # need from paramset
+                       ):
+    """Launch DLC's analyze_videos within element-deeplabcut
+    :param video_filepaths: list of videos to analyze
+    :param dlc_model: element-deeplabcut dlc.Model dict
+    :param project_path: path to project config.yml
+    :param output_dir: where to save output
+    Remaining parameters are DLC's defaults
+    """
     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
     # ---- Build and save DLC configuration (yaml) file ----
@@ -150,5 +164,8 @@ def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir):
     # ---- Trigger DLC prediction job ----
     analyze_videos(config=dlc_cfg_filepath, videos=video_filepaths,
                    shuffle=dlc_model['shuffle'],
-                   trainingsetindex=dlc_model['trainingsetindex'],
-                   destfolder=output_dir)
+                   trainingsetindex=dlc_model['training_fract_idx'],
+                   destfolder=output_dir,
+                   videotype=None, gputouse=None, save_as_csv=False, batchsize=None,
+                   cropping=None, TFGPUinference=True, dynamic=(False, 0.5, 10),
+                   robust_nframes=False, allow_growth=False, use_shelve=False)

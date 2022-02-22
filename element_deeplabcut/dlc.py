@@ -1,13 +1,20 @@
+"""
+Code adapted from the Mathis Lab
+MIT License Copyright (c) 2022 Mackenzie Mathis
+DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
+"""
+
 import datajoint as dj
 import importlib
 import inspect
+import os
+import numpy as np
 from deeplabcut.version import __version__ as dlc_version
 from deeplabcut.utils.auxiliaryfunctions import GetScorerName, GetEvaluationFolder
 from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
-import pandas as pd
-import numpy as np
 from pathlib import Path
-from element_interface.utils import find_full_path, find_root_directory, dict_to_uuid
+from element_interface.utils import find_full_path, dict_to_uuid
+from datetime import datetime
 
 
 schema = dj.schema()
@@ -194,7 +201,7 @@ class ModelTraining(dj.Manual):
     """
 
     @classmethod
-    def train_model(cls, session_key,
+    def train_model(cls, training_id,
                     max_snapshots_to_keep=5,
                     displayiters=None,
                     saveiters=None,
@@ -204,7 +211,7 @@ class ModelTraining(dj.Manual):
                     autotune=False,
                     keepdeconvweights=True):
         """ Launches model training, then stores max snapshot number and config
-        :param key: Key specifying one ConfigParamSet
+        :param training_id: Key specifying one entry in dlc.TrainingTask
         :param project_path: Directory of DLC project
         :param max_snapshots_to_keep: How many snapshots are kept, default to 5
         Optional overrides of settings in pose_config.yaml
@@ -219,10 +226,12 @@ class ModelTraining(dj.Manual):
         """
         from deeplabcut import train_network
         from .readers.dlc_reader import PoseEstimation
+
+        train_key = (TrainingTask & f'training_id={training_id}').fetch1('KEY')
         project_path = find_full_path(get_dlc_root_data_dir(),
-                                      get_session_directory(session_key))
+                                      get_session_directory(train_key))
         model = PoseEstimation(project_path)
-        params = (ConfigParamSet & session_key).fetch1()
+        params = (ConfigParamSet & train_key).fetch1()
         if params['train_fraction'] not in model.yml['TrainingFraction']:
             # Config lists fractions used. If user provided val not exist, raise Err
             # TODO: move duplicated code to reader
@@ -251,12 +260,36 @@ class ModelTraining(dj.Manual):
                                          model.yml,
                                          modelprefix=params['model_prefix'])
                           / 'train').glob('*index*'))
-        # ACTUALLY NEED MOST RECENT
-        snapshot_idx_last = sorted([int(f.stem[9:]) for f in snapshots])[-1]
+        max_modified_time = 0
+        for snapshot in snapshots:
+            modified_time = os.path.getmtime(snapshot)
+            if modified_time > max_modified_time:
+                snapshot_idx_last = int(snapshot.stem[9:])
+
         model = PoseEstimation(project_path)  # reload for any updates post-train
-        cls.insert1({**session_key,
-                     'snapshot_index_exact': snapshot_idx_last,
-                     'config_template': model.yml})
+        cls.insert_snapshot(train_key, snapshot_index_exact=snapshot_idx_last,
+                            config_template=model.yml)
+
+    @classmethod
+    def insert_snapshot(cls, train_key, snapshot_index_exact, config_template):
+        """Insert into Model Training Table with snapshot number and config path
+        :param train_key: Key specifying one TrainingTask
+        :param snapshot_index_exact: exact snapshot index (i.e., never -1)
+        :param config_template: dictionary of config.yml or a path to this file
+        """
+        if isinstance(config_template, Path):
+            # if path, check that it exists, find full path, load yml
+            if not config_template.exists():
+                config_template = find_full_path(get_dlc_root_data_dir(),
+                                                 config_template)
+            from .readers.dlc_reader import PoseEstimation
+            config_template = PoseEstimation(config_template).yml
+        assert isinstance(config_template, dict), ('Please provide a path to the config'
+                                                   + ' file as config_template or the '
+                                                   + 'contents as a dictionary')
+        cls.insert1({**train_key,
+                     'snapshot_index_exact': snapshot_index_exact,
+                     'config_template': config_template})
 
 
 @schema
@@ -268,22 +301,25 @@ class BodyPart(dj.Lookup):
     """
 
     @classmethod
-    def insert_all_from_model(cls, session_key, description_list=None,
+    def insert_all_from_model(cls, key, body_part_list=None,
+                              description_list=None,
                               skip_duplicates=True):
         """ Insert all body parts from a given model
-        :param key: specifying one training session
-        :param description_list: list of string descriptions of each part
+        To see body_part list before inserting, use
+        `element_deeplabcut.readers.dlc_reader.PoseEstimation(config_path).body_parts`
+        :param key: specifying one model
+        :param description_list: optional list of string descriptions of each part
         :parm skip_duplicates: skip if already in table
         """
-        from .readers.dlc_reader import PoseEstimation
-        project_path = find_full_path(get_dlc_root_data_dir(),
-                                      get_session_directory(session_key))
-        body_parts = PoseEstimation(project_path).body_parts
+        if not body_part_list:
+            from .readers.dlc_reader import PoseEstimation
+            project_path = find_full_path(get_dlc_root_data_dir(),
+                                          get_session_directory(key))
+            body_parts = PoseEstimation(project_path).body_parts
         if not description_list:
             description_list = [''] * len(body_parts)
         for i in range(len(body_parts)):
-            cls.insert1(body_parts=body_parts[i],
-                        body_part_description=description_list[i],
+            cls.insert1((body_parts[i], description_list[i]),
                         skip_duplicates=skip_duplicates)
 
 
@@ -305,8 +341,11 @@ class Model(dj.Manual):
     dlc_version          : varchar(8)   # keeps the deeplabcut version
     model_description='' : varchar(1000)
     -> ConfigParamSet
-    -> [nullable] ModelTraining
     """
+
+    # NOTE: Previously, nullable ModelTraining entry. If imported, would have duplicate
+    #       values for multiple items stored here. Don't want to enforce model training
+    #       but I do want to enforce having models stored here for pose estimation later
 
     class BodyPart(dj.Part):
         definition = """
@@ -314,31 +353,34 @@ class Model(dj.Manual):
         -> BodyPart
         """
 
-    def insert_new_model(cls, project_path, config_paramset_idx, model_name=None,
+    @classmethod
+    def insert_new_model(cls, session_key, config_paramset_idx, model_name,
                          model_description='', training_id=None,
                          body_part_descriptions=None):
         """ Add new model to DataJoint framework
-        :param project_path: Path of the DLC project with config.yaml
+        :param session_key: session, which specifies a path to a config.yml file
+                            via get_dlc_root_data_dir() and get_session_directory()
         :param config_paramset_idx: index of ConfigParamSet table
         :param model_name: User friendly model name. If none, DLC's GetScorerName
         :param model_description: Description of this model
+        :param training_id: optional link to TrainingTask table
+        :param body_part_descriptions: optional descriptions to add to new entries in
+                                       BodyPart table. List order should follow:
+        `element_deeplabcut.readers.dlc_reader.PoseEstimation(config_path).body_parts`
         """
         from .readers.dlc_reader import PoseEstimation
 
         # ------------------------------ Path Information ------------------------------
-        if not project_path.exists():  # If relative path, get full
-            project_path = find_full_path(get_dlc_root_data_dir(), project_path)
+        project_path = find_full_path(get_dlc_root_data_dir(),
+                                      get_session_directory(session_key))
         assert project_path.exists(), f'Could not find {project_path}'
-        root_project_path = find_root_directory(get_dlc_root_data_dir(), project_path)
-        relative_project_path = project_path.relative_to(root_project_path)  # save rel
 
         # ------------------------------ Model information -----------------------------
         model = PoseEstimation(project_path)
-        BodyPart.insert_all_from_model(project_path,
+        BodyPart.insert_all_from_model(session_key,
                                        description_list=body_part_descriptions,
-                                       skip_duplicates = True)
-
-        params = (ConfigParamSet & config_paramset_idx).fetch1()
+                                       skip_duplicates=True)
+        params = (ConfigParamSet & f'paramset_idx={config_paramset_idx}').fetch1()
         if params['train_fraction'] not in model.yml['TrainingFraction']:
             # Config lists fractions used. If user provided val not exist, raise Err
             raise FileNotFoundError('Train Fraction {train_fraction}'.format(**params)
@@ -355,21 +397,21 @@ class Model(dj.Manual):
                                        params['train_fraction']
                                        )[scorer_legacy]
         # ------------------------ Insert into DataJoint tables ------------------------
-        BodyPart.insert(model.body_parts, skip_duplicates=True)
-        # cls.insert1
-        print('    ', dict(model_name=model_name,
-                           task=model.yml['Task'],
-                           date=model.yml['date'],
-                           iteration=model.yml['iteration'],
-                           snapshot_idx=model.yml['snapshotindex'],
-                           shuffle=params['shuffle'],
-                           training_fract_idx=train_fract_idx,
-                           scorer=model.pkl['Scorer'],
-                           config_template=model.yml,
-                           model_description=model_description,
-                           project_path=relative_project_path,
-                           ModelTraining=training_id,
-                           dlc_version=dlc_version))
+        cls.insert1(dict(model_name=model_name,
+                         task=model.yml['Task'],
+                         date=model.yml['date'],
+                         iteration=model.yml['iteration'],
+                         snapshot_idx=model.yml['snapshotindex'],
+                         shuffle=params['shuffle'],
+                         training_fract_idx=train_fract_idx,
+                         scorer=model.pkl['Scorer'],
+                         config_template=model.yml,
+                         model_description=model_description,
+                         project_path=get_session_directory(session_key),
+                         paramset_idx=config_paramset_idx,
+                         dlc_version=dlc_version))
+        for body_part in model.body_parts:
+            cls.BodyPart.insert1(dict(model_name=model_name, body_part=body_part))
 
 
 @schema
@@ -388,14 +430,18 @@ class ModelEval(dj.Computed):
     def make(self, key, comparisonbodyparts='all', gputouse=None, rescale=None):
         import csv
         from deeplabcut import evaluate_network
+        from .readers.dlc_reader import PoseEstimation
 
         model_table = (Model & key)
-        params = model_table.fetch1('paramset_idx')
+        paramset_idx = model_table.fetch1('paramset_idx')
+        params = (ConfigParamSet & f'paramset_idx={paramset_idx}').fetch1()
         project_path = find_full_path(get_dlc_root_data_dir(),
                                       model_table.fetch1('project_path'))
+        model = PoseEstimation(project_path)
         evaluate_network(
-            project_path/'config.yml',
-            Shuffles=list(model_table.fetch1('shuffle')),
+            project_path/'config.yaml',
+            # this needs to be a list
+            Shuffles=[int(model_table.fetch1('shuffle'))],
             trainingsetindex=model_table.fetch1('training_fract_idx'),
             comparisonbodyparts=comparisonbodyparts,
             gputouse=gputouse,
@@ -403,21 +449,25 @@ class ModelEval(dj.Computed):
 
         evaluationfolder = str(GetEvaluationFolder(params['train_fraction'],
                                                    params['shuffle'],
-                                                   project_path/'config.yml',
+                                                   model.yml,
                                                    modelprefix=params['model_prefix']))
         eval_path = project_path / evaluationfolder
-        eval_csv = list(eval_path.glob('*csv'))
         assert eval_path.exists(), f'Couldn\'t find evaluation folder:\n{eval_path}'
-        assert len(eval_csv) == 1, f'Found multiple evaluation CSVs:\n{eval_csv}'
-        with open(eval_csv[0], newline='') as f:
+        eval_csvs = list(eval_path.glob('*csv'))
+        max_modified_time = 0
+        for eval_csv in eval_csvs:
+            modified_time = os.path.getmtime(eval_csv)
+            if modified_time > max_modified_time:
+                eval_csv_latest = eval_csv
+        with open(eval_csv_latest, newline='') as f:
             results = list(csv.DictReader(f, delimiter=','))[0]
-        self.insert1(key,
-                     train_iterations=results['Training iterations:'],
-                     train_error=results[' Train error(px)'],
-                     test_error=results[' Test error(px)'],
-                     p_cutoff=results['p-cutoff used'],
-                     Train_error_p=results['Train error with p-cutoff'],
-                     test_error_p=results['Test error with p-cutoff'])
+        self.insert1(dict(key,
+                          train_iterations=results['Training iterations:'],
+                          train_error=results[' Train error(px)'],
+                          test_error=results[' Test error(px)'],
+                          p_cutoff=results['p-cutoff used'],
+                          train_error_p=results['Train error with p-cutoff'],
+                          test_error_p=results['Test error with p-cutoff']))
 
 
 @schema
@@ -426,7 +476,6 @@ class PoseEstimationTask(dj.Manual):
     -> VideoRecording
     -> Model
     ---
-    dlc_output_dir='': varchar(255)             # output relative to root data directory
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
     """
 
@@ -442,7 +491,7 @@ class PoseEstimation(dj.Computed):
     class BodyPartPosition(dj.Part):
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
-        -> Model.BodyPart
+        -> BodyPart
         ---
         frame_index : longblob     # frame index in model
         x_pos       : longblob
@@ -456,62 +505,70 @@ class PoseEstimation(dj.Computed):
 
         # ID model and directories
         dlc_model = (Model & key).fetch1()
-        task_mode, output_dir = (PoseEstimationTask & key
-                                 ).fetch1('task_mode', 'dlc_output_dir')
-        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
-        video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp)
-                           for fp in (VideoRecording.File & key).fetch('file_path')]
+        task_mode = (PoseEstimationTask & key).fetch1('task_mode')
+        root_directories = [d for d in get_dlc_root_data_dir() if d]
+        if get_dlc_processed_data_dir():
+            output_dir = get_dlc_processed_data_dir(key)
+        else:
+            output_dir = get_session_directory(key)
+        output_dir = find_full_path(root_directories, output_dir)
+        video_filepaths = []
+        for fp in (VideoRecording.File & key).fetch('file_path'):
+            session_vid = get_session_directory(key) / Path(fp)
+            # video paths as list of strings or dlc_aux.Getlistofvideos throws err
+            video_filepaths.append(str(find_full_path(root_directories, session_vid)))
         project_path = find_full_path(get_dlc_root_data_dir(),
                                       dlc_model['project_path'])
         # Triger estimation,
         if task_mode == 'trigger':
             do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir)
         dlc_result = PoseEstimation(output_dir)
+        creation_time = datetime.fromtimestamp(dlc_result.creation_time
+                                               ).strftime('%Y-%m-%d %H:%M:%S')
 
         body_parts = [{**key,
                        'body_part': k,
                        'frame_index': np.arange(dlc_result.nframes),
-                       'x_pos': v['x_pos'],
-                       'y_pos': v['y_pos'],
-                       'z_pos': v.get('z_pos'),
+                       'x_pos': v['x'],
+                       'y_pos': v['y'],
+                       'z_pos': v.get('z'),
                        'likelihood': v['likelihood']}
                       for k, v in dlc_result.data.items()]
 
-        self.insert1({**key, 'post_estimation_time': dlc_result.creation_time})
+        self.insert1({**key, 'post_estimation_time': creation_time})
         self.BodyPartPosition.insert(body_parts)
 
-    def Get2DTrajectory(self, joint_name=[None]):
+    def GetTrajectory(key, body_parts='all'):
         """
-        :param self: A query specifying one subject, else error is thrown.
-                     Use primary keys to choose the model, version etc.
-        :param joint_name: joint(s) as a list or None if all joints
+        Returns a dataframe of x, y and z coordinates of the specified body_parts
+        :param key: A query specifying one PoseEstimation entry, else error is thrown.
+        :param body_parts: optional, joint(s) as a list. If none, all joints
         returns df: multi index dataframe with DLC scorer names, body_parts
                     and x/y coordinates of each joint name for a camera_id,
                     similar to output of DLC dataframe.
-            e.g. df = (dlc.Model & "subject = 'subject5'"
-                       & 'session_datetime > "2021-06-03"'
-                       ).get2dJointsTrajectory('backhand')
-
         """
-        model = np.unique(self.fetch('model'))[0]
-        if joint_name is None:
-            body_parts = self.BodyPartPosition().fetch('joint_name')
+        import pandas as pd
+        model_name = key['model_name']
+        if body_parts == 'all':
+            body_parts = (PoseEstimation & key).BodyPartPosition().fetch('body_part')
         else:
-            body_parts = list(joint_name)
-            dataFrame = None
+            body_parts = list(body_parts)
+
+        DataFrame = None
         for bodypart in body_parts:
-            position_data = (PoseEstimation.BodyPartPosition
-                             & ("joint_name='%s'" % bodypart))
-            x_pos = (position_data).fetch1('x_pos')
-            y_pos = (position_data).fetch1('y_pos')
-            likelihood = (position_data).fetch1('likelihood')
-            a = np.vstack((x_pos, y_pos, likelihood))
+            data = (PoseEstimation.BodyPartPosition() & ("body_part='%s'" % bodypart))
+            x_pos = data.fetch1('x_pos')
+            y_pos = data.fetch1('y_pos')
+            z_pos = data.fetch1('z_pos')
+            if not z_pos:
+                z_pos = np.zeros_like(x_pos)
+            likelihood = data.fetch1('likelihood')
+            a = np.vstack((x_pos, y_pos, z_pos, likelihood))
             a = a.T
-            pdindex = pd.MultiIndex.from_product([[model], [bodypart],
-                                                 ['x', 'y', 'likelihood']],
-                                                 names=['scorer', 'body_parts',
+            pdindex = pd.MultiIndex.from_product([[model_name], [bodypart],
+                                                 ['x', 'y', 'z', 'likelihood']],
+                                                 names=['scorer', 'bodyparts',
                                                         'coords'])
-            frame = pd.DataFrame(a, columns=pdindex,
-                                 index=range(0, a.shape[0]))
-            dataFrame = pd.concat([dataFrame, frame], axis=1)
-            return(dataFrame)
+            frame = pd.DataFrame(a, columns=pdindex, index=range(0, a.shape[0]))
+            DataFrame = pd.concat([DataFrame, frame], axis=1)
+        return(DataFrame)
