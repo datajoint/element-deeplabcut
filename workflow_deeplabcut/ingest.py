@@ -2,10 +2,7 @@
 import csv
 from distutils.util import strtobool
 
-from workflow_behavior.pipeline import subject, session, dlc
-# from workflow_behavior.paths import get_beh_root_data_dir
-# from element-interface.utils import find_full_path
-
+from workflow_deeplabcut.pipeline import subject, session, dlc
 
 def ingest_general(csvs, tables,
                    skip_duplicates=True):

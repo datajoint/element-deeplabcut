@@ -7,7 +7,7 @@ This directory provides an example workflow to save the continuous behavior data
 + [element-deeplabcut](https://github.com/datajoint/element-deeplabcut)
 
 This repository provides demonstrations for:
-Setting up a workflow using different elements (see [pipeline.py](workflow_behavior/pipeline.py))
+Setting up a workflow using different elements (see [pipeline.py](workflow_deeplabcut/pipeline.py))
 
 ## Workflow architecture
 The lab and animal management workflow presented here uses components from two DataJoint elements (element-lab, element-animal and element-session) assembled together to a functional workflow.

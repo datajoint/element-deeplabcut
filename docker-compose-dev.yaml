@@ -15,7 +15,7 @@ services:
     <<: *net
     build:
       context: ../
-      dockerfile: ./workflow-behavior/Dockerfile.dev
+      dockerfile: ./workflow-deeplabcut/Dockerfile.dev
     env_file: .env
     image: workflow_session_dev:0.0.0a1
     volumes:
@@ -23,8 +23,8 @@ services:
       - ../element-lab:/main/element-lab
       - ../element-animal:/main/element-animal
       - ../element-session:/main/element-session
-      - ../element-behavior:/main/element-behavior
-      - .:/main/workflow-behavior
+      - ../element-deeplabcut:/main/element-deeplabcut
+      - .:/main/workflow-deeplabcut
     depends_on:
       db:
         condition: service_healthy

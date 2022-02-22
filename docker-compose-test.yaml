@@ -15,9 +15,9 @@ services:
     <<: *net
     build:
       context: ../
-      dockerfile: ./workflow-behavior/Dockerfile.test
+      dockerfile: ./workflow-deeplabcut/Dockerfile.test
     env_file: .env
-    image: workflow_behavior:0.0.0a1
+    image: workflow_deeplabcut:0.0.0a1
     environment:
       - DJ_HOST=db
       - DJ_USER=root
@@ -28,15 +28,15 @@ services:
       - -c
       - |
         echo "------ INTEGRATION TESTS ------"
-        pytest -sv --cov-report term-missing --cov=workflow-behavior -p no:warnings
+        pytest -sv --cov-report term-missing --cov=workflow-deeplabcut -p no:warnings
         tail -f /dev/null
     volumes:
       - ./apt_requirements.txt:/tmp/apt_requirements.txt
       - ../element-lab:/main/element-lab
       - ../element-animal:/main/element-animal
       - ../element-session:/main/element-session
-      - ../element-behavior:/main/element-behavior
-      - .:/main/workflow-behavior
+      - ../element-deeplabcut:/main/element-deeplabcut
+      - .:/main/workflow-deeplabcut
     depends_on:
       db:
         condition: service_healthy
