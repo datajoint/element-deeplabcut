@@ -292,9 +292,9 @@ class Model(dj.Manual):
     task                 : varchar(32)  # task in the config yaml
     date                 : varchar(16)  # date in the config yaml
     iteration            : int          # iteration/version of this model
-    snapshotindex         : int          # which snapshot for prediction (if -1, latest)
+    snapshotindex        : int          # which snapshot for prediction (if -1, latest)
     shuffle              : int          # which shuffle of the training dataset
-    trainingsetindex   : int          # which training set fraction to generate model
+    trainingsetindex     : int          # which training set fraction to generate model
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
     scorer               : varchar(64)  # scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # dictionary of the config for analyze_videos()

@@ -164,8 +164,9 @@ def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir,
     # ---- Trigger DLC prediction job ----
     analyze_videos(config=dlc_cfg_filepath, videos=video_filepaths,
                    shuffle=dlc_model['shuffle'],
-                   trainingsetindex=dlc_model['training_fract_idx'],
+                   trainingsetindex=dlc_model['trainingsetindex'],
                    destfolder=output_dir,
+                   modelprefix=dlc_model['model_prefix'],
                    videotype=None, gputouse=None, save_as_csv=False, batchsize=None,
                    cropping=None, TFGPUinference=True, dynamic=(False, 0.5, 10),
                    robust_nframes=False, allow_growth=False, use_shelve=False)
