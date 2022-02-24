@@ -222,6 +222,10 @@ class ModelTraining(dj.Computed):
         dlc_config['project_path'] = dlc_project_path.as_posix()
         dlc_config['modelprefix'] = model_prefix
 
+        video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
+                           for fp in (VideoRecording.File & key).fetch('file_path')]
+        dlc_config['video_sets'] = video_filepaths
+
         # ---- Write DLC and basefolder yaml (config) files ----
 
         # Write dlc config file to base (data) folder
@@ -464,16 +468,16 @@ class PoseEstimation(dj.Computed):
         dlc_model = (Model & key).fetch1()
         task_mode = (PoseEstimationTask & key).fetch1('task_mode')
         root_directories = [d for d in get_dlc_root_data_dir() if d]
+
         if get_dlc_processed_data_dir():
             output_dir = get_dlc_processed_data_dir(key)
         else:
             output_dir = get_session_directory(key)
         output_dir = find_full_path(root_directories, output_dir)
-        video_filepaths = []
-        for fp in (VideoRecording.File & key).fetch('file_path'):
-            session_vid = get_session_directory(key) / Path(fp)
-            # video paths as list of strings or dlc_aux.Getlistofvideos throws err
-            video_filepaths.append(str(find_full_path(root_directories, session_vid)))
+
+        video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
+                           for fp in (VideoRecording.File & key).fetch('file_path')]
+
         project_path = find_full_path(get_dlc_root_data_dir(),
                                       dlc_model['project_path'])
         # Triger estimation,
