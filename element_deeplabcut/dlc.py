@@ -35,17 +35,13 @@ def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
         :param linking_module: a module (or name) containing the required dependencies
                                to activate the `session` element:
             Upstream tables:
-                + Session: parent table to Recording, identifying a recording session
+                + Session: parent table to VideoRecording, identifying a recording session
+                + Device: parent table to VideoRecording, identifying video recording device
             Functions:
                 + get_dlc_root_data_dir() -> list
                     Retrieve the root data director(y/ies) with behavioral
                     recordings for all subject/sessions.
                     :return: a string for full path to the root data directory
-                + get_session_directory(session_key: dict) -> str
-                    Retrieve the session directory containing the recording(s)
-                    for a given Session
-                    :param session_key: a dictionary of one Session `key`
-                    :return: a string for full path to the session directory
                 + get_dlc_processed_data_dir(session_key: dict) -> str
                     Optional function to retrive the desired output directory
                     for DeepLabCut files for a given session. If unspecified,
@@ -59,8 +55,6 @@ def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
         "The argument 'dependency' must be a module's name or a module"
     assert hasattr(linking_module, 'get_dlc_root_data_dir'),\
         "The linking module must specify a lookup funtion for a root data directory"
-    assert hasattr(linking_module, 'get_session_directory'),\
-        "The linking module must specify a lookup funtion for session directories"
 
     global _linking_module
     _linking_module = linking_module
@@ -96,18 +90,7 @@ def get_dlc_root_data_dir() -> list:
     return root_directories
 
 
-def get_session_directory(session_key: dict) -> str:
-    """
-    get_session_directory(session_key: dict) -> str
-        Retrieve the session directory containing the
-         recorded Neuropixels data for a given Session
-        :param session_key: a dictionary of one Session `key`
-        :return: a string for full path to the session directory
-    """
-    return _linking_module.get_session_directory(session_key)
-
-
-def get_dlc_processed_data_dir(session_key: dict = None) -> str:
+def get_dlc_processed_data_dir() -> str:
     """
     If specified by the user, this function provides DeepLabCut with an output
     directory for processed files. If unspecified, output files will be stored
@@ -118,7 +101,7 @@ def get_dlc_processed_data_dir(session_key: dict = None) -> str:
         will be stored.
     """
     if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
-        return _linking_module.get_dlc_processed_data_dir(session_key)
+        return _linking_module.get_dlc_processed_data_dir()
     else:
         return get_dlc_root_data_dir()[0]
 
@@ -131,6 +114,8 @@ class VideoRecording(dj.Manual):
     definition = """
     -> Session
     -> Device
+    recording_id: int
+    ---
     recording_start_time: datetime
     """
 
@@ -437,8 +422,36 @@ class PoseEstimationTask(dj.Manual):
     -> VideoRecording
     -> Model
     ---
-    task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
+    task_mode='load' : enum('load', 'trigger')   # load results or trigger computation
+    pose_estimation_output_dir='': varchar(255)  # output directory relative to the root data directory
     """
+
+    @classmethod
+    def infer_output_dir(cls, key, relative=False, mkdir=False):
+        """
+        Given a 'key' to an entry in this table
+        Return the expected pose_estimation_output_dir based on the following convention:
+            processed_dir / video_dir / device_{}_recording_{}_model_{}
+        """
+        processed_dir = pathlib.Path(get_processed_root_data_dir())
+
+        video_filepath = find_full_path(get_dlc_root_data_dir(),
+                                        (VideoRecording.File & key).fetch('file_path', limit=1)[0]).as_posix()
+
+        video_dir = video_filepath.parent
+        root_dir = find_root_directory(get_ephys_root_data_dir(), video_dir)
+
+        device = '-'.join((_linking_module.Device & key).fetch1('KEY').values())
+
+        output_dir = (processed_dir
+                      / video_dir.relative_to(root_dir)
+                      / f'device_{device}_recording_{key["recording_id"]}_model_{key["model_name"]}')
+
+        if mkdir:
+            output_dir.mkdir(parents=True, exist_ok=True)
+            log.info(f'{output_dir} created!')
+
+        return output_dir.relative_to(processed_dir) if relative else output_dir
 
 
 @schema
@@ -466,20 +479,15 @@ class PoseEstimation(dj.Computed):
 
         # ID model and directories
         dlc_model = (Model & key).fetch1()
-        task_mode = (PoseEstimationTask & key).fetch1('task_mode')
-        root_directories = [d for d in get_dlc_root_data_dir() if d]
+        task_mode, output_dir = (PoseEstimationTask & key).fetch1('task_mode', 'pose_estimation_output_dir')
 
-        if get_dlc_processed_data_dir():
-            output_dir = get_dlc_processed_data_dir(key)
-        else:
-            output_dir = get_session_directory(key)
-        output_dir = find_full_path(root_directories, output_dir)
+        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
 
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
 
-        project_path = find_full_path(get_dlc_root_data_dir(),
-                                      dlc_model['project_path'])
+        project_path = find_full_path(get_dlc_root_data_dir(), dlc_model['project_path'])
+
         # Triger estimation,
         if task_mode == 'trigger':
             dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir)
