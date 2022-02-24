@@ -25,6 +25,7 @@ wheels/
 *.spec
 pip-log.txt
 pip-delete*.txt
+.idea/
 
 # Unit test / coverage reports
 htmlcov/
