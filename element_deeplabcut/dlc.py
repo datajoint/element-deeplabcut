@@ -208,7 +208,7 @@ class ModelTraining(dj.Computed):
 
         # ---- Build and save DLC configuration (yaml) file ----
         dlc_config = (ModelTrainingParamSet & key).fetch1('params')
-        dlc_config['project_path'] = dlc_project_path.as_posix()
+        dlc_config['project_path'] = project_path.as_posix()
         dlc_config['modelprefix'] = model_prefix
 
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
