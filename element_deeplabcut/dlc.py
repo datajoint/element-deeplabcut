@@ -139,11 +139,15 @@ class ModelTrainingParamSet(dj.Lookup):
     """
 
     required_parameters = ('shuffle', 'trainingsetindex')
+    skipped_parameters = ('project_path', 'video_sets')
 
     @classmethod
     def insert_new_params(cls, paramset_desc: str, params: dict, paramset_idx: int = None):
         for required_param in cls.required_parameters:
             assert required_param in params, f'Missing required parameter: {required_param}'
+        for skipped_param in cls.skipped_parameters:
+            if skipped_param in params:
+                params.pop(skipped_param)
 
         if paramset_idx is None:
             paramset_idx = (dj.U().aggr(cls, n='max(paramset_idx)').fetch1('n') or 0) + 1
@@ -439,7 +443,7 @@ class PoseEstimationTask(dj.Manual):
                                         (VideoRecording.File & key).fetch('file_path', limit=1)[0]).as_posix()
 
         video_dir = video_filepath.parent
-        root_dir = find_root_directory(get_ephys_root_data_dir(), video_dir)
+        root_dir = find_root_directory(get_dlc_root_data_dir(), video_dir)
 
         device = '-'.join((_linking_module.Device & key).fetch1('KEY').values())
 
