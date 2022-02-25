@@ -179,7 +179,7 @@ class ModelTrainingParamSet(dj.Lookup):
 class TrainingTask(dj.Manual):
     definition = """      # Specification for a DLC model training instance
     -> VideoRecording     # labeled video for training
-    -> ConfigParamSet
+    -> ModelTrainingParamSet
     training_id: int
     ---
     model_prefix='': varchar(32)
