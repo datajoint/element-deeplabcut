@@ -9,11 +9,10 @@ import importlib
 import inspect
 import os
 import numpy as np
-from deeplabcut.version import __version__ as dlc_version
-from deeplabcut.utils.auxiliaryfunctions import GetScorerName, GetEvaluationFolder
-from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
 from pathlib import Path
-from element_interface.utils import find_full_path, dict_to_uuid
+import pathlib
+import yaml
+from element_interface.utils import find_full_path, dict_to_uuid, find_root_directory
 from datetime import datetime
 
 
@@ -436,7 +435,7 @@ class PoseEstimationTask(dj.Manual):
         Return the expected pose_estimation_output_dir based on the following convention:
             processed_dir / video_dir / device_{}_recording_{}_model_{}
         """
-        processed_dir = pathlib.Path(get_processed_root_data_dir())
+        processed_dir = pathlib.Path(get_dlc_processed_data_dir())
 
         video_filepath = find_full_path(get_dlc_root_data_dir(),
                                         (VideoRecording.File & key).fetch('file_path', limit=1)[0]).as_posix()
@@ -452,7 +451,6 @@ class PoseEstimationTask(dj.Manual):
 
         if mkdir:
             output_dir.mkdir(parents=True, exist_ok=True)
-            log.info(f'{output_dir} created!')
 
         return output_dir.relative_to(processed_dir) if relative else output_dir
 
