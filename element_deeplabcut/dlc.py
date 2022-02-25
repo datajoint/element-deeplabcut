@@ -219,7 +219,6 @@ class ModelTraining(dj.Computed):
 
         # Write dlc config file to base (data) folder
         # This is important for parsing the DLC in datajoint imaging
-        output_dir.mkdir(exist_ok=True)
         dlc_cfg_filepath = project_path / 'config.yaml'
         with open(dlc_cfg_filepath, 'w') as f:
             yaml.dump(dlc_config, f)
@@ -247,7 +246,7 @@ class ModelTraining(dj.Computed):
 
         self.insert1({**key,
                       'latest_snapshot': latest_snapshot,
-                      'config_template': config_template})
+                      'config_template': dlc_config})
 
 
 @schema
