@@ -34,19 +34,18 @@ def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
                               does not yet exist.
         :param linking_module: a module (or name) containing the required dependencies
                                to activate the `session` element:
-            Upstream tables:
-                + Session: parent table to VideoRecording, identifying a recording session
-                + Device: parent table to VideoRecording, identifying video recording device
-            Functions:
-                + get_dlc_root_data_dir() -> list
-                    Retrieve the root data director(y/ies) with behavioral
-                    recordings for all subject/sessions.
-                    :return: a string for full path to the root data directory
-                + get_dlc_processed_data_dir(session_key: dict) -> str
-                    Optional function to retrive the desired output directory
-                    for DeepLabCut files for a given session. If unspecified,
-                    output stored in the session video folder, per DLC default
-                    :return: a string for the absolute path of output directory
+        Upstream tables:
+            + Session: parent table to VideoRecording, identifying a recording session
+            + Device: parent table to VideoRecording, identifying video recording device
+        Functions:
+            + get_dlc_root_data_dir() -> list Retrieve the root data director(y/ies)
+                with behavioral recordings for all subject/sessions.
+                :return: a string for full path to the root data directory
+            + get_dlc_processed_data_dir(session_key: dict) -> str
+                Optional function to retrive the desired output directory for DeepLabCut
+                files for a given session. If unspecified,
+                output stored in the session video folder, per DLC default
+                :return: a string for the absolute path of output directory
     """
 
     if isinstance(linking_module, str):
@@ -142,15 +141,18 @@ class ModelTrainingParamSet(dj.Lookup):
     skipped_parameters = ('project_path', 'video_sets')
 
     @classmethod
-    def insert_new_params(cls, paramset_desc: str, params: dict, paramset_idx: int = None):
+    def insert_new_params(cls, paramset_desc: str, params: dict,
+                          paramset_idx: int = None):
         for required_param in cls.required_parameters:
-            assert required_param in params, f'Missing required parameter: {required_param}'
+            assert required_param in params, ('Missing required parameter: '
+                                              + required_param)
         for skipped_param in cls.skipped_parameters:
             if skipped_param in params:
                 params.pop(skipped_param)
 
         if paramset_idx is None:
-            paramset_idx = (dj.U().aggr(cls, n='max(paramset_idx)').fetch1('n') or 0) + 1
+            paramset_idx = (dj.U().aggr(cls, n='max(paramset_idx)'
+                                        ).fetch1('n') or 0) + 1
 
         param_dict = {'paramset_idx': paramset_idx,
                       'paramset_desc': paramset_desc,
@@ -161,9 +163,9 @@ class ModelTrainingParamSet(dj.Lookup):
 
         if param_query:  # If the specified param-set already exists
             existing_paramset_idx = param_query.fetch1('paramset_idx')
-            if existing_paramset_idx == paramset_idx:  # If the existing set has the same paramset_idx: job done
+            if existing_paramset_idx == paramset_idx:  # If existing_idx same: job done
                 return
-            else:  # If not same name: human error, trying to add the same paramset with different name
+            else:  # If not: human error, trying to add same paramset with diff name
                 raise dj.DataJointError(
                     f'The specified param-set already exists'
                     f' - with paramset_idx: {existing_paramset_idx}')
@@ -177,13 +179,13 @@ class ModelTrainingParamSet(dj.Lookup):
 
 @schema
 class TrainingTask(dj.Manual):
-    definition = """      # Specification for a DLC model training instance
-    -> VideoRecording     # labeled video for training
+    definition = """              # Specification for a DLC model training instance
+    -> VideoRecording             # labeled video for training
     -> ModelTrainingParamSet
-    training_id: int
+    training_id.    : int
     ---
-    model_prefix='': varchar(32)
-    project_path='': varchar(255) # DLC's project_path in config relative to root, to save the trained results
+    model_prefix='' : varchar(32)
+    project_path='' : varchar(255) # DLC's project_path in config relative to root
     """
 
 
@@ -225,7 +227,8 @@ class ModelTraining(dj.Computed):
 
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
-        train_network_kwargs = {k: v for k, v in dlc_config.items() if k in train_network_input_args}
+        train_network_kwargs = {k: v for k, v in dlc_config.items()
+                                if k in train_network_input_args}
         try:
             train_network(dlc_cfg_filepath, **train_network_kwargs)
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
@@ -272,7 +275,8 @@ class BodyPart(dj.Lookup):
             if new_body_parts:
                 print(f'Existing body parts: {tracked_body_parts}')
                 print(f'New body parts: {new_body_parts}')
-                if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body part(s)?') == 'yes':
+                if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body '
+                                        + 'part(s)?') == 'yes':
                     cls.insert({'body_part': b} for b in new_body_parts)
 
 
@@ -308,8 +312,8 @@ class Model(dj.Manual):
         """
 
     @classmethod
-    def insert_new_model(cls, model_name: str, dlc_config: dict, *,
-                         shuffle, trainingsetindex, model_description='', model_prefix=''):
+    def insert_new_model(cls, model_name: str, dlc_config: dict, *, shuffle,
+                         trainingsetindex, model_description='', model_prefix=''):
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
 
         # handle dlc_config being a yaml file
@@ -325,14 +329,17 @@ class Model(dj.Manual):
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
         # ---- Build config ----
-        template_attributes = ['Task', 'date', 'TrainingFraction', 'iteration', 'snapshotindex',
-                               'batch_size', 'cropping', 'x1', 'x2', 'y1', 'y2']
-        config_template = {k: v for k, v in dlc_config.items() if k in template_attributes}
+        template_attributes = ['Task', 'date', 'TrainingFraction', 'iteration',
+                               'snapshotindex', 'batch_size', 'cropping',
+                               'x1', 'x2', 'y1', 'y2']
+        config_template = {k: v for k, v in dlc_config.items()
+                           if k in template_attributes}
 
         # ---- Get scorer name ----
         dlc_scorer = GetScorerName(cfg=config_template,
                                    shuffle=shuffle,
-                                   trainFraction=dlc_config['TrainingFraction'][trainingsetindex],
+                                   trainFraction=dlc_config['TrainingFraction'
+                                                            ][trainingsetindex],
                                    modelprefix=model_prefix)
         if config_template['snapshotindex'] == -1:
             dlc_scorer = ''.join(dlc_scorer.split('_')[:-1])
@@ -382,10 +389,11 @@ class ModelEvaluation(dj.Computed):
     def make(self, key):
         import csv
         from deeplabcut import evaluate_network
-        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
+        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder as GetFolder
 
-        dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (Model & key).fetch1(
-            'config_template', 'project_path', 'model_prefix', 'shuffle', 'trainingsetindex')
+        dlc_config, project_path, model_prefix, shuffle, trainingsetindex = \
+            (Model & key).fetch1('config_template', 'project_path', 'model_prefix',
+                                 'shuffle', 'trainingsetindex')
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
@@ -395,10 +403,11 @@ class ModelEvaluation(dj.Computed):
             trainingsetindex=trainingsetindex,
             comparisonbodyparts='all')
 
-        evaluation_folder = GetEvaluationFolder(trainFraction=dlc_config['TrainingFraction'][trainingsetindex],
-                                                shuffle=shuffle,
-                                                cfg=dlc_config,
-                                                modelprefix=model_prefix)
+        evaluation_folder = GetFolder(trainFraction=dlc_config['TrainingFraction'
+                                                               ][trainingsetindex],
+                                      shuffle=shuffle,
+                                      cfg=dlc_config,
+                                      modelprefix=model_prefix)
         eval_path = project_path / evaluation_folder
         assert eval_path.exists(), f'Couldn\'t find evaluation folder:\n{eval_path}'
 
@@ -426,20 +435,21 @@ class PoseEstimationTask(dj.Manual):
     -> Model
     ---
     task_mode='load' : enum('load', 'trigger')   # load results or trigger computation
-    pose_estimation_output_dir='': varchar(255)  # output directory relative to the root data directory
+    pose_estimation_output_dir='': varchar(255)  # output dir relative to the root dir
     """
 
     @classmethod
     def infer_output_dir(cls, key, relative=False, mkdir=False):
         """
         Given a 'key' to an entry in this table
-        Return the expected pose_estimation_output_dir based on the following convention:
+        Return the expected pose_estimation_output_dir based on the convention
             processed_dir / video_dir / device_{}_recording_{}_model_{}
         """
         processed_dir = pathlib.Path(get_dlc_processed_data_dir())
 
         video_filepath = find_full_path(get_dlc_root_data_dir(),
-                                        (VideoRecording.File & key).fetch('file_path', limit=1)[0]).as_posix()
+                                        (VideoRecording.File & key
+                                         ).fetch('file_path', limit=1)[0]).as_posix()
 
         video_dir = video_filepath.parent
         root_dir = find_root_directory(get_dlc_root_data_dir(), video_dir)
@@ -448,7 +458,9 @@ class PoseEstimationTask(dj.Manual):
 
         output_dir = (processed_dir
                       / video_dir.relative_to(root_dir)
-                      / f'device_{device}_recording_{key["recording_id"]}_model_{key["model_name"]}')
+                      / (f'device_{device}_recording_{key["recording_id"]}_model_'
+                         + key["model_name"])
+                      )
 
         if mkdir:
             output_dir.mkdir(parents=True, exist_ok=True)
@@ -481,18 +493,21 @@ class PoseEstimation(dj.Computed):
 
         # ID model and directories
         dlc_model = (Model & key).fetch1()
-        task_mode, output_dir = (PoseEstimationTask & key).fetch1('task_mode', 'pose_estimation_output_dir')
+        task_mode, output_dir = (PoseEstimationTask & key
+                                 ).fetch1('task_mode', 'pose_estimation_output_dir')
 
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
 
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
 
-        project_path = find_full_path(get_dlc_root_data_dir(), dlc_model['project_path'])
+        project_path = find_full_path(get_dlc_root_data_dir(),
+                                      dlc_model['project_path'])
 
         # Triger estimation,
         if task_mode == 'trigger':
-            dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir)
+            dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path,
+                                          output_dir)
         dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time
                                                ).strftime('%Y-%m-%d %H:%M:%S')
@@ -528,8 +543,9 @@ class PoseEstimation(dj.Computed):
 
         df = None
         for body_part in body_parts:
-            x_pos, y_pos, z_pos, likelihood = (cls.BodyPartPosition & {'body_part': body_part}).fetch1(
-                'x_pos', 'y_pos', 'z_pos', 'likelihood')
+            x_pos, y_pos, z_pos, likelihood = (cls.BodyPartPosition
+                                               & {'body_part': body_part}).fetch1(
+                                               'x_pos', 'y_pos', 'z_pos', 'likelihood')
             if not z_pos:
                 z_pos = np.zeros_like(x_pos)
 
