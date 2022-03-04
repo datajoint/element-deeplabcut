@@ -1,1 +1,3 @@
 datajoint>=0.13
+deeplabcut
+numpy==1.2

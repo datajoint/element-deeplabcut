@@ -9,16 +9,18 @@ import ruamel.yaml as yaml
 class PoseEstimation:
 
     def __init__(self, dlc_dir=None, pkl_path=None, h5_path=None, yml_path=None,
-                 filename_prefix=''):
-        if dlc_dir is None:
+                 filename_prefix='', output_dir=None):
+        if dlc_dir is None and output_dir is None:
             assert pkl_path and h5_path and yml_path, \
-                ('If "dlc_dir" is not provided, then pkl_path, h5_path, and yml_path '
-                 + 'must be provided')
+                ('If neither "dlc_dir" nor "output_dir" are provided, then pkl_path, '
+                 + 'h5_path, and yml_path must be provided')
+        elif output_dir:   # Use the output dir we saved for pkl/h5
+            self.dlc_dir = Path(output_dir)
         else:
             self.dlc_dir = Path(dlc_dir)
-            if self.dlc_dir.stem != 'videos':
+            if self.dlc_dir.stem != 'videos':      # doesn't work for inferred output
                 self.dlc_dir = dlc_dir / 'videos'
-            assert self.dlc_dir.exists(), f'Unable to find {dlc_dir}'
+        assert self.dlc_dir.exists(), f'Unable to find {dlc_dir}'
 
         # meta file: pkl - info about this  DLC run (input video, configuration, etc.)
         if pkl_path is None:
@@ -43,11 +45,14 @@ class PoseEstimation:
         assert self.pkl_path.stem == self.h5_path.stem + '_meta', \
             (f'Mismatching h5 ({self.h5_path.stem}) and pickle {self.pkl_path.stem}')
 
-        # config file: yaml - configuration for invoking the DLC post estimation step
+        # config file: yaml - configuration for invoking the DLC pose estimation step
         if yml_path is None:
-            yml_paths = list(self.dlc_dir.parent.glob(f'{filename_prefix}*.yaml'))
-            # remove the one we save
-            yml_paths = [val for val in yml_paths if not val.stem == "dlc_config_file"]
+            if output_dir:  # if we saved the output, it only has 1 yaml
+                yml_paths = list(Path(output_dir).glob(f'{filename_prefix}*.y*ml'))
+            else:
+                yml_paths = list(self.dlc_dir.parent.glob(f'{filename_prefix}*.y*ml'))
+                yml_paths = [val for val in yml_paths
+                             if not val.stem == "dlc_config_file"]
             assert len(yml_paths) == 1, ('Unable to find one unique .yaml file in: '
                                          + f'{dlc_dir} - Found: {len(yml_paths)}')
             self.yml_path = yml_paths[0]
@@ -120,8 +125,6 @@ class PoseEstimation:
                          + f'from .pickle ({self.pkl["nframes"]})')
         assert len(self.rawdata) == self.pkl['nframes'], error_message
 
-        top_level = self.rawdata.columns.levels[0][0]
-
         body_parts_position = {}
         for body_part in self.body_parts:
             body_parts_position[body_part] = {c: self.df.get(body_part).get(c).values
@@ -157,16 +160,20 @@ def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir,
     # Write dlc config file to base (data) folder
     # This is important for parsing the DLC in datajoint imaging
     output_dir.mkdir(exist_ok=True)
-    dlc_cfg_filepath = output_dir / 'dlc_config_file.yaml'
+    dlc_cfg_filepath = dlc_project_path / 'dlc_config_file.yaml'
     with open(dlc_cfg_filepath, 'w') as f:
         yaml.dump(dlc_config, f)
 
     # ---- Trigger DLC prediction job ----
+    # the config is presumed to be in the DLC project directory:
+    # <project>/dlc-models/iteration-<#>/<scorer>/test/pose_cfg.yaml
     analyze_videos(config=dlc_cfg_filepath, videos=video_filepaths,
                    shuffle=dlc_model['shuffle'],
                    trainingsetindex=dlc_model['trainingsetindex'],
                    destfolder=output_dir,
                    modelprefix=dlc_model['model_prefix'],
-                   videotype=None, gputouse=None, save_as_csv=False, batchsize=None,
-                   cropping=None, TFGPUinference=True, dynamic=(False, 0.5, 10),
-                   robust_nframes=False, allow_growth=False, use_shelve=False)
+                   videotype=videotype, gputouse=gputouse, save_as_csv=save_as_csv,
+                   batchsize=batchsize, cropping=cropping,
+                   TFGPUinference=TFGPUinference, dynamic=dynamic,
+                   robust_nframes=robust_nframes, allow_growth=allow_growth,
+                   use_shelve=use_shelve)

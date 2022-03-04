@@ -49,6 +49,8 @@ A ***Device*** table must be declared elsewhere to uniqely identify cameras.
     pip install "element-data-loader @ git+https://github.com/datajoint/element-data-loader"
     ```
 
+Note that deeplabcut itself requires a dependency called numba as part of `trackingutils.py`. Numba requires numpy<=1.2. This may conflict with installs of other DataJoint elements, which rely on nwb-conversion-tools, itself requiring numpy>=1.21.0.
+
 ## Usage
 
 ### Element activation
