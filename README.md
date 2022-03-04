@@ -38,8 +38,8 @@ This workflow serves as an example of the upstream part of a typical data workfl
 
 ## Installation instructions
 
-+ The installation instructions can be found at [datajoint-elements/install.md](
-     https://github.com/datajoint/datajoint-elements/blob/main/install.md).
++ The installation instructions can be found at the 
+[datajoint-elements repository](https://github.com/datajoint/datajoint-elements/blob/main/gh-pages/docs/install.md).
 
 ## Interacting with the DataJoint workflow
 

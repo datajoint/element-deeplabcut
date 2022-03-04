@@ -8,11 +8,10 @@ from element_animal.subject import Subject
 from element_lab.lab import Source, Lab, Protocol, User, Project
 from element_session.session import Session
 
-from .paths import get_dlc_root_data_dir, get_session_directory
-from .paths import get_dlc_processed_data_dir
+from .paths import get_dlc_root_data_dir, get_dlc_processed_data_dir
 
-__all__ = ['get_dlc_root_data_dir', 'get_session_directory',
-           'get_dlc_processed_data_dir', 'Subject', 'Source', 'Lab', 'Protocol', 'User',
+__all__ = ['get_dlc_root_data_dir', 'get_dlc_processed_data_dir',
+           'Subject', 'Source', 'Lab', 'Protocol', 'User',
            'Project', 'Session']
 
 if 'custom' not in dj.config:
