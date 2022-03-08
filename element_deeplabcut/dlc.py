@@ -576,8 +576,7 @@ class PoseEstimation(dj.Computed):
         task_mode, params, output_dir = (PoseEstimationTask & key
                                          ).fetch1('task_mode', 'pose_estimation_params',
                                                   'pose_estimation_output_dir')
-        if not Path(output_dir).exists():
-            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
         project_path = find_full_path(get_dlc_root_data_dir(),
