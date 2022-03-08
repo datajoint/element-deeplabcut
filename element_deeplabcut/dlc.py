@@ -107,6 +107,32 @@ def get_dlc_processed_data_dir() -> str:
 
 # ----------------------------- Table declarations ----------------------
 
+@schema
+class BodyPart(dj.Lookup):
+    definition = """
+    body_part: varchar(32)
+    ---
+    body_part_description='': varchar(1000)
+    """
+
+    @classmethod
+    def insert_from_config(cls, dlc_config: dict):
+        # handle dlc_config being a yaml file
+        if not isinstance(dlc_config, dict):
+            dlc_config_fp = pathlib.Path(dlc_config)
+            if dlc_config_fp.exists() and dlc_config_fp.suffix in ('.yml', '.yaml'):
+                with open(dlc_config, 'rb') as f:
+                    dlc_config = yaml.safe_load(f)
+        # -- Check and insert new BodyPart --
+        if 'bodyparts' in dlc_config:
+            tracked_body_parts = cls.fetch('body_part')
+            new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
+            if new_body_parts:
+                print(f'Existing body parts: {tracked_body_parts}')
+                print(f'New body parts: {new_body_parts}')
+                if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body part(s)?') == 'yes':
+                    cls.insert({'body_part': b} for b in new_body_parts)
+
 
 @schema
 class VideoRecording(dj.Manual):
@@ -122,6 +148,27 @@ class VideoRecording(dj.Manual):
         definition = """
         -> master
         file_path: varchar(255)  # filepath of video, relative to root data directory
+        """
+
+
+# ---- Model training pipeline ----
+
+@schema
+class TrainingVideo(dj.Manual):
+    definition = """
+    video_set_id: int
+    """
+
+    class File(dj.Part):
+        definition = """
+        -> master
+        file_path: varchar(255)  # filepath of the labeled png file and/or the csv
+        """
+
+    class VideoRecording(dj.Part):
+        definition = """
+        -> master
+        -> VideoRecording
         """
 
 
@@ -191,8 +238,8 @@ class ModelTrainingParamSet(dj.Lookup):
 
 @schema
 class TrainingTask(dj.Manual):
-    definition = """              # Specification for a DLC model training instance
-    -> VideoRecording             # labeled video for training
+    definition = """      # Specification for a DLC model training instance
+    -> TrainingVideo      # labeled video for training
     -> ModelTrainingParamSet
     training_id     : int
     ---
@@ -230,9 +277,9 @@ class ModelTraining(dj.Computed):
         dlc_config['modelprefix'] = model_prefix
         dlc_config['train_fraction'] = dlc_config['TrainingFraction'
                                                   ][int(dlc_config['trainingsetindex'])]
-        #  These paths aren't used in training, only the training-dataset/*mat
+        #  These paths aren't used in training. Instead only the training-dataset/*mat
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                           for fp in (VideoRecording.File & key).fetch('file_path')]
+                           for fp in (TrainingVideo.File & key).fetch('file_path')]
         dlc_config['video_sets'] = video_filepaths
 
         # ---- Write DLC and basefolder yaml (config) files ----
@@ -272,6 +319,7 @@ class ModelTraining(dj.Computed):
                       'config_template': dlc_config})
 
 
+# ---- Model pipeline ----
 @schema
 class BodyPart(dj.Lookup):
     definition = """
@@ -443,7 +491,8 @@ class Model(dj.Manual):
             return
         with cls.connection.transaction:
             cls.insert1(model_dict)
-            BodyPart.insert_from_config(dlc_config, descriptions=None, prompt=prompt)
+            if BodyPart.extract_new_body_parts(dlc_config):
+                BodyPart.insert_from_config(dlc_config, prompt=prompt)
 
 
 @schema
@@ -504,6 +553,9 @@ class ModelEvaluation(dj.Computed):
                           p_cutoff=results['p-cutoff used'],
                           train_error_p=results['Train error with p-cutoff'],
                           test_error_p=results['Test error with p-cutoff']))
+
+
+# ---- Model Inference pipeline ----
 
 
 @schema
@@ -603,7 +655,7 @@ class PoseEstimation(dj.Computed):
         if task_mode == 'trigger':
             dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path,
                                           output_dir, **analyze_video_params)
-        dlc_result = dlc_reader.PoseEstimation(output_dir=output_dir)
+        dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time
                                                ).strftime('%Y-%m-%d %H:%M:%S')
 
