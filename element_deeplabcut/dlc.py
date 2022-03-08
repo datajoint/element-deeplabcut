@@ -107,6 +107,32 @@ def get_dlc_processed_data_dir() -> str:
 
 # ----------------------------- Table declarations ----------------------
 
+@schema
+class BodyPart(dj.Lookup):
+    definition = """
+    body_part: varchar(32)
+    ---
+    body_part_description='': varchar(1000)
+    """
+
+    @classmethod
+    def insert_from_config(cls, dlc_config: dict):
+        # handle dlc_config being a yaml file
+        if not isinstance(dlc_config, dict):
+            dlc_config_fp = pathlib.Path(dlc_config)
+            if dlc_config_fp.exists() and dlc_config_fp.suffix in ('.yml', '.yaml'):
+                with open(dlc_config, 'rb') as f:
+                    dlc_config = yaml.safe_load(f)
+        # -- Check and insert new BodyPart --
+        if 'bodyparts' in dlc_config:
+            tracked_body_parts = cls.fetch('body_part')
+            new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
+            if new_body_parts:
+                print(f'Existing body parts: {tracked_body_parts}')
+                print(f'New body parts: {new_body_parts}')
+                if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body part(s)?') == 'yes':
+                    cls.insert({'body_part': b} for b in new_body_parts)
+
 
 @schema
 class VideoRecording(dj.Manual):
@@ -122,6 +148,27 @@ class VideoRecording(dj.Manual):
         definition = """
         -> master
         file_path: varchar(255)  # filepath of video, relative to root data directory
+        """
+
+
+# ---- Model training pipeline ----
+
+@schema
+class TrainingVideo(dj.Manual):
+    definition = """
+    video_set_id: int
+    """
+
+    class LabeledFrame(dj.Part):
+        definition = """
+        -> master
+        file_path: varchar(255)  # filepath of the labeled png file
+        """
+
+    class VideoRecording(dj.Part):
+        definition = """
+        -> master
+        -> VideoRecording
         """
 
 
@@ -177,7 +224,7 @@ class ModelTrainingParamSet(dj.Lookup):
 @schema
 class TrainingTask(dj.Manual):
     definition = """      # Specification for a DLC model training instance
-    -> VideoRecording     # labeled video for training
+    -> TrainingVideo      # labeled video for training
     -> ModelTrainingParamSet
     training_id: int
     ---
@@ -211,7 +258,7 @@ class ModelTraining(dj.Computed):
         dlc_config['modelprefix'] = model_prefix
 
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                           for fp in (VideoRecording.File & key).fetch('file_path')]
+                           for fp in (TrainingVideo.LabeledFrame & key).fetch('file_path')]
         dlc_config['video_sets'] = video_filepaths
 
         # ---- Write DLC and basefolder yaml (config) files ----
@@ -248,32 +295,7 @@ class ModelTraining(dj.Computed):
                       'config_template': dlc_config})
 
 
-@schema
-class BodyPart(dj.Lookup):
-    definition = """
-    body_part: varchar(32)
-    ---
-    body_part_description='': varchar(1000)
-    """
-
-    @classmethod
-    def insert_from_config(cls, dlc_config: dict):
-        # handle dlc_config being a yaml file
-        if not isinstance(dlc_config, dict):
-            dlc_config_fp = pathlib.Path(dlc_config)
-            if dlc_config_fp.exists() and dlc_config_fp.suffix in ('.yml', '.yaml'):
-                with open(dlc_config, 'rb') as f:
-                    dlc_config = yaml.safe_load(f)
-        # -- Check and insert new BodyPart --
-        if 'bodyparts' in dlc_config:
-            tracked_body_parts = cls.fetch('body_part')
-            new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
-            if new_body_parts:
-                print(f'Existing body parts: {tracked_body_parts}')
-                print(f'New body parts: {new_body_parts}')
-                if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body part(s)?') == 'yes':
-                    cls.insert({'body_part': b} for b in new_body_parts)
-
+# ---- Model pipeline ----
 
 @schema
 class Model(dj.Manual):
@@ -416,6 +438,9 @@ class ModelEvaluation(dj.Computed):
                           p_cutoff=results['p-cutoff used'],
                           train_error_p=results['Train error with p-cutoff'],
                           test_error_p=results['Test error with p-cutoff']))
+
+
+# ---- Model Inference pipeline ----
 
 
 @schema
