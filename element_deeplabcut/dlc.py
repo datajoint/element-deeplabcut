@@ -143,7 +143,7 @@ class ModelTrainingParamSet(dj.Lookup):
 
     @classmethod
     def insert_new_params(cls, paramset_desc: str, params: dict,
-                          paramset_idx: int = None, skip_duplicates=False):
+                          paramset_idx: int = None):
         """
         Insert a new set of training parameters into dlc.ModelTrainingParamSet
 
@@ -177,16 +177,16 @@ class ModelTrainingParamSet(dj.Lookup):
             existing_paramset_idx = param_query.fetch1('paramset_idx')
             if existing_paramset_idx == paramset_idx:  # If existing_idx same: job done
                 return
-            elif not skip_duplicates:  # If not: human error, adding paramset w/new name
+            else:  # If not: human error, adding paramset w/new name
                 raise dj.DataJointError(
                     f'The specified param-set already exists'
                     f' - with paramset_idx: {existing_paramset_idx}')
-        elif not skip_duplicates:
+        else:
             if {'paramset_idx': paramset_idx} in cls.proj():
                 raise dj.DataJointError(
                     f'The specified paramset_idx {paramset_idx} already exists,'
                     f' please pick a different one.')
-        cls.insert1(param_dict, skip_duplicates=skip_duplicates)
+        cls.insert1(param_dict)
 
 
 @schema
@@ -228,8 +228,8 @@ class ModelTraining(dj.Computed):
         dlc_config = (ModelTrainingParamSet & key).fetch1('params')
         dlc_config['project_path'] = project_path.as_posix()
         dlc_config['modelprefix'] = model_prefix
-        dlc_config['train_float'] = dlc_config['TrainingFraction'
-                                               ][int(dlc_config['trainingsetindex'])]
+        dlc_config['train_fraction'] = dlc_config['TrainingFraction'
+                                                  ][int(dlc_config['trainingsetindex'])]
 
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
@@ -255,7 +255,7 @@ class ModelTraining(dj.Computed):
             pass
 
         snapshots = list((project_path /
-                          GetModelFolder(trainFraction=dlc_config['train_float'],
+                          GetModelFolder(trainFraction=dlc_config['train_fraction'],
                                          shuffle=dlc_config['shuffle'],
                                          cfg=dlc_config,
                                          modelprefix=dlc_config['modelprefix'])
@@ -292,8 +292,9 @@ class BodyPart(dj.Lookup):
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(),
                                            pathlib.Path(dlc_config))
-            assert dlc_config_fp.exists(), ('dlc_config is neither dict nor filepath'
-                                            + f'\n Check: {dlc_config_fp}')
+            assert (dlc_config_fp.exists()
+                    and dlc_config_fp.suffix in ('.yml', '.yaml')), (
+                    f'dlc_config is neither dict nor filepath\n Check: {dlc_config_fp}')
             if dlc_config_fp.suffix in ('.yml', '.yaml'):
                 with open(dlc_config_fp, 'rb') as f:
                     dlc_config = yaml.safe_load(f)
@@ -330,7 +331,6 @@ class Model(dj.Manual):
     scorer               : varchar(64)  # scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
-    dlc_version          : varchar(8)   # keeps the deeplabcut version
     model_prefix=''      : varchar(32)
     model_description='' : varchar(1000)
     -> [nullable] ModelTrainingParamSet
@@ -410,7 +410,6 @@ class Model(dj.Manual):
                       'trainingsetindex': trainingsetindex,
                       'project_path': project_path.relative_to(root_dir).as_posix(),
                       'paramset_idx': paramset_idx,
-                      'dlc_version': dlc_version,
                       'config_template': config_template}
 
         # -- prompt for confirmation --
@@ -447,7 +446,7 @@ class ModelEvaluation(dj.Computed):
         """.populate() method will launch evaulation for each unique entry in Model"""
         import csv
         from deeplabcut import evaluate_network
-        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder as GetFolder
+        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
 
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = \
             (Model & key).fetch1('config_template', 'project_path', 'model_prefix',
@@ -464,12 +463,12 @@ class ModelEvaluation(dj.Computed):
             trainingsetindex=trainingsetindex,
             comparisonbodyparts='all')
 
-        evaluation_folder = GetFolder(trainFraction=dlc_config['TrainingFraction'
-                                                               ][trainingsetindex],
-                                      shuffle=shuffle,
-                                      cfg=dlc_config,
-                                      modelprefix=model_prefix)
-        eval_path = project_path / evaluation_folder
+        eval_folder = GetEvaluationFolder(trainFraction=dlc_config['TrainingFraction'
+                                                                   ][trainingsetindex],
+                                          shuffle=shuffle,
+                                          cfg=dlc_config,
+                                          modelprefix=model_prefix)
+        eval_path = project_path / eval_folder
         assert eval_path.exists(), f'Couldn\'t find evaluation folder:\n{eval_path}'
 
         eval_csvs = list(eval_path.glob('*csv'))
@@ -498,7 +497,7 @@ class PoseEstimationTask(dj.Manual):
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
     pose_estimation_output_dir='': varchar(255) # output dir relative to the root dir
-    pose_estimation_params       : longblob     # analyze_videos params, if not default
+    pose_estimation_params=null  : longblob     # analyze_videos params, if not default
     """
 
     @classmethod
@@ -573,9 +572,9 @@ class PoseEstimation(dj.Computed):
 
         # ID model and directories
         dlc_model = (Model & key).fetch1()
-        task_mode, params, output_dir = (PoseEstimationTask & key
-                                         ).fetch1('task_mode', 'pose_estimation_params',
-                                                  'pose_estimation_output_dir')
+        task_mode, analyze_video_params, output_dir = (
+            PoseEstimationTask & key).fetch1('task_mode', 'pose_estimation_params',
+                                             'pose_estimation_output_dir')
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
@@ -585,7 +584,7 @@ class PoseEstimation(dj.Computed):
         # Triger estimation,
         if task_mode == 'trigger':
             dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path,
-                                          output_dir, **params)
+                                          output_dir, **analyze_video_params)
         dlc_result = dlc_reader.PoseEstimation(output_dir=output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time
                                                ).strftime('%Y-%m-%d %H:%M:%S')
