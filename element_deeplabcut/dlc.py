@@ -310,6 +310,8 @@ class BodyPart(dj.Lookup):
                         == len(new_body_parts), ('Descriptions list does not match '
                                                  + ' the number of new_body_parts')
                 print(f'New descriptions: {descriptions}')
+            if descriptions is None:
+                descriptions = ["" for x in range(len(new_body_parts))]
             if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body '
                                     + 'part(s)?') == 'yes':
                 cls.insert([{'body_part': b, 'body_part_description': d}
@@ -575,6 +577,7 @@ class PoseEstimation(dj.Computed):
         task_mode, analyze_video_params, output_dir = (
             PoseEstimationTask & key).fetch1('task_mode', 'pose_estimation_params',
                                              'pose_estimation_output_dir')
+        analyze_video_params = analyze_video_params or {}
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
