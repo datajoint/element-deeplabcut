@@ -230,7 +230,7 @@ class ModelTraining(dj.Computed):
         dlc_config['modelprefix'] = model_prefix
         dlc_config['train_fraction'] = dlc_config['TrainingFraction'
                                                   ][int(dlc_config['trainingsetindex'])]
-
+        #  These paths aren't used in training, only the training-dataset/*mat
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                            for fp in (VideoRecording.File & key).fetch('file_path')]
         dlc_config['video_sets'] = video_filepaths
@@ -281,14 +281,11 @@ class BodyPart(dj.Lookup):
     """
 
     @classmethod
-    def insert_from_config(cls, dlc_config: dict, descriptions: list = None):
-        """Insert all body parts from a config file
-
-        :param dlc_config: path to a config.y*ml, or dict including contents thereof
-        :param descriptions: optional list describing new body parts
+    def extract_new_body_parts(cls, dlc_config: dict):
+        """Print a list of new body parts from a dlc config,
+        to examine before generating descriptions
+        :param dlc_config:  path to a config.y*ml, or dict including contents thereof
         """
-
-        # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(),
                                            pathlib.Path(dlc_config))
@@ -302,9 +299,22 @@ class BodyPart(dj.Lookup):
         assert 'bodyparts' in dlc_config, f'Found no bodyparts section in {dlc_config}'
         tracked_body_parts = cls.fetch('body_part')
         new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
+        print(f'Existing body parts: {tracked_body_parts}')
+        print(f'New body parts: {new_body_parts}')
+        return new_body_parts
+
+    @classmethod
+    def insert_from_config(cls, dlc_config: dict, descriptions: list = None,
+                           prompt=True):
+        """Insert all body parts from a config file
+
+        :param dlc_config: path to a config.y*ml, or dict including contents thereof
+        :param descriptions: optional list describing new body parts
+        """
+
+        # handle dlc_config being a yaml file
+        new_body_parts = cls.extract_new_body_parts(dlc_config)
         if new_body_parts is not None:  # Required bc np.array is ambiguous as bool
-            print(f'Existing body parts: {tracked_body_parts}')
-            print(f'New body parts: {new_body_parts}')
             if descriptions:
                 assert len(descriptions)\
                         == len(new_body_parts), ('Descriptions list does not match '
@@ -312,10 +322,13 @@ class BodyPart(dj.Lookup):
                 print(f'New descriptions: {descriptions}')
             if descriptions is None:
                 descriptions = ["" for x in range(len(new_body_parts))]
-            if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body '
-                                    + 'part(s)?') == 'yes':
-                cls.insert([{'body_part': b, 'body_part_description': d}
-                           for b, d in zip(new_body_parts, descriptions)])
+
+            if prompt and dj.utils.user_choice(f'Insert {len(new_body_parts)} new body '
+                                               + 'part(s)?') != 'yes':
+                print('Canceled insert.')
+                return
+            cls.insert([{'body_part': b, 'body_part_description': d}
+                       for b, d in zip(new_body_parts, descriptions)])
 
 
 @schema
@@ -347,7 +360,7 @@ class Model(dj.Manual):
     @classmethod
     def insert_new_model(cls, model_name: str, dlc_config: dict, *, shuffle: int,
                          trainingsetindex, model_description='', model_prefix='',
-                         body_part_descriptions: list = None, paramset_idx: int = None):
+                         paramset_idx: int = None, prompt=True):
         """Insert new model into the dlc.Model table
 
         :param model_name: User-friendly name for this model
@@ -424,11 +437,13 @@ class Model(dj.Manual):
                 for k, v in model_dict['config_template'].items():
                     print('\t\t{}: {}'.format(k, v))
 
-        if dj.utils.user_choice('Proceed with new DLC model insert?') == 'yes':
-            with cls.connection.transaction:
-                cls.insert1(model_dict)
-                BodyPart.insert_from_config(dlc_config,
-                                            descriptions=body_part_descriptions)
+        if prompt and dj.utils.user_choice('Proceed with new DLC model insert?'
+                                           ) != 'yes':
+            print('Canceled insert.')
+            return
+        with cls.connection.transaction:
+            cls.insert1(model_dict)
+            BodyPart.insert_from_config(dlc_config, descriptions=None, prompt=prompt)
 
 
 @schema
@@ -505,7 +520,7 @@ class PoseEstimationTask(dj.Manual):
     @classmethod
     def infer_output_dir(cls, key, relative=False, mkdir=False):
         """ Return the expected pose_estimation_output_dir based on the convention
-                processed_dir / video_dir / device_{}_recording_{}_model_{}
+                 / video_dir / device_{}_recording_{}_model_{}
         Spaces in model name are replaced with hyphens
         :param key: key specifying a pairing of VideoRecording and Model
         :param relative: report directory relative to get_dlc_processed_data_dir()
