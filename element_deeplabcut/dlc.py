@@ -159,10 +159,10 @@ class TrainingVideo(dj.Manual):
     video_set_id: int
     """
 
-    class LabeledFrame(dj.Part):
+    class File(dj.Part):
         definition = """
         -> master
-        file_path: varchar(255)  # filepath of the labeled png file
+        file_path: varchar(255)  # filepath of the labeled png file and/or the csv
         """
 
     class VideoRecording(dj.Part):
@@ -258,7 +258,7 @@ class ModelTraining(dj.Computed):
         dlc_config['modelprefix'] = model_prefix
 
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                           for fp in (TrainingVideo.LabeledFrame & key).fetch('file_path')]
+                           for fp in (TrainingVideo.File & key).fetch('file_path')]
         dlc_config['video_sets'] = video_filepaths
 
         # ---- Write DLC and basefolder yaml (config) files ----
