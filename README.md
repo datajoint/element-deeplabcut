@@ -11,6 +11,8 @@ example [workflow-deeplabcut](https://github.com/datajoint/workflow-deeplabcut))
 
 This Element currently supports single-animal, single-camera 2D models, and does not yet support multi-animal or multi-camera models.
 
+This element assumes your labeled data is alrady generated via the DLC gui and that your training and inference data pools are separate.
+
 ## The Pipeline Architecture
 
 ![element-deeplabcut diagram](images/diagram_dlc.svg)

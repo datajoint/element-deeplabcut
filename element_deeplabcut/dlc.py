@@ -107,32 +107,6 @@ def get_dlc_processed_data_dir() -> str:
 
 # ----------------------------- Table declarations ----------------------
 
-@schema
-class BodyPart(dj.Lookup):
-    definition = """
-    body_part: varchar(32)
-    ---
-    body_part_description='': varchar(1000)
-    """
-
-    @classmethod
-    def insert_from_config(cls, dlc_config: dict):
-        # handle dlc_config being a yaml file
-        if not isinstance(dlc_config, dict):
-            dlc_config_fp = pathlib.Path(dlc_config)
-            if dlc_config_fp.exists() and dlc_config_fp.suffix in ('.yml', '.yaml'):
-                with open(dlc_config, 'rb') as f:
-                    dlc_config = yaml.safe_load(f)
-        # -- Check and insert new BodyPart --
-        if 'bodyparts' in dlc_config:
-            tracked_body_parts = cls.fetch('body_part')
-            new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
-            if new_body_parts:
-                print(f'Existing body parts: {tracked_body_parts}')
-                print(f'New body parts: {new_body_parts}')
-                if dj.utils.user_choice(f'Insert {len(new_body_parts)} new body part(s)?') == 'yes':
-                    cls.insert({'body_part': b} for b in new_body_parts)
-
 
 @schema
 class VideoRecording(dj.Manual):
