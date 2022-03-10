@@ -11,6 +11,8 @@ example [workflow-deeplabcut](https://github.com/datajoint/workflow-deeplabcut))
 
 This Element currently supports single-animal, single-camera 2D models, and does not yet support multi-animal or multi-camera models.
 
+This element assumes your labeled data is alrady generated via the DLC gui and that your training and inference data pools are separate.
+
 ## The Pipeline Architecture
 
 ![element-deeplabcut diagram](images/diagram_dlc.svg)
@@ -48,6 +50,8 @@ A ***Device*** table must be declared elsewhere to uniqely identify cameras.
     ```
     pip install "element-data-loader @ git+https://github.com/datajoint/element-data-loader"
     ```
+
+Note that deeplabcut itself requires a dependency called numba as part of `trackingutils.py`. Numba requires numpy<=1.2. This may conflict with installs of other DataJoint elements, which rely on nwb-conversion-tools, itself requiring numpy>=1.21.0.
 
 ## Usage
 

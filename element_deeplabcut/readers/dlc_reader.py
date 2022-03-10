@@ -16,8 +16,6 @@ class PoseEstimation:
                  + 'must be provided')
         else:
             self.dlc_dir = Path(dlc_dir)
-            if self.dlc_dir.stem != 'videos':
-                self.dlc_dir = dlc_dir / 'videos'
             assert self.dlc_dir.exists(), f'Unable to find {dlc_dir}'
 
         # meta file: pkl - info about this  DLC run (input video, configuration, etc.)
@@ -45,9 +43,12 @@ class PoseEstimation:
 
         # config file: yaml - configuration for invoking the DLC post estimation step
         if yml_path is None:
-            yml_paths = list(self.dlc_dir.parent.glob(f'{filename_prefix}*.yaml'))
-            # remove the one we save
-            yml_paths = [val for val in yml_paths if not val.stem == "dlc_config_file"]
+            yml_paths = list(self.dlc_dir.glob(f'{filename_prefix}*.y*ml'))
+            # If multiple, remove the one we save.
+            # Otherwise errs when dlc_dir is inferred output_dir
+            if len(yml_paths) > 1:
+                yml_paths = [val for val in yml_paths
+                             if not val.stem == "dlc_config_file"]
             assert len(yml_paths) == 1, ('Unable to find one unique .yaml file in: '
                                          + f'{dlc_dir} - Found: {len(yml_paths)}')
             self.yml_path = yml_paths[0]
@@ -120,8 +121,6 @@ class PoseEstimation:
                          + f'from .pickle ({self.pkl["nframes"]})')
         assert len(self.rawdata) == self.pkl['nframes'], error_message
 
-        top_level = self.rawdata.columns.levels[0][0]
-
         body_parts_position = {}
         for body_part in self.body_parts:
             body_parts_position[body_part] = {c: self.df.get(body_part).get(c).values
@@ -148,12 +147,11 @@ def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir,
     # ---- Build and save DLC configuration (yaml) file ----
     dlc_config = dlc_model['config_template']
     dlc_project_path = Path(project_path)
-    assert dlc_project_path.exists(), (f'DLC project path ({dlc_project_path}) not '
-                                       + 'found on this machine')
+    assert (project_path / 'config.yaml').exists(), ('DLC needs the config.yaml in the '
+                                                     + f'project path: {project_path}')
     dlc_config['project_path'] = dlc_project_path.as_posix()
 
     # ---- Write DLC and basefolder yaml (config) files ----
-
     # Write dlc config file to base (data) folder
     # This is important for parsing the DLC in datajoint imaging
     output_dir.mkdir(exist_ok=True)
@@ -162,11 +160,13 @@ def do_pose_estimation(video_filepaths, dlc_model, project_path, output_dir,
         yaml.dump(dlc_config, f)
 
     # ---- Trigger DLC prediction job ----
-    analyze_videos(config=dlc_cfg_filepath, videos=video_filepaths,
+    analyze_videos(config=(project_path / 'config.yaml'), videos=video_filepaths,
                    shuffle=dlc_model['shuffle'],
                    trainingsetindex=dlc_model['trainingsetindex'],
                    destfolder=output_dir,
                    modelprefix=dlc_model['model_prefix'],
-                   videotype=None, gputouse=None, save_as_csv=False, batchsize=None,
-                   cropping=None, TFGPUinference=True, dynamic=(False, 0.5, 10),
-                   robust_nframes=False, allow_growth=False, use_shelve=False)
+                   videotype=videotype, gputouse=gputouse, save_as_csv=save_as_csv,
+                   batchsize=batchsize, cropping=cropping,
+                   TFGPUinference=TFGPUinference, dynamic=dynamic,
+                   robust_nframes=robust_nframes, allow_growth=allow_growth,
+                   use_shelve=use_shelve)
