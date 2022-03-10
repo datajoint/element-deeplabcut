@@ -107,7 +107,6 @@ def get_dlc_processed_data_dir() -> str:
 
 # ----------------------------- Table declarations ----------------------
 
-
 @schema
 class VideoRecording(dj.Manual):
     definition = """
@@ -294,6 +293,7 @@ class ModelTraining(dj.Computed):
 
 
 # ---- Model pipeline ----
+
 @schema
 class BodyPart(dj.Lookup):
     definition = """
