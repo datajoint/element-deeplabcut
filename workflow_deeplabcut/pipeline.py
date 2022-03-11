@@ -2,7 +2,7 @@ import datajoint as dj
 from element_animal import subject
 from element_lab import lab
 from element_session import session
-from element_deeplabcut import dlc
+from element_deeplabcut import train, model, pose
 
 from element_animal.subject import Subject
 from element_lab.lab import Source, Lab, Protocol, User, Project
@@ -38,7 +38,26 @@ class Device(dj.Lookup):
     """
     contents = zip([1, 2])
 
-# Activate "behavior" schema -----------------------------------
+
+@session.schema
+class VideoRecording(dj.Manual):
+    definition = """
+    -> Session
+    -> Device
+    recording_id: int
+    ---
+    recording_start_time: datetime
+    """
+
+    class File(dj.Part):
+        definition = """
+        -> master
+        file_path: varchar(255)  # filepath of video, relative to root data directory
+        """
+
+# Activate DeepLabCut schema -----------------------------------
 
 
-dlc.activate(db_prefix + 'dlc', linking_module=__name__)
+train.activate(db_prefix + 'train', linking_module=__name__)
+model.activate(db_prefix + 'model', linking_module=__name__)
+pose.activate(db_prefix + 'pose', linking_module=__name__)
