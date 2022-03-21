@@ -15,7 +15,6 @@ import yaml
 from element_interface.utils import find_full_path, find_root_directory
 
 
-
 schema = dj.schema()
 _linking_module = None
 
@@ -123,7 +122,7 @@ class BodyPart(dj.Lookup):
         """
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(),
-                                           pathlib.Path(dlc_config))
+                                           Path(dlc_config))
             assert (dlc_config_fp.exists()
                     and dlc_config_fp.suffix in ('.yml', '.yaml')), (
                     f'dlc_config is neither dict nor filepath\n Check: {dlc_config_fp}')
@@ -217,7 +216,7 @@ class Model(dj.Manual):
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(),
-                                           pathlib.Path(dlc_config))
+                                           Path(dlc_config))
             assert dlc_config_fp.exists(), ('dlc_config is neither dict nor filepath'
                                             + f'\n Check: {dlc_config_fp}')
             if dlc_config_fp.suffix in ('.yml', '.yaml'):
@@ -364,12 +363,13 @@ class EstimationTask(dj.Manual):
         :param relative: report directory relative to get_dlc_processed_data_dir()
         :param mkdir: default False, make directory if it doesn't exist
         """
-        processed_dir = pathlib.Path(get_dlc_processed_data_dir())
+        processed_dir = Path(get_dlc_processed_data_dir())
         video_filepath = find_full_path(get_dlc_root_data_dir(),
                                         (_linking_module.VideoRecording.File & key
                                          ).fetch('file_path', limit=1)[0])
         root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath.parent)
-        device = '-'.join(str(v) for v in (_linking_module.Device & key
+        recording_key = _linking_module.VideoRecording & key
+        device = '-'.join(str(v) for v in (_linking_module.Device & recording_key
                                            ).fetch1('KEY').values())
         output_dir = (processed_dir
                       / video_filepath.parent.relative_to(root_dir)
