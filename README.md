@@ -17,9 +17,9 @@ intitializing a project and labeling training data.
 ![element-deeplabcut diagram](images/diagram_dlc.svg)
 
 As the diagram depicts, the DeepLabCut element starts immediately downstream from
-a ***VideoRecording*** table, which is modeled in our 
+a ***Session*** table, which is modeled in our 
 [workflow pipeline](https://github.com/datajoint/workflow-deeplabcut/blob/main/workflow_deeplabcut/pipeline.py).
-The following tables are downstream of ***VideoRecording*** across two schemas:
+The following tables are further downstream across two schemas:
 
 - `train` schema: Tables related to model training.
    + ***VideoSet***: The set of files corresponding to a training dataset.
@@ -28,12 +28,13 @@ The following tables are downstream of ***VideoRecording*** across two schemas:
    + ***VideoRecording***: All recordings from a given session.
    + ***ModelTraining***: A record of training iterations launched by ***TrainingTask***.
 - `model` schema: Tables related to DeepLabCut models and pose estimation.
+   + ***VideoRecording***: A set of for pose estimation.
    + ***Model***: A central table for storing unique models.
    + ***ModelEvaluation***: Evaluation results for each model.
    + ***BodyPart***: Unique body parts (a.k.a. joints) and descriptions thereof.
-   + ***EstimationTask***: A series of pose estimation tasks to be completed. A pairing
-        video recordings with models to be use for pose estimation.
-   + ***Estimation***: Results of pose estimation using a given model. 
+   + ***PoseEstimationTask***: A series of pose estimation tasks to be completed. A
+        pairing video recordings with models to be use for pose estimation.
+   + ***PoseEstimation***: Results of pose estimation using a given model. 
 
 ## Installation
 
@@ -71,8 +72,9 @@ To activate the `element-deeplabcut`, one needs to provide:
     + optionally, a schema name for the `train` module.
     + a schema name for the `model` moduel.
 2. Upstream tables
-    + `VideoRecording` to maintain a record of all video files.
-    + `Device` upstream of `VideoRecording` to specify camera information.
+    + `Session`: A set of keys identifying a recording session (see [Element-Session]
+      (https://github.com/datajoint/element-session)).
+    + `Device`: A reference table linked `VideoRecording` to specify camera information.
 3. Utility functions
     + `get_dlc_root_data_dir()` to provide a root directory for a given machine,
     + optionally, `get_dlc_processed_data_dir()` to provide an output directory.

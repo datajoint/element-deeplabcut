@@ -106,6 +106,24 @@ def get_dlc_processed_data_dir() -> str:
 
 # ----------------------------- Table declarations ----------------------
 
+
+@schema
+class VideoRecording(dj.Manual):
+    definition = """
+    -> Session
+    -> Device
+    recording_id: int
+    ---
+    recording_start_time: datetime
+    """
+
+    class File(dj.Part):
+        definition = """
+        -> master
+        file_path: varchar(255)  # filepath of video, relative to root data directory
+        """
+
+
 @schema
 class BodyPart(dj.Lookup):
     definition = """
@@ -344,7 +362,7 @@ class ModelEvaluation(dj.Computed):
 
 
 @schema
-class EstimationTask(dj.Manual):
+class PoseEstimationTask(dj.Manual):
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
     -> model.Model                              # Must specify a DLC project_path
@@ -383,7 +401,7 @@ class EstimationTask(dj.Manual):
     @classmethod
     def insert_estimation_task(cls, key, task_mode='trigger', params: dict = None,
                                relative=True, mkdir=True, skip_duplicates=False):
-        """ Insert EstimationTask with inferred output dir based on the convention
+        """ Insert PoseEstimationTask with inferred output dir based on the convention
                 processed_dir / video_dir / device_{}_recording_{}_model_{}
         :param key: key specifying a pairing of VideoRecording and Model
         :param task_mode: default 'trigger' computation. Or 'load' existing results
@@ -402,9 +420,9 @@ class EstimationTask(dj.Manual):
 
 
 @schema
-class Estimation(dj.Computed):
+class PoseEstimation(dj.Computed):
     definition = """
-    -> EstimationTask
+    -> PoseEstimationTask
     ---
     post_estimation_time: datetime  # time of generation of this set of DLC results
     """
@@ -422,7 +440,7 @@ class Estimation(dj.Computed):
         """
 
     def make(self, key):
-        """.populate() method will launch training for each EstimationTask
+        """.populate() method will launch training for each PoseEstimationTask
         """
         from .readers import dlc_reader
 
@@ -431,8 +449,8 @@ class Estimation(dj.Computed):
         assert dlc_model['project_path'], ("Your model table must have a 'project_path'"
                                            + "field pointing to a DLC directory")
         task_mode, analyze_video_params, output_dir = (
-            EstimationTask & key).fetch1('task_mode', 'pose_estimation_params',
-                                         'pose_estimation_output_dir')
+            PoseEstimationTask & key).fetch1('task_mode', 'pose_estimation_params',
+                                             'pose_estimation_output_dir')
         analyze_video_params = analyze_video_params or {}
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
@@ -441,7 +459,7 @@ class Estimation(dj.Computed):
         project_path = find_full_path(get_dlc_root_data_dir(),
                                       dlc_model['project_path'])
 
-        # Triger estimation,
+        # Triger Poseestimation,
         if task_mode == 'trigger':
             dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path,
                                           output_dir, **analyze_video_params)
@@ -465,7 +483,7 @@ class Estimation(dj.Computed):
     def get_trajectory(cls, key, body_parts='all'):
         """
         Returns a pandas dataframe of x, y and z coordinates of the specified body_parts
-        :param key: A query specifying one Estimation entry, else error is thrown.
+        :param key: A query specifying one PoseEstimation entry, else error is thrown.
         :param body_parts: optional, body parts as a list. If none, all joints
         returns df: multi index pandas dataframe with DLC scorer names, body_parts
                     and x/y coordinates of each joint name for a camera_id,
