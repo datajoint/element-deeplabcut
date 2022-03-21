@@ -18,7 +18,7 @@ services:
       context: ../../
       dockerfile: ./workflow-deeplabcut/docker/Dockerfile.dev
     env_file: .env
-    image: workflow-deeplabcut-dev:0.1.0a4
+    image: workflow-deeplabcut-dev:0.0.0a0
     container_name: workflow-deeplabcut-dev
     environment:
       - TEST_DATA_DIR=/main/test_data/workflow_dlc_data1/,/main/test_data/workflow_dlc_data2/
