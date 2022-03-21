@@ -8,8 +8,9 @@ of experiment session, thus assembling a fully functional behavior pipeline (see
 example [workflow-deeplabcut](https://github.com/datajoint/workflow-deeplabcut)).
 
 This Element currently supports single-animal, single-camera 2D models, and does not yet
-support multi-animal or multi-camera models. This Element also requires the user should
-to use native DeepLabCut tools for intitializing a project and labeling training data.
+support multi-animal or multi-camera models. This Element does not offer any features
+for labeling training data. Users should to use native DeepLabCut tools for
+intitializing a project and labeling training data.
 
 ## The Pipeline Architecture
 
