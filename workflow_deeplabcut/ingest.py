@@ -3,7 +3,7 @@ import csv
 import ruamel.yaml as yaml
 from element_interface.utils import find_full_path
 
-from .pipeline import subject, session, dlc
+from .pipeline import subject, session, VideoRecording, train
 from .paths import get_dlc_root_data_dir
 
 
@@ -55,18 +55,19 @@ def ingest_sessions(session_csv_path='./user_data/sessions.csv',
 
 def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
                      recording_csv_path='./user_data/recordings.csv',
+                     train_video_csv_path='./user_data/train_videosets.csv',
                      skip_duplicates=True):
     """
     Ingests to DLC schema from ./user_data/{config_params,recordings}.csv
 
-    First, loads config.yaml info to dlc.ModelTrainingParamSet. Requires paramset_idx,
+    First, loads config.yaml info to train.TrainingParamSet. Requires paramset_idx,
         paramset_desc and relative config_path. Other columns overwrite config variables
-    Next, loads recording info into dlc.VideoRecording and dlc.VideoRecording.File
+    Next, loads recording info into VideoRecording and VideoRecording.File
     :param config_params_csv_path: csv path for model training config and parameters
     :param recording_csv_path: csv path for list of recordings
     """
 
-    previous_length = len(dlc.ModelTrainingParamSet.fetch())
+    previous_length = len(train.TrainingParamSet.fetch())
     with open(config_params_csv_path, newline='') as f:
         config_csv = list(csv.DictReader(f, delimiter=','))
     for line in config_csv:
@@ -79,17 +80,16 @@ def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
             params = yaml.safe_load(y)
         params.update({**line})
 
-        dlc.ModelTrainingParamSet.insert_new_params(paramset_idx=paramset_idx,
-                                                    paramset_desc=paramset_desc,
-                                                    params=params,
-                                                    skip_duplicates=skip_duplicates)
-    insert_length = len(dlc.ModelTrainingParamSet.fetch()) - previous_length
+        train.TrainingParamSet.insert_new_params(paramset_idx=paramset_idx,
+                                                 paramset_desc=paramset_desc,
+                                                 params=params)
+    insert_length = len(train.TrainingParamSet.fetch()) - previous_length
     print(f'\n---- Inserting {insert_length} entry(s) into #model_training_param_set '
           + '----')
 
     # Next, recordings and config files
-    csvs = [recording_csv_path, recording_csv_path]
-    tables = [dlc.VideoRecording(), dlc.VideoRecording.File()]
+    csvs = [recording_csv_path, recording_csv_path, train_video_csv_path]
+    tables = [VideoRecording(), VideoRecording.File(), train.VideoSet.VideoRecording()]
     ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
 
 

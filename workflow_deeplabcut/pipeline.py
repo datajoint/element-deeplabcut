@@ -1,12 +1,12 @@
 import datajoint as dj
-from element_animal import subject
 from element_lab import lab
-from element_session import session
-from element_deeplabcut import train, model, pose
+from element_animal import subject
+from element_session import session_with_datetime as session
+from element_deeplabcut import train, model
 
 from element_animal.subject import Subject
+from element_session.session_with_datetime import Session
 from element_lab.lab import Source, Lab, Protocol, User, Project
-from element_session.session import Session
 
 from .paths import get_dlc_root_data_dir, get_dlc_processed_data_dir
 
@@ -60,4 +60,3 @@ class VideoRecording(dj.Manual):
 
 train.activate(db_prefix + 'train', linking_module=__name__)
 model.activate(db_prefix + 'model', linking_module=__name__)
-pose.activate(db_prefix + 'pose', linking_module=__name__)

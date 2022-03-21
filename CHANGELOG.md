@@ -11,4 +11,4 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + First draft begins, reflecting precursor pipelines
 + Added Docker files
 + Draft integration tests
-+ Add example data featuring DLC examples
++ Add example data download instructions

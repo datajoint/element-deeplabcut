@@ -1,0 +1,51 @@
+# export COMPOSE_DOCKER_CLI_BUILD=0 # some machines need for smooth --build
+# .env file: TEST_DATA_DIR=<local parent directory of workflow_dlc_data{1,2}>
+# docker-compose -f ./docker/docker-compose-test.yaml up --build
+# docker exec -it workflow-deeplabcut_workflow_1 /bin/bash
+# docker-compose -f ./docker/docker-compose-test.yaml down
+
+version: "2.4"
+x-net: &net
+  networks:
+      - main
+services:
+  db:
+    <<: *net
+    image: datajoint/mysql:5.7
+    container_name: workflow-deeplabcut-test-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=simple
+  workflow:
+    <<: *net
+    build:
+      context: ../../
+      dockerfile: ./workflow-deeplabcut/docker/Dockerfile.test
+    env_file: .env
+    image: workflow-deeplabcut-test:0.1.0a4
+    container_name: workflow-deeplabcut-test
+    environment:
+      - DJ_HOST=db
+      - DJ_USER=root
+      - DJ_PASS=simple
+      - TEST_DATA_DIR=/main/test_data/workflow_dlc_data1/,/main/test_data/workflow_dlc_data2/
+      - DATABASE_PREFIX=test_
+    command:
+      - bash
+      - -c
+      - |
+        echo "------ INTEGRATION TESTS ------"
+        pytest -sv --cov-report term-missing --cov=workflow_deeplabcut -p no:warnings tests/
+        tail -f /dev/null
+    volumes:
+      - ${TEST_DATA_DIR}:/main/test_data
+      - ./apt_requirements.txt:/tmp/apt_requirements.txt
+      - ../../element-lab:/main/element-lab
+      - ../../element-animal:/main/element-animal
+      - ../../element-session:/main/element-session
+      - ../../element-deeplabcut:/main/element-deeplabcut
+      - ..:/main/workflow-deeplabcut
+    depends_on:
+      db:
+        condition: service_healthy
+networks:
+  main:
