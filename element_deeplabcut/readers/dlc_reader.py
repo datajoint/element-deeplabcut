@@ -88,7 +88,7 @@ class PoseEstimation:
                 self._pkl = pickle.load(f)
         return self._pkl['data']
 
-    @property
+    @property # DLC aux_func has a read_config option, but it rewrites the proj path
     def yml(self):
         if self._yml is None:
             with open(self.yml_path, 'rb') as f:
