@@ -369,7 +369,8 @@ class ModelEvaluation(dj.Computed):
 class PoseEstimationTask(dj.Manual):
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
-    -> model.Model                              # Must specify a DLC project_path
+    -> Model                              # Must specify a DLC project_path
+
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
     pose_estimation_output_dir='': varchar(255) # output dir relative to the root dir
@@ -434,7 +435,8 @@ class PoseEstimation(dj.Computed):
     class BodyPartPosition(dj.Part):
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
-        -> model.BodyPart
+        -> Model.BodyPart
+
         ---
         frame_index : longblob     # frame index in model
         x_pos       : longblob
@@ -449,7 +451,8 @@ class PoseEstimation(dj.Computed):
         from .readers import dlc_reader
 
         # ID model and directories
-        dlc_model = (_linking_module.model.Model & key).fetch1()
+        dlc_model = (Model & key).fetch1()
+
         assert dlc_model['project_path'], ("Your model table must have a 'project_path'"
                                            + "field pointing to a DLC directory")
         task_mode, analyze_video_params, output_dir = (
