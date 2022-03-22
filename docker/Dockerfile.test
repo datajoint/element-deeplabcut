@@ -1,0 +1,42 @@
+FROM datajoint/djbase:py3.9-debian-fcd8909
+
+USER anaconda:anaconda
+
+COPY ./workflow-deeplabcut/docker/apt_requirements.txt /tmp/
+RUN /entrypoint.sh echo "Installed dependencies."
+
+WORKDIR /main/workflow-deeplabcut
+
+# Option 1 - Install DataJoint's remote fork of the workflow and elements
+# RUN git clone https://github.com/datajoint/workflow-deeplabcut.git /main/
+
+# Option 2 - Install user's remote fork of element and workflow
+#            or an unreleased version of the element
+# RUN pip install git+https://github.com/<user>element-lab.git
+# RUN pip install git+https://github.com/<user>/element-animal.git
+# RUN pip install git+https://github.com/<user>/element-session.git
+# RUN pip install git+https://github.com/<user>/element-deeplabcut.git
+# RUN git clone https://github.com/<user>/workflow-deeplabcut.git /main/workflow-deeplabcut
+
+# Option 3 - Install user's local fork of element and workflow
+RUN mkdir /main/element-lab \
+          /main/element-animal \
+          /main/element-session \
+          /main/element-deeplabcut \
+          /main/workflow-deeplabcut
+
+COPY --chown=anaconda:anaconda ./element-lab /main/element-lab
+COPY --chown=anaconda:anaconda ./element-animal /main/element-animal
+COPY --chown=anaconda:anaconda ./element-session /main/element-session
+COPY --chown=anaconda:anaconda ./element-deeplabcut /main/element-deeplabcut
+COPY --chown=anaconda:anaconda ./workflow-deeplabcut /main/workflow-deeplabcut
+
+RUN pip install -e /main/element-lab
+RUN pip install -e /main/element-animal
+RUN pip install -e /main/element-session
+RUN pip install -e /main/element-deeplabcut
+RUN rm -f /main/workflow-deeplabcut/dj_local_conf.json
+
+# Install the workflow
+RUN pip install /main/workflow-deeplabcut
+RUN pip install -r /main/workflow-deeplabcut/requirements_test.txt

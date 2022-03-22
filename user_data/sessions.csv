@@ -1,0 +1,4 @@
+subject,session_datetime,session_dir,session_note
+subject5,2020-04-15 11:16:38,example-dir/subject5/,Successful data collection. No notes
+subject6,2021-06-02 14:04:22,example-dir/subject6/,Model Training Session
+subject6,2021-06-03 14:43:10,example-dir/subject6/,Test Session
