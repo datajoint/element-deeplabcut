@@ -466,7 +466,7 @@ class PoseEstimation(dj.Computed):
         project_path = find_full_path(get_dlc_root_data_dir(),
                                       dlc_model['project_path'])
 
-        # Triger Poseestimation,
+        # Triger PoseEstimation,
         if task_mode == 'trigger':
             dlc_reader.do_pose_estimation(video_filepaths, dlc_model, project_path,
                                           output_dir, **analyze_video_params)
