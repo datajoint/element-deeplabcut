@@ -25,8 +25,7 @@ assembled together to a functional workflow.
 
 ### element-lab
 
-![element-lab](
-https://github.com/datajoint/element-lab/raw/main/images/element_lab_diagram.svg)
+![element-lab](https://github.com/datajoint/element-lab/blob/main/images/lab_diagram.svg)
 
 ### element-animal
 
@@ -52,16 +51,16 @@ still manage various models and execute pose estimation.
 
 ## Installation instructions
 
-+ The installation instructions can be found at the 
-[datajoint-elements repository](https://github.com/datajoint/datajoint-elements/blob/main/gh-pages/docs/install.md).
+The installation instructions can be found at the 
+[DataJoint Elements repository](https://github.com/datajoint/datajoint-elements/blob/main/gh-pages/docs/usage/install.md).
 
 ## Interacting with the DataJoint workflow
 
 Please refer to the following workflow-specific
 [Jupyter notebooks](/notebooks) for an in-depth explanation of how to ...
-+ download example data ([00-DataDownload.ipynb](notebooks/00-DataDownload_Optional.ipynb))
-+ configure DataJoint settings ([01-Configure.ipynb](notebooks/01-Configure.ipynb))
-+ run the workflow ([01-WorkflowStructure.ipynb](notebooks/01-WorkflowStructure_Optional.ipynb))
-+ ingest data and launch tasks ([03-Process.ipynb](notebooks/03-Process.ipynb))
-+ automate tasks ([04-Automate.ipynb](notebooks/04-Automate_Optional.ipynb))
-+ drop tables ([05-Drop](notebooks/05-Drop_Optional.ipynb))
++ Download example data ([00-DataDownload.ipynb](notebooks/00-DataDownload_Optional.ipynb))
++ Configure DataJoint settings ([01-Configure.ipynb](notebooks/01-Configure.ipynb))
++ Run the workflow ([01-WorkflowStructure.ipynb](notebooks/01-WorkflowStructure_Optional.ipynb))
++ Ingest data and launch tasks ([03-Process.ipynb](notebooks/03-Process.ipynb))
++ Automate tasks ([04-Automate.ipynb](notebooks/04-Automate_Optional.ipynb))
++ Drop tables ([05-Drop](notebooks/05-Drop_Optional.ipynb))
