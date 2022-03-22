@@ -60,7 +60,7 @@ Please refer to the following workflow-specific
 [Jupyter notebooks](/notebooks) for an in-depth explanation of how to ...
 + Download example data ([00-DataDownload.ipynb](notebooks/00-DataDownload_Optional.ipynb))
 + Configure DataJoint settings ([01-Configure.ipynb](notebooks/01-Configure.ipynb))
-+ Run the workflow ([01-WorkflowStructure.ipynb](notebooks/01-WorkflowStructure_Optional.ipynb))
++ Visualize the workflow ([01-WorkflowStructure.ipynb](notebooks/01-WorkflowStructure_Optional.ipynb))
 + Ingest data and launch tasks ([03-Process.ipynb](notebooks/03-Process.ipynb))
 + Automate tasks ([04-Automate.ipynb](notebooks/04-Automate_Optional.ipynb))
 + Drop tables ([05-Drop](notebooks/05-Drop_Optional.ipynb))
