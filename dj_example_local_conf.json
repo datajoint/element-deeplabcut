@@ -18,7 +18,7 @@
     "database.ingest_filename_full": "",
     "custom": {
         "database.prefix": "YourPrefix_",
-        "beh_root_dir": [
+        "dlc_root_data_dir": [
             "/Abolute/Path/Here/",
             "/Abolute/Other/Path/"
         ]

@@ -1,4 +1,0 @@
-subject,session_datetime,video_path,camera_id,config_path,config_notes,paramset_idx
-subject5,2020-04-15 11:16:38,videos/reachingvideo1.avi,1,config.yaml,Reaching example provided by DeepLabCut repository,0
-subject6,2021-06-02 14:04:22,videos/m3v1mp4.mp4,1,config.yaml,Openfield example provided by DeepLabCut repository,0
-subject6,2021-06-03 14:04:22,videos/videocompressed1.mp4,1,config.yaml,Multianimal - not fully trained,1

@@ -24,7 +24,7 @@ def test_ingest_subjects(pipeline, subjects_csv, ingest_subjects):
 
 
 def test_ingest_sessions(pipeline, sessions_csv, ingest_sessions):
-    """Check length/contents of Session.SessionDirectory"""
+    """Check length/contents of session schema"""
     session = pipeline['session']
     assert len(session.Session()) == 2
 
@@ -36,9 +36,14 @@ def test_ingest_sessions(pipeline, sessions_csv, ingest_sessions):
                 ).fetch1('session_dir') == sess[2]
 
 
+def test_ingest_dlc_items(pipeline, recordings_csv, config_params_csv,
+                          ingest_dlc_items):
+    """Check length/contents of VideoRecordings/ConfigParams"""
+    pass
+
+
 ''' TO DO
 - add ingestion of recordings and config params
-- test launch of analyze videos
 - Encode analysis outcome specifcs from Model.Data
    e.g. assert mean(Model.Data & "joint_name = 'Finger1'").fetch('x_pos')) == Value
 - post example data to djarchive?
