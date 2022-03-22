@@ -1,0 +1,87 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution, packaging, PyInstaller
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.manifest
+*.spec
+pip-log.txt
+pip-delete*.txt
+.idea/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+docker-compose.y*ml
+
+# C extension, Translations
+*.so
+*.mo
+*.pot
+
+# editors: vscode, emacs, Mac
+.vscode
+**/*~
+**/#*#
+**/.#*
+.DS_Store
+
+# Django, Flask, Scrapy, Sphinx, mkdocs:
+# PyBuilder, Jupyter, SageMath, celery beat
+*.log
+local_settings.py
+instance/
+.webassets-cache
+.scrapy
+scratchpaper.*
+docs/_build/
+/site
+target/
+.ipynb_checkpoints
+celerybeat-schedule
+*.sage.py
+
+# dotenv, virtualenv, pyenv, mypy
+./.env
+.venv
+venv/
+ENV/
+.python-version
+.mypy_cache/
+
+# Spyder/Rope project settings
+.spyderproject
+.spyproject
+.ropeproject
+
+# datajoint, notes, nwb export
+dj_local_c*.json
+temp*
+temp/*
+*nwb
