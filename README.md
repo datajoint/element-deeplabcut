@@ -43,12 +43,12 @@ The DeepLabCut Element is split into `train` and `model` schemas. To manage both
 training and pose estimation within DataJoint, one would activate both schemas, as
 shown below.
 
-![assembled-both](./images/attached_train_model.svg)
+![assembled-both](https://github.com/datajoint/element-deeplabcut/blob/main/images/diagram_dlc.svg)
 
 If training is managed outside DataJoint, one could only activate the `model` schema to
 still manage various models and execute pose estimation.
 
-![assembled-model](./images/attached_model_only.svg)
+![assembled-model](https://github.com/datajoint/element-deeplabcut/blob/main/images/diagram_dlc_model.svg)
 
 ## Installation instructions
 
@@ -64,5 +64,4 @@ Please refer to the following workflow-specific
 + run the workflow ([01-WorkflowStructure.ipynb](notebooks/01-WorkflowStructure_Optional.ipynb))
 + ingest data and launch tasks ([03-Process.ipynb](notebooks/03-Process.ipynb))
 + automate tasks ([04-Automate.ipynb](notebooks/04-Automate_Optional.ipynb))
-
-?? keep? [05-Explore.ipynb](notebooks/05-Explore.ipynb)
++ drop tables ([05-Drop](notebooks/05-Drop_Optional.ipynb))

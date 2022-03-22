@@ -93,15 +93,13 @@ dj.Diagram(subject.Subject) + dj.Diagram(session.Session) + dj.Diagram(model)
 lab.schema.list_tables()
 
 # %%
-from workflow_deeplabcut.pipeline import VideoRecording
 # plot diagram of selected tables and schemas
 (dj.Diagram(subject.Subject) + dj.Diagram(session.Session) 
- + dj.Diagram(VideoRecording) 
- + dj.Diagram(model.EstimationTask)) 
+ + dj.Diagram(model.VideoRecording) + dj.Diagram(model.PoseEstimationTask)) 
 
 # %% Each datajoint table class inside the module corresponds to a table inside the schema. For example, the class `ephys.EphysRecording` correponds to the table `_ephys_recording` in the schema `neuro_ephys` in the database.
 # preview columns and contents in a table
-VideoRecording.File()
+model.VideoRecording.File()
 
 # %% `heading`: [markdown]
 # `describe()` shows table definition with foreign key references
@@ -138,7 +136,7 @@ subject.Subject.describe();
 dj.Diagram(session)
 
 # %% [session](https://github.com/datajoint/element-session): experimental session information
-session.Session.describe();
+session.Session.describe()
 
 # %% [markdown]
 # ## Summary and next step

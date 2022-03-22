@@ -76,57 +76,23 @@ session.Session() & "session_datetime > '2021-06-01 12:00:00'"
 # %% [markdown]
 # ## Inserting recordings
 
-# %%
-from workflow_deeplabcut.pipeline import VideoRecording
-VideoRecording.heading
-
 # %% [markdown]
-# The `VideoRecording` table retains unique recordings file specifies all videos across sessions, including both model training
-# videos and videos for later analysis.
-
-# %%
-recordings = [{'recording_id': '1',
-               'subject': 'subject6',
-               'session_datetime': '2021-06-02 14:04:22',
-               'recording_start_time': '2021-06-02 14:07:00',
-               'camera_id': '1'},
-              {'recording_id': '2',
-               'subject': 'subject6',
-               'session_datetime': '2021-06-03 14:43:10',
-               'recording_start_time': '2021-06-03 14:50:00',
-               'camera_id': '1'}]
-VideoRecording.insert(recordings)
-
-# %% [markdown]
-# The related part table allows for multiple files for a given recording session.
-
-# %%
-VideoRecording.File.heading
-
-# %%
-recordings[0].update({'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4'})
-recordings[1].update({'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4'})
-VideoRecording.File.insert(recordings, ignore_extra_fields=True)
-
-# %%
-VideoRecording.File()
-
-# %% [markdown]
-# The `TrainingVideo` table handles all files generated in the video labeling process, including the `h5`, `csv`, and `png` files under the `labeled-data` directory. While these aren't required for launching DLC training, it may be helpful to retain records. DLC will instead refer to the `mat` file located under the `training-datasets` directory.
+# The `VideoSet` table handles all files generated in the video labeling process, including the `h5`, `csv`, and `png` files under the `labeled-data` directory. While these aren't required for launching DLC training, it may be helpful to retain records. DLC will instead refer to the `mat` file located under the `training-datasets` directory.
 
 # %%
 train.VideoSet.insert1({'video_set_id': 1})
-csv_path = 'openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.csv'
-train.VideoSet.File.insert1({'video_set_id': 1,
-                             'file_path': csv_path})
+labeled_dir = 'openfield-Pranav-2018-10-30/labeled-data/m4s1/'
+training_files = ['CollectedData_Pranav.h5',
+                  'CollectedData_Pranav.csv',
+                  'img0000.png']
+for file in training_files:
+    train.VideoSet.File.insert1({'video_set_id': 1,
+                                 'file_path': (labeled_dir + file)})
+train.VideoSet.File.insert1({'video_set_id':1, 'file_path': 
+                            'openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4'})
 
 # %%
-rec_key = (VideoRecording & 'recording_id=1').fetch1('KEY')
-train.VideoSet.VideoRecording.insert1({**rec_key,
-                                       'video_set_id': 1, 'recording_id': 1})
-
-# %%
-train.VideoSet.VideoRecording()
+train.VideoSet.File()
 
 # %% [markdown]
 # ## Training a DLC Network

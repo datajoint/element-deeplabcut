@@ -3,7 +3,7 @@ import csv
 import ruamel.yaml as yaml
 from element_interface.utils import find_full_path
 
-from .pipeline import subject, session, VideoRecording, train
+from .pipeline import subject, session, train, model
 from .paths import get_dlc_root_data_dir
 
 
@@ -54,8 +54,8 @@ def ingest_sessions(session_csv_path='./user_data/sessions.csv',
 
 
 def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
-                     recording_csv_path='./user_data/recordings.csv',
                      train_video_csv_path='./user_data/train_videosets.csv',
+                     model_video_csv_path='./user_data/model_videos.csv',
                      skip_duplicates=True):
     """
     Ingests to DLC schema from ./user_data/{config_params,recordings}.csv
@@ -64,7 +64,8 @@ def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
         paramset_desc and relative config_path. Other columns overwrite config variables
     Next, loads recording info into VideoRecording and VideoRecording.File
     :param config_params_csv_path: csv path for model training config and parameters
-    :param recording_csv_path: csv path for list of recordings
+    :param train_video_csv_path: csv path for list of training videosets
+    :param recording_csv_path: csv path for list of modeling videos for pose estimation
     """
 
     previous_length = len(train.TrainingParamSet.fetch())
@@ -88,8 +89,10 @@ def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
           + '----')
 
     # Next, recordings and config files
-    csvs = [recording_csv_path, recording_csv_path, train_video_csv_path]
-    tables = [VideoRecording(), VideoRecording.File(), train.VideoSet.VideoRecording()]
+    csvs = [train_video_csv_path, train_video_csv_path,
+            model_video_csv_path, model_video_csv_path]
+    tables = [train.VideoSet(), train.VideoSet.File(),
+              model.VideoRecording(), model.VideoRecording.File()]
     ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
 
 

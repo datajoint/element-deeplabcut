@@ -39,22 +39,6 @@ class Device(dj.Lookup):
     contents = zip([1, 2])
 
 
-@session.schema
-class VideoRecording(dj.Manual):
-    definition = """
-    -> Session
-    -> Device
-    recording_id: int
-    ---
-    recording_start_time: datetime
-    """
-
-    class File(dj.Part):
-        definition = """
-        -> master
-        file_path: varchar(255)  # filepath of video, relative to root data directory
-        """
-
 # Activate DeepLabCut schema -----------------------------------
 
 
