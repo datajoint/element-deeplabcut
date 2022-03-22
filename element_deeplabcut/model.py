@@ -82,7 +82,8 @@ def get_dlc_root_data_dir() -> list:
     if isinstance(root_directories, (str, Path)):
         root_directories = [root_directories]
 
-    if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
+    if (hasattr(_linking_module, 'get_dlc_processed_data_dir')
+            and get_dlc_processed_data_dir() not in root_directories):
         root_directories.append(_linking_module.get_dlc_processed_data_dir())
 
     return root_directories
@@ -133,10 +134,11 @@ class BodyPart(dj.Lookup):
     """
 
     @classmethod
-    def extract_new_body_parts(cls, dlc_config: dict):
+    def extract_new_body_parts(cls, dlc_config: dict, verbose=True):
         """Print a list of new body parts from a dlc config,
         to examine before generating descriptions
         :param dlc_config:  path to a config.y*ml, or dict including contents thereof
+        :param verbose:     default True. Print existing/new items to console
         """
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(),
@@ -151,8 +153,9 @@ class BodyPart(dj.Lookup):
         assert 'bodyparts' in dlc_config, f'Found no bodyparts section in {dlc_config}'
         tracked_body_parts = cls.fetch('body_part')
         new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
-        print(f'Existing body parts: {tracked_body_parts}')
-        print(f'New body parts: {new_body_parts}')
+        if verbose: # Added to silence duplicate prompt during `insert_new_model`
+            print(f'Existing body parts: {tracked_body_parts}')
+            print(f'New body parts: {new_body_parts}')
         return new_body_parts
 
     @classmethod
@@ -297,7 +300,8 @@ class Model(dj.Manual):
             return
         with cls.connection.transaction:
             cls.insert1(model_dict)
-            if BodyPart.extract_new_body_parts(dlc_config):
+            # 'not None' bc, when should execute, returns list w/ambiguous truth val
+            if BodyPart.extract_new_body_parts(dlc_config, verbose=False) is not None:
                 BodyPart.insert_from_config(dlc_config, prompt=prompt)
 
 
@@ -383,10 +387,10 @@ class PoseEstimationTask(dj.Manual):
         """
         processed_dir = Path(get_dlc_processed_data_dir())
         video_filepath = find_full_path(get_dlc_root_data_dir(),
-                                        (_linking_module.VideoRecording.File & key
+                                        (VideoRecording.File & key
                                          ).fetch('file_path', limit=1)[0])
         root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath.parent)
-        recording_key = _linking_module.VideoRecording & key
+        recording_key = VideoRecording & key
         device = '-'.join(str(v) for v in (_linking_module.Device & recording_key
                                            ).fetch1('KEY').values())
         output_dir = (processed_dir
@@ -454,7 +458,7 @@ class PoseEstimation(dj.Computed):
         analyze_video_params = analyze_video_params or {}
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                           for fp in (_linking_module.VideoRecording.File & key
+                           for fp in (VideoRecording.File & key
                                       ).fetch('file_path')]
         project_path = find_full_path(get_dlc_root_data_dir(),
                                       dlc_model['project_path'])

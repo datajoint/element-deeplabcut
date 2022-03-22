@@ -73,11 +73,26 @@ def get_dlc_root_data_dir() -> list:
     if isinstance(root_directories, (str, Path)):
         root_directories = [root_directories]
 
-    if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
+    if (hasattr(_linking_module, 'get_dlc_processed_data_dir')
+            and get_dlc_processed_data_dir() not in root_directories):
         root_directories.append(_linking_module.get_dlc_processed_data_dir())
 
     return root_directories
 
+def get_dlc_processed_data_dir() -> str:
+    """
+    If specified by the user, this function provides DeepLabCut with an output
+    directory for processed files. If unspecified, output files will be stored
+    in the session directory 'videos' folder, per DeepLabCut default
+
+    get_dlc_processed_data_dir -> str
+        This user-provided function specifies where DeepLabCut output files
+        will be stored.
+    """
+    if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
+        return _linking_module.get_dlc_processed_data_dir()
+    else:
+        return get_dlc_root_data_dir()[0]
 
 # ----------------------------- Table declarations ----------------------
 
@@ -145,8 +160,8 @@ class TrainingParamSet(dj.Lookup):
 
         if param_query:  # If the specified param-set already exists
             existing_paramset_idx = param_query.fetch1('paramset_idx')
-            if existing_paramset_idx == paramset_idx:  # If existing_idx same: job done
-                return
+            if existing_paramset_idx == int(paramset_idx): # If existing_idx same:
+                return                                     # job done
             else:  # If not: human error, adding paramset w/new name
                 raise dj.DataJointError(
                     f'The specified param-set already exists'
