@@ -23,17 +23,16 @@ The following tables are further downstream across two schemas:
 
 - `train` schema: Tables related to model training.
    + ***VideoSet***: The set of files corresponding to a training dataset.
-   + ***TrainingParamSet***: A collection of model parameters, represented by an index.
-   + ***TrainingTask***: A set of tasks specifying models to train.
-   + ***VideoRecording***: All recordings from a given session.
+   + ***TrainingParamSet***: A collection of model training parameters, represented by an index.
+   + ***TrainingTask***: A set of tasks specifying model training methods.
    + ***ModelTraining***: A record of training iterations launched by ***TrainingTask***.
 - `model` schema: Tables related to DeepLabCut models and pose estimation.
-   + ***VideoRecording***: A set of for pose estimation.
+   + ***VideoRecording***: Video(s) from one recording session, for pose estimation.
+   + ***BodyPart***: Unique body parts (a.k.a. joints) and descriptions thereof.
    + ***Model***: A central table for storing unique models.
    + ***ModelEvaluation***: Evaluation results for each model.
-   + ***BodyPart***: Unique body parts (a.k.a. joints) and descriptions thereof.
-   + ***PoseEstimationTask***: A series of pose estimation tasks to be completed. A
-        pairing video recordings with models to be use for pose estimation.
+   + ***PoseEstimationTask***: A series of pose estimation tasks to be completed. 
+     Pairings of video recordings with models to be use for pose estimation.
    + ***PoseEstimation***: Results of pose estimation using a given model. 
 
 ## Installation
@@ -57,11 +56,6 @@ The following tables are further downstream across two schemas:
     pip install "element-interface @ git+https://github.com/datajoint/element-interface"
     ```
 
-Note that DeepLabCut itself requires a dependency called `numba` as part of
-`trackingutils.py`. `numba` requires `numpy<=1.20`. This may conflict with installs of
-other DataJoint Elements, which rely on `nwb-conversion-tools`, itself requiring
-`numpy>=1.21.0`. 
-
 ## Usage
 
 ### Element activation
@@ -72,8 +66,8 @@ To activate the `element-deeplabcut`, one needs to provide:
     + optionally, a schema name for the `train` module.
     + a schema name for the `model` moduel.
 2. Upstream tables
-    + `Session`: A set of keys identifying a recording session (see [Element-Session]
-      (https://github.com/datajoint/element-session)).
+    + `Session`: A set of keys identifying a recording session (see 
+      [Element-Session](https://github.com/datajoint/element-session)).
     + `Device`: A reference table linked `VideoRecording` to specify camera information.
 3. Utility functions
     + `get_dlc_root_data_dir()` to provide a root directory for a given machine,

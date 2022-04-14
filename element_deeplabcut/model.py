@@ -153,7 +153,7 @@ class BodyPart(dj.Lookup):
         assert 'bodyparts' in dlc_config, f'Found no bodyparts section in {dlc_config}'
         tracked_body_parts = cls.fetch('body_part')
         new_body_parts = np.setdiff1d(dlc_config['bodyparts'], tracked_body_parts)
-        if verbose: # Added to silence duplicate prompt during `insert_new_model`
+        if verbose:  # Added to silence duplicate prompt during `insert_new_model`
             print(f'Existing body parts: {tracked_body_parts}')
             print(f'New body parts: {new_body_parts}')
         return new_body_parts
@@ -300,9 +300,10 @@ class Model(dj.Manual):
             return
         with cls.connection.transaction:
             cls.insert1(model_dict)
-            # 'not None' bc, when should execute, returns list w/ambiguous truth val
-            if BodyPart.extract_new_body_parts(dlc_config, verbose=False) is not None:
+            # Returns array, so check size for unambiguous truth value
+            if BodyPart.extract_new_body_parts(dlc_config, verbose=False).size > 0:
                 BodyPart.insert_from_config(dlc_config, prompt=prompt)
+            cls.BodyPart.insert((model_name, bp) for bp in dlc_config['bodyparts'])
 
 
 @schema
