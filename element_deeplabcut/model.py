@@ -303,8 +303,7 @@ class Model(dj.Manual):
             # Returns array, so check size for unambiguous truth value
             if BodyPart.extract_new_body_parts(dlc_config, verbose=False).size > 0:
                 BodyPart.insert_from_config(dlc_config, prompt=prompt)
-            for bp in dlc_config['bodyparts']:
-                cls.BodyPart.insert1((model_name, bp))
+            cls.BodyPart.insert((model_name, bp) for bp in dlc_config['bodyparts'])
 
 
 @schema
