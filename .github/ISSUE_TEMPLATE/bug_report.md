@@ -17,7 +17,7 @@ performed that resulted in an error.
 ### Reproducibility
 Include:
 - OS (WIN | MACOS | Linux)
-- DataJoint Element-Behavior Version
+- DataJoint Element Version
 - MySQL Version
 - MySQL Deployment Strategy (local-native | local-docker | remote)
 - Minimum number of steps to reliably reproduce the issue
