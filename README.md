@@ -17,6 +17,10 @@ This repository provides demonstrations for:
 3. Ingestion of model information, and launching evaluation.
 4. Using an ingested model to run pose estimation.
 
+See the [DataJoint Elements documentation](https://elements.datajoint.org) for 
+descriptions of the other `elements` and `workflows` developed as part of this National 
+Institutes of Health (NIH)-funded initiative.
+
 ## Workflow architecture
 
 The deeplabcut workflow presented here uses components from 4 DataJoint elements
@@ -52,7 +56,7 @@ still manage various models and execute pose estimation.
 ## Installation instructions
 
 The installation instructions can be found at the 
-[DataJoint Elements repository](https://github.com/datajoint/datajoint-elements/blob/main/gh-pages/docs/usage/install.md).
+[DataJoint Elements documentation](https://elements.datajoint.org/usage/install/).
 
 ## Interacting with the DataJoint workflow
 
