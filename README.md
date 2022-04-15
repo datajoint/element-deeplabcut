@@ -23,8 +23,11 @@ Institutes of Health (NIH)-funded initiative.
 
 ## Workflow architecture
 
-The deeplabcut workflow presented here uses components from 4 DataJoint elements
-(`element-lab`, `element-animal`, `element-session`, and `element-deeplabcut`)
+The deeplabcut workflow presented here uses components from four DataJoint Elements
+([element-lab](https://github.com/datajoint/element-lab), 
+[element-animal](https://github.com/datajoint/element-animal), 
+[element-session](https://github.com/datajoint/element-session), 
+[element-deeplabcut](https://github.com/datajoint/element-deeplabcut))
 assembled together to a functional workflow.
 
 The DeepLabCut Element is split into `train` and `model` schemas. To manage both model
