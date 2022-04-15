@@ -27,21 +27,6 @@ The deeplabcut workflow presented here uses components from 4 DataJoint elements
 (`element-lab`, `element-animal`, `element-session`, and `element-deeplabcut`)
 assembled together to a functional workflow.
 
-### element-lab
-
-![element-lab](https://github.com/datajoint/element-lab/blob/main/images/lab_diagram.svg)
-
-### element-animal
-
-![element-animal](
-https://github.com/datajoint/element-animal/blob/main/images/subject_diagram.svg)
-
-### element-session
-
-![session](https://github.com/datajoint/element-session/blob/main/images/session_diagram.svg)
-
-### Assembled with element-deeplabcut
-
 The DeepLabCut Element is split into `train` and `model` schemas. To manage both model
 training and pose estimation within DataJoint, one would activate both schemas, as
 shown below.
