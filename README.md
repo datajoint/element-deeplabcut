@@ -82,6 +82,7 @@ For more detail, check the docstring of the `element-deeplabcut`:
     help(train.activate)
     help(model.activate)
 ```
+
 ### Example usage
 
 See [our workflow](https://github.com/datajoint/workflow-deeplabcut) for an example usage of this DeepLabCut Element.
