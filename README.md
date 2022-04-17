@@ -17,7 +17,9 @@ This repository provides demonstrations for:
 3. Ingestion of model information, and launching evaluation.
 4. Using an ingested model to run pose estimation.
 
-For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.
++ See the [Element DeepLabCut documentation](https://elements.datajoint.org/description/deeplabcut/) for the background information and development timeline.
+
++ For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.
 
 ## Workflow architecture
 
