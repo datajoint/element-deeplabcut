@@ -1,18 +1,22 @@
 # DataJoint Element - DeepLabCut
 
-This repository features a DataJoint schema for pose estimation via ***DeepLabCut***.
++ This repository features a DataJoint schema for pose estimation via ***DeepLabCut***.
 The pipeline presented here is not a complete pipeline by itself, but rather a modular
 design of tables and dependencies specific to the behavior tracking workflow. This
 modular pipeline element can be flexibly attached downstream to any particular design
 of experiment session, thus assembling a fully functional behavior pipeline (see the
 example [workflow-deeplabcut](https://github.com/datajoint/workflow-deeplabcut)).
 
-This Element currently supports single-animal, single-camera 2D models, and does not yet
++ This Element currently supports single-animal, single-camera 2D models, and does not yet
 support multi-animal or multi-camera models. This Element does not offer any features
 for labeling training data. Users should to use native DeepLabCut tools for
 intitializing a project and labeling training data.
 
-## The Pipeline Architecture
++ See the [Element DeepLabCut documentation](https://elements.datajoint.org/description/deeplabcut/) for the background information and development timeline.
+
++ For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.
+
+## Element architecture
 
 ![element-deeplabcut diagram](images/diagram_dlc.svg)
 
