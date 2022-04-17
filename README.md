@@ -68,7 +68,7 @@ To activate the `element-deeplabcut`, one needs to provide:
 
 1. Schema names
     + optionally, a schema name for the `train` module.
-    + a schema name for the `model` moduel.
+    + a schema name for the `model` module.
 2. Upstream tables
     + `Session`: A set of keys identifying a recording session (see 
       [Element-Session](https://github.com/datajoint/element-session)).
