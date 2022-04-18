@@ -154,8 +154,9 @@ class RecordingInfo(dj.Imported):
             file_path = (find_full_path(get_dlc_root_data_dir(), file_path)).as_posix()
 
             cap = cv2.VideoCapture(file_path)
-            info = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(
-                cap.get(cv2.CAP_PROP_FPS))
+            info = (int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), 
+                    int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
+                    int(cap.get(cv2.CAP_PROP_FPS)))
             if px_height is not None:
                 assert (px_height, px_width, fps) == info
             px_height, px_width, fps = info
