@@ -95,6 +95,12 @@ def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
               model.VideoRecording(), model.VideoRecording.File()]
     ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
 
+    # Populate RecordingInfo
+    previous_length = len(model.RecordingInfo.fetch())
+    model.RecordingInfo.populate()
+    insert_length = len(model.RecordingInfo.fetch()) - previous_length
+    print(f'\n---- Inserting {insert_length} entry(s) into _recording_info ----')
+
 
 if __name__ == '__main__':
     ingest_subjects()

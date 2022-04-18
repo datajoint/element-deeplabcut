@@ -52,12 +52,12 @@ subject.Subject.heading
 
 # %%
 subject.Subject.insert1(dict(subject='subject6', 
-                             sex='M', 
-                             subject_birth_date='2020-01-03', 
+                             sex='F', 
+                             subject_birth_date='2020-01-01', 
                              subject_description='hneih_E105'))
 
 # %%
-subject.Subject()
+subject.Subject & "subject='subject6'"
 
 # %%
 session.Session.describe();
@@ -71,7 +71,7 @@ session_keys = [dict(subject='subject6', session_datetime='2021-06-02 14:04:22')
 session.Session.insert(session_keys)
 
 # %%
-session.Session() & "session_datetime > '2021-06-01 12:00:00'"
+session.Session() & "session_datetime > '2021-06-01 12:00:00'" & "subject='subject6'"
 
 # %% [markdown]
 # ## Inserting recordings
@@ -127,7 +127,8 @@ training_params = {'shuffle': '1',
                    'trainingsetindex': '0',
                    'maxiters': '5',
                    'scorer_legacy': 'False',
-                   'maxiters': '5'}
+                   'maxiters': '5', 
+                   'multianimalproject':'False'}
 config_params.update(training_params)
 train.TrainingParamSet.insert_new_params(paramset_idx=paramset_idx,
                                          paramset_desc=paramset_desc,
@@ -207,6 +208,9 @@ model.Model()
 # %%
 model.ModelEvaluation.heading
 
+# %% [markdown]
+# If your project was initialized in a version of DeepLabCut other than the one you're currently using, model evaluation may report key errors. Specifically, your `config.yaml` may not specify `multianimalproject: false`.
+
 # %%
 model.ModelEvaluation.populate()
 
@@ -217,16 +221,41 @@ model.ModelEvaluation()
 # ## Pose Estimation
 
 # %% [markdown]
-# To put this model to use, we'll conduct pose estimation on the video generated in the [DataDownload notebook](./00_DataDownload_Optional.ipynb). Here, we can also specify parameters accepted by the `analyze_videos` function as a dictionary.
+# To put this model to use, we'll conduct pose estimation on the video generated in the [DataDownload notebook](./00_DataDownload_Optional.ipynb). First, we need to update the `VideoRecording` table with the recording from a session.
 
 # %%
-key=(VideoRecording&'recording_id=2').fetch1('KEY');
+key = {'subject': 'subject6',
+       'session_datetime': '2021-06-02 14:04:22',
+       'recording_id': '1', 'camera_id': 1}
+model.VideoRecording.insert1(key)
+                         # do not include an initial `/` in relative file paths   
+key.update({'file_id': 1, 
+            'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4'})
+model.VideoRecording.File.insert1(key, ignore_extra_fields=True)
+
+# %%
+model.VideoRecording.File()
+
+# %% [markdown]
+# To automatically get recording information about this file, we can use the `make` function of the `RecordingInfo` table.
+
+# %%
+model.RecordingInfo.populate()
+model.RecordingInfo()
+
+# %% [markdown]
+#  Next, we need to specify if the `PoseEstimation` table should load results from an existing file or trigger the estimation command. Here, we can also specify parameters accepted by the `analyze_videos` function as a dictionary.
+
+# %%
+key = (model.VideoRecording & {'recording_id': '1'}).fetch1('KEY')
 key.update({'model_name': 'OpenField-5', 'task_mode': 'trigger'})
-model.EstimationTask.insert_estimation_task(key,params={'save_as_csv':True},
-                                            skip_duplicates=True)
+key
 
 # %%
-model.Estimation.populate()
+model.PoseEstimationTask.insert_estimation_task(key,params={'save_as_csv':True})
+
+# %%
+model.PoseEstimation.populate()
 
 # %% [markdown]
 # By default, DataJoint will store the results of pose estimation in a subdirectory
@@ -239,7 +268,7 @@ model.Estimation.populate()
 # We can get this estimation directly as a pandas dataframe.
 
 # %%
-model.Estimation.get_trajectory(key)
+model.PoseEstimation.get_trajectory(key)
 
 # %% [markdown]
 # <!-- Next Steps -->
