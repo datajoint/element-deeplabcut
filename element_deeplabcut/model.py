@@ -12,6 +12,7 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 import yaml
+import cv2
 from element_interface.utils import find_full_path, find_root_directory
 
 
@@ -112,17 +113,64 @@ def get_dlc_processed_data_dir() -> str:
 class VideoRecording(dj.Manual):
     definition = """
     -> Session
-    -> Device
     recording_id: int
     ---
-    recording_start_time: datetime
+    -> Device
     """
 
     class File(dj.Part):
         definition = """
         -> master
+        file_id: int
+        ---
         file_path: varchar(255)  # filepath of video, relative to root data directory
         """
+
+
+@schema
+class RecordingInfo(dj.Imported):
+    definition = """
+    -> VideoRecording
+    ---
+    px_height                 : smallint  # height in pixels
+    px_width                  : smallint  # width in pixels
+    nframes                   : smallint  # number of frames 
+    fps = NULL                : int     # (Hz) frames per second
+    recording_datetime = NULL : datetime  # Datetime for the start of the recording
+    recording_duration = NULL : float     # video duration in seconds
+    """
+
+    @property
+    def key_source(self):
+        return VideoRecording & VideoRecording.File
+
+    def make(self, key):
+        file_paths = (VideoRecording.File & key).fetch('file_path')
+
+        nframes = 0
+        px_height, px_width, fps = None, None, None
+
+        for file_path in file_paths:
+            file_path = (find_full_path(get_dlc_root_data_dir(), file_path)).as_posix()
+
+            cap = cv2.VideoCapture(file_path)
+            info = (int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), 
+                    int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
+                    int(cap.get(cv2.CAP_PROP_FPS)))
+            if px_height is not None:
+                assert (px_height, px_width, fps) == info
+            px_height, px_width, fps = info
+            nframes += int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            cap.release()
+
+        self.insert1({
+            **key,
+            'px_height': px_height,
+            'px_width': px_width,
+            'nframes': nframes,
+            'fps': fps,
+            'recording_duration': nframes / fps
+        })
 
 
 @schema
