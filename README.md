@@ -12,7 +12,11 @@ support multi-animal or multi-camera models. This Element does not offer any fea
 for labeling training data. Users should to use native DeepLabCut tools for
 intitializing a project and labeling training data.
 
-## The Pipeline Architecture
++ See the [Element DeepLabCut documentation](https://elements.datajoint.org/description/deeplabcut/) for the background information and development timeline.
+
++ For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.
+
+## Element architecture
 
 ![element-deeplabcut diagram](images/diagram_dlc.svg)
 
@@ -64,7 +68,7 @@ To activate the `element-deeplabcut`, one needs to provide:
 
 1. Schema names
     + optionally, a schema name for the `train` module.
-    + a schema name for the `model` moduel.
+    + a schema name for the `model` module.
 2. Upstream tables
     + `Session`: A set of keys identifying a recording session (see 
       [Element-Session](https://github.com/datajoint/element-session)).
@@ -78,6 +82,21 @@ For more detail, check the docstring of the `element-deeplabcut`:
     help(train.activate)
     help(model.activate)
 ```
+
 ### Example usage
 
 See [our workflow](https://github.com/datajoint/workflow-deeplabcut) for an example usage of this DeepLabCut Element.
+
+## Citation
+
++ If your work uses DataJoint and DataJoint Elements, please cite the respective Research Resource Identifiers (RRIDs) and manuscripts.
+
++ DataJoint for Python or MATLAB
+    + Yatsenko D, Reimer J, Ecker AS, Walker EY, Sinz F, Berens P, Hoenselaar A, Cotton RJ, Siapas AS, Tolias AS. DataJoint: managing big scientific data using MATLAB or Python. bioRxiv. 2015 Jan 1:031658. doi: https://doi.org/10.1101/031658
+
+    + DataJoint ([RRID:SCR_014543](https://scicrunch.org/resolver/SCR_014543)) - DataJoint for `<Select Python or MATLAB>` (version `<Enter version number>`)
+
++ DataJoint Elements
+    + Yatsenko D, Nguyen T, Shen S, Gunalan K, Turner CA, Guzman R, Sasaki M, Sitonic D, Reimer J, Walker EY, Tolias AS. DataJoint Elements: Data Workflows for Neurophysiology. bioRxiv. 2021 Jan 1. doi: https://doi.org/10.1101/2021.03.30.437358
+
+    + DataJoint Elements ([RRID:SCR_021894](https://scicrunch.org/resolver/SCR_021894)) - Element DeepLabCut (version `<Enter version number>`)
