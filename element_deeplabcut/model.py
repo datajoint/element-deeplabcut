@@ -137,7 +137,7 @@ class RecordingInfo(dj.Imported):
     nframes                   : smallint  # number of frames 
     fps = NULL                : int     # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
-    recording_duration        : float     # video duration in seconds
+    recording_duration        : float     # video duration (s) from nframes / fps
     """
 
     @property
