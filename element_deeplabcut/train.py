@@ -106,6 +106,8 @@ class VideoSet(dj.Manual):
         definition = """
         # Paths of training files (e.g., labeled pngs, CSV or video)
         -> master
+        file_id: int
+        ---
         file_path: varchar(255)
         """
 
