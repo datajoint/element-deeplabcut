@@ -1,2 +1,3 @@
 datajoint>=0.13
 deeplabcut
+element-interface @ git+https://github.com/datajoint/element-interface.git
