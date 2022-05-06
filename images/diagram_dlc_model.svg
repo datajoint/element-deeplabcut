@@ -11,8 +11,8 @@
 <!-- lab.Device -->
 <g id="node1" class="node">
 <title>lab.Device</title>
-<polygon fill="#000000" fill-opacity="0.125490" stroke="transparent" points="198.5,-294 99.5,-294 99.5,-259 198.5,-259 198.5,-294"/>
-<text text-anchor="start" x="125.5" y="-275" font-family="arial" text-decoration="underline" font-size="10.00">lab.Device</text>
+<polygon fill="#000000" fill-opacity="0.125490" stroke="transparent" points="177.5,-294 78.5,-294 78.5,-259 177.5,-259 177.5,-294"/>
+<text text-anchor="start" x="104.5" y="-275" font-family="arial" text-decoration="underline" font-size="10.00">lab.Device</text>
 </g>
 <!-- model.VideoRecording -->
 <g id="node2" class="node">
@@ -26,7 +26,7 @@
 <!-- lab.Device&#45;&gt;model.VideoRecording -->
 <g id="edge1" class="edge">
 <title>lab.Device&#45;&gt;model.VideoRecording</title>
-<path fill="none" stroke="#000000" stroke-width="0.75" stroke-dasharray="5,2" stroke-opacity="0.250980" d="M158.44,-258.8C164.57,-247.95 172.53,-233.87 178.65,-223.05"/>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-dasharray="5,2" stroke-opacity="0.250980" d="M142.52,-258.8C151.96,-247.95 164.2,-233.87 173.61,-223.05"/>
 </g>
 <!-- model.PoseEstimationTask -->
 <g id="node3" class="node">
@@ -141,7 +141,7 @@
 <path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M604.05,-124.82C585.01,-109.86 544.33,-78.58 508,-55 487.21,-41.5 462.15,-27.61 446.15,-19.01"/>
 </g>
 <!-- model.PoseEstimation&#45;&gt;model.PoseEstimation.BodyPartPosition -->
-<g id="edge11" class="edge">
+<g id="edge12" class="edge">
 <title>model.PoseEstimation&#45;&gt;model.PoseEstimation.BodyPartPosition</title>
 <path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M430,-54.74C430,-43.97 430,-28.56 430,-19.06"/>
 </g>
@@ -149,41 +149,55 @@
 <g id="node11" class="node">
 <title>session.Session</title>
 <g id="a_node11"><a xlink:title="→ subject.Subject&#13;session_datetime &#160;&#160;&#160;&#160;&#13;">
-<polygon fill="#00ff00" fill-opacity="0.188235" stroke="#00ff00" stroke-opacity="0.188235" points="279,-365 175,-365 175,-330 279,-330 279,-365"/>
-<text text-anchor="start" x="183" y="-345.4" font-family="arial" text-decoration="underline" font-size="12.00" fill="darkgreen">session.Session</text>
+<polygon fill="#00ff00" fill-opacity="0.188235" stroke="#00ff00" stroke-opacity="0.188235" points="300,-294 196,-294 196,-259 300,-259 300,-294"/>
+<text text-anchor="start" x="204" y="-274.4" font-family="arial" text-decoration="underline" font-size="12.00" fill="darkgreen">session.Session</text>
 </a>
 </g>
 </g>
 <!-- session.Session&#45;&gt;model.VideoRecording -->
 <g id="edge10" class="edge">
 <title>session.Session&#45;&gt;model.VideoRecording</title>
-<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M224.16,-329.86C220.95,-312.12 215.22,-283.29 208,-259 204.39,-246.85 199.29,-233.5 195.14,-223.3"/>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M233.48,-258.8C224.04,-247.95 211.8,-233.87 202.39,-223.05"/>
+</g>
+<!-- subject.Subject -->
+<g id="node12" class="node">
+<title>subject.Subject</title>
+<g id="a_node12"><a xlink:title="subject &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#13;sex &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;subject_birth_date &#160;&#160;&#13;subject_description=&quot;&quot; &#13;">
+<polygon fill="#00ff00" fill-opacity="0.188235" stroke="#00ff00" stroke-opacity="0.188235" points="297,-365 199,-365 199,-330 297,-330 297,-365"/>
+<text text-anchor="start" x="207" y="-345.4" font-family="arial" text-decoration="underline" font-size="12.00" fill="darkgreen">subject.Subject</text>
+</a>
+</g>
+</g>
+<!-- subject.Subject&#45;&gt;session.Session -->
+<g id="edge11" class="edge">
+<title>subject.Subject&#45;&gt;session.Session</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M248,-329.8C248,-318.95 248,-304.87 248,-294.05"/>
 </g>
 <!-- train.TrainingParamSet -->
-<g id="node12" class="node">
+<g id="node13" class="node">
 <title>train.TrainingParamSet</title>
-<g id="a_node12"><a xlink:title="paramset_idx &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#13;paramset_desc &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;param_set_hash &#160;&#160;&#160;&#160;&#160;&#160;&#13;params &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;UNIQUE INDEX (param_set_hash)&#13;">
+<g id="a_node13"><a xlink:title="paramset_idx &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#13;paramset_desc &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;param_set_hash &#160;&#160;&#160;&#160;&#160;&#160;&#13;params &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;UNIQUE INDEX (param_set_hash)&#13;">
 <polygon fill="#000000" fill-opacity="0.125490" stroke="transparent" points="621,-294 505,-294 505,-259 621,-259 621,-294"/>
 <text text-anchor="start" x="513" y="-275" font-family="arial" text-decoration="underline" font-size="10.00">train.TrainingParamSet</text>
 </a>
 </g>
 </g>
 <!-- train.TrainingParamSet&#45;&gt;model.Model -->
-<g id="edge12" class="edge">
+<g id="edge13" class="edge">
 <title>train.TrainingParamSet&#45;&gt;model.Model</title>
 <path fill="none" stroke="#000000" stroke-width="0.75" stroke-dasharray="5,2" stroke-opacity="0.250980" d="M563,-258.8C563,-247.95 563,-233.87 563,-223.05"/>
 </g>
 <!-- model.BodyPart -->
-<g id="node13" class="node">
+<g id="node14" class="node">
 <title>model.BodyPart</title>
-<g id="a_node13"><a xlink:title="body_part &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#13;body_part_description=&quot;&quot; &#13;">
+<g id="a_node14"><a xlink:title="body_part &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#13;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#13;body_part_description=&quot;&quot; &#13;">
 <polygon fill="#000000" fill-opacity="0.125490" stroke="transparent" points="710,-223 624,-223 624,-188 710,-188 710,-223"/>
 <text text-anchor="start" x="632" y="-204" font-family="arial" text-decoration="underline" font-size="10.00">model.BodyPart</text>
 </a>
 </g>
 </g>
 <!-- model.BodyPart&#45;&gt;model.Model.BodyPart -->
-<g id="edge13" class="edge">
+<g id="edge14" class="edge">
 <title>model.BodyPart&#45;&gt;model.Model.BodyPart</title>
 <path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M654.41,-187.8C644.07,-174.08 629.84,-155.19 621.61,-144.27"/>
 </g>
