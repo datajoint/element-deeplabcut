@@ -35,7 +35,7 @@ from workflow_deeplabcut.pipeline import lab, subject, session, train, model
 # If you previously completed the [03-Process notebook](./03-Process.ipynb), you may want to delete the contents ingested there, to avoid duplication errors.
 
 # %%
-# session.Session.delete()
+# (session.Session & 'subject="subject6"').delete()
 # train.TrainingParamSet.delete()
 # train.VideoSet.delete()
 
@@ -113,7 +113,14 @@ model.Model.insert_new_model(model_name='OpenField-5',dlc_config=config_path,
 model.ModelEvaluation.populate()
 
 # %% [markdown]
-# 6. Add a pose estimation task, and launch pose estimation.
+# 6. Auto-populate the `RecordingInfo` table with relevant fields.
+
+# %%
+model.RecordingInfo.populate()
+model.RecordingInfo()
+
+# %% [markdown]
+# 7. Add a pose estimation task, and launch pose estimation.
 #    - Get all primary key information for a given recording
 #    - Add the model and `task_mode` (i.e., load vs. trigger) to be applied
 #    - Add any additional analysis parameters for `deeplabcut.analyze_videos`
@@ -126,7 +133,7 @@ model.PoseEstimationTask.insert_estimation_task(key,params=analyze_params)
 model.PoseEstimation.populate()
 
 # %% [markdown]
-# 7. Retrieve estimated position data.
+# 8. Retrieve estimated position data.
 
 # %%
 model.PoseEstimation.get_trajectory(key)

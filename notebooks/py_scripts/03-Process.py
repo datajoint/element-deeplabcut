@@ -16,7 +16,7 @@
 # %% [markdown] tags=[]
 # # DataJoint U24 - Workflow DeepLabCut
 
-# %% [markdown]
+# %% [markdown] tags=[]
 # ## Interactively run the workflow
 #
 # The workflow requires a DeepLabCut project with labeled data.
@@ -41,8 +41,14 @@ assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to th
 import datajoint as dj
 from workflow_deeplabcut.pipeline import lab, subject, session, train, model
 
-# %% [markdown]
-# #### Inserting entries into upstream tables
+# Directing our pipeline to the appropriate config location
+from element_interface.utils import find_full_path
+from workflow_deeplabcut.paths import get_dlc_root_data_dir
+config_path = find_full_path(get_dlc_root_data_dir(), 
+                             'openfield-Pranav-2018-10-30/config.yaml')
+
+# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# ### Inserting entries into upstream tables
 
 # %% [markdown]
 # In general, you can manually insert entries into each table by directly providing values for each column as a dictionary. Be sure to follow the type specified in the table definition.
@@ -73,8 +79,8 @@ session.Session.insert(session_keys)
 # %%
 session.Session() & "session_datetime > '2021-06-01 12:00:00'" & "subject='subject6'"
 
-# %% [markdown]
-# ## Inserting recordings
+# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# ### Inserting recordings
 
 # %% [markdown]
 # The `VideoSet` table handles all files generated in the video labeling process, including the `h5`, `csv`, and `png` files under the `labeled-data` directory. While these aren't required for launching DLC training, it may be helpful to retain records. DLC will instead refer to the `mat` file located under the `training-datasets` directory.
@@ -94,8 +100,8 @@ train.VideoSet.File.insert1({'video_set_id':1, 'file_path':
 # %%
 train.VideoSet.File()
 
-# %% [markdown]
-# ## Training a DLC Network
+# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# ### Training a DLC Network
 
 # %% [markdown]
 # First, we'll add a `ModelTrainingParamSet`. This is a lookup table that we can reference when training a model.
@@ -115,12 +121,9 @@ help(train_network) # for more information on optional parameters
 
 # %%
 import yaml
-from element_interface.utils import find_full_path
-from workflow_deeplabcut.paths import get_dlc_root_data_dir
 
 paramset_idx = 1; paramset_desc='OpenField'
-config_path = find_full_path(get_dlc_root_data_dir(), 
-                             'openfield-Pranav-2018-10-30/config.yaml')
+
 with open(config_path, 'rb') as y:
     config_params = yaml.safe_load(y)
 training_params = {'shuffle': '1',
@@ -158,8 +161,8 @@ train.ModelTraining()
 # adjust the `maxiters` paramset (if present) to a higher threshold (e.g., 10 for 5 more itterations).
 # Emperical work from the Mathis team suggests 200k iterations for any true use-case.
 
-# %% [markdown]
-# ## Tracking Joints/Body Parts
+# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# ### Tracking Joints/Body Parts
 
 # %% [markdown]
 # The `model` schema uses a lookup table for managing Body Parts tracked across models.
@@ -183,8 +186,8 @@ model.BodyPart.insert_from_config(config_path,bp_desc)
 # %% [markdown]
 # If we skip this step, body parts (without descriptions) will be added when we insert a model. We can [update](https://docs.datajoint.org/python/v0.13/manipulation/3-Cautious-Update.html) empty descriptions at any time.
 
-# %% [markdown]
-# ## Declaring a Model
+# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# ### Declaring a Model
 
 # %% [markdown]
 # If training appears successful, the result can be inserted into the `Model` table for automatic evaluation.
@@ -199,7 +202,7 @@ model.Model.insert_new_model(model_name='OpenField-5',dlc_config=config_path,
 model.Model()
 
 # %% [markdown]
-# ## Model Evaluation
+# ### Model Evaluation
 
 # %% [markdown]
 # Next, all inserted models can be evaluated with a similar `populate` method, which will
@@ -218,7 +221,7 @@ model.ModelEvaluation.populate()
 model.ModelEvaluation()
 
 # %% [markdown]
-# ## Pose Estimation
+# ### Pose Estimation
 
 # %% [markdown]
 # To put this model to use, we'll conduct pose estimation on the video generated in the [DataDownload notebook](./00_DataDownload_Optional.ipynb). First, we need to update the `VideoRecording` table with the recording from a session.
