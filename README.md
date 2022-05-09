@@ -85,7 +85,10 @@ For more detail, check the docstring of the `element-deeplabcut`:
 
 ### Example usage
 
-See [our workflow](https://github.com/datajoint/workflow-deeplabcut) for an example usage of this DeepLabCut Element.
+- See [our workflow](https://github.com/datajoint/workflow-deeplabcut) for an example usage of this DeepLabCut Element. 
+- See our YouTube tutorial for a walkthrough of the schemas and functions:
+
+[![YouTube tutorial](https://img.youtube.com/vi/8FDjTuQ52gQ/0.jpg)](https://www.youtube.com/watch?v=8FDjTuQ52gQ)
 
 ## Citation
 
