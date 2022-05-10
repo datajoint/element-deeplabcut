@@ -236,7 +236,7 @@ model.VideoRecording.insert1(key)
 # Note that `/` at the beginning of a path implies the machine's root directory. Do not include an initial `/` in relative file paths.
 
 # %%
-_ = key.pop('equipment') # get rid of secondary key from master table
+key.pop('equipment') # get rid of secondary key from master table
 key.update({'file_id': 1, 
             'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4'})
 model.VideoRecording.File.insert1(key)
