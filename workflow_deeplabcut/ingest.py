@@ -1,42 +1,10 @@
 # from pathlib import Path
 import csv
 import ruamel.yaml as yaml
-from element_interface.utils import find_full_path  # , ingest_csv_to_table
+from element_interface.utils import find_full_path, ingest_csv_to_table
 
 from .pipeline import subject, session, train, model
 from .paths import get_dlc_root_data_dir
-
-
-## TODO: why did pip install git+URL not have this function from element-interface?
-def ingest_csv_to_table(csvs, tables, verbose=True, skip_duplicates=True,
-                        ignore_extra_fields=True, allow_direct_insert=False):
-    """
-    Inserts data from a series of csvs into their corresponding table:
-        e.g., ingest_csv_to_table(['./lab_data.csv', './proj_data.csv'],
-                                 [lab.Lab(),lab.Project()]
-    ingest_csv_to_table(csvs, tables, skip_duplicates=True)
-        :param csvs: list of relative paths to CSV files.  CSV are delimited by commas.
-        :param tables: list of datajoint tables with ()
-        :param verbose: print number inserted (i.e., table length change)
-        :param skip_duplicates: skip duplicate entries
-        :param ignore_extra_fields: if a csv feeds multiple tables, the subset of
-                                    columns not applicable to a table will be ignored
-        :param allow_direct_insert: permit insertion into Imported and Computed tables
-    """
-    for csv_filepath, table in zip(csvs, tables):
-        with open(csv_filepath, newline='') as f:
-            data = list(csv.DictReader(f, delimiter=','))
-        if verbose:
-            prev_len = len(table)
-        table.insert(data, skip_duplicates=skip_duplicates,
-                     # Ignore extra fields because some CSVs feed multiple tables
-                     ignore_extra_fields=ignore_extra_fields,
-                     # Allow direct bc element-event uses dj.Imported w/o `make` funcs
-                     allow_direct_insert=allow_direct_insert)
-        if verbose:
-            insert_len = len(table) - prev_len
-            print(f'\n---- Inserting {insert_len} entry(s) '
-                  + f'into {table.table_name} ----')
 
 
 def ingest_subjects(subject_csv_path='./user_data/subjects.csv',
