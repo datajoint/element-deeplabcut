@@ -1,6 +1,6 @@
 from workflow_deeplabcut.pipeline import train, model
 import sys
-
+import os
 def run(verbose=True, display_progress=True, reserve_jobs=False, suppress_errors=False):
     """ Run all `make` methods from element-deeplabcut
     :param verbose: when True (default), display table names before populating
