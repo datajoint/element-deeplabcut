@@ -36,7 +36,7 @@ def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
                                to activate the `session` element:
         Upstream tables:
             + Session: parent table to VideoRecording, identifying a recording session
-            + Device: parent table to VideoRecording, identifying video recording device
+            + Equipment: parent table to VideoRecording, identifying recording device
         Functions:
             + get_dlc_root_data_dir() -> list Retrieve the root data director(y/ies)
                 with behavioral recordings for all subject/sessions.
@@ -115,7 +115,7 @@ class VideoRecording(dj.Manual):
     -> Session
     recording_id: int
     ---
-    -> Device
+    -> Equipment
     """
 
     class File(dj.Part):
@@ -429,7 +429,7 @@ class PoseEstimationTask(dj.Manual):
     @classmethod
     def infer_output_dir(cls, key, relative=False, mkdir=False):
         """ Return the expected pose_estimation_output_dir based on the convention
-                 / video_dir / device_{}_recording_{}_model_{}
+                 / video_dir / Equipment_{}_recording_{}_model_{}
         Spaces in model name are replaced with hyphens
         :param key: key specifying a pairing of VideoRecording and Model
         :param relative: report directory relative to get_dlc_processed_data_dir()
@@ -441,7 +441,7 @@ class PoseEstimationTask(dj.Manual):
                                          ).fetch('file_path', limit=1)[0])
         root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath.parent)
         recording_key = VideoRecording & key
-        device = '-'.join(str(v) for v in (_linking_module.Device & recording_key
+        device = '-'.join(str(v) for v in (_linking_module.Equipment & recording_key
                                            ).fetch1('KEY').values())
         output_dir = (processed_dir
                       / video_filepath.parent.relative_to(root_dir)
