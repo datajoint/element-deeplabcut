@@ -17,8 +17,9 @@ schema = dj.schema()
 _linking_module = None
 
 
-def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
-             linking_module=None):
+def activate(
+    dlc_schema_name, *, create_schema=True, create_tables=True, linking_module=None
+):
     """
     activate(schema_name, *, create_schema=True, create_tables=True,
              linking_module=None)
@@ -40,21 +41,27 @@ def activate(dlc_schema_name, *, create_schema=True, create_tables=True,
 
     if isinstance(linking_module, str):
         linking_module = importlib.import_module(linking_module)
-    assert inspect.ismodule(linking_module),\
-        "The argument 'dependency' must be a module's name or a module"
-    assert hasattr(linking_module, 'get_dlc_root_data_dir'),\
-        "The linking module must specify a lookup funtion for a root data directory"
+    assert inspect.ismodule(
+        linking_module
+    ), "The argument 'dependency' must be a module's name or a module"
+    assert hasattr(
+        linking_module, "get_dlc_root_data_dir"
+    ), "The linking module must specify a lookup funtion for a root data directory"
 
     global _linking_module
     _linking_module = linking_module
 
     # activate
-    schema.activate(dlc_schema_name, create_schema=create_schema,
-                    create_tables=create_tables,
-                    add_objects=_linking_module.__dict__)
+    schema.activate(
+        dlc_schema_name,
+        create_schema=create_schema,
+        create_tables=create_tables,
+        add_objects=_linking_module.__dict__,
+    )
 
 
 # -------------- Functions required by element-deeplabcut ---------------
+
 
 def get_dlc_root_data_dir() -> list:
     """
@@ -73,11 +80,14 @@ def get_dlc_root_data_dir() -> list:
     if isinstance(root_directories, (str, Path)):
         root_directories = [root_directories]
 
-    if (hasattr(_linking_module, 'get_dlc_processed_data_dir')
-            and get_dlc_processed_data_dir() not in root_directories):
+    if (
+        hasattr(_linking_module, "get_dlc_processed_data_dir")
+        and get_dlc_processed_data_dir() not in root_directories
+    ):
         root_directories.append(_linking_module.get_dlc_processed_data_dir())
 
     return root_directories
+
 
 def get_dlc_processed_data_dir() -> str:
     """
@@ -89,12 +99,14 @@ def get_dlc_processed_data_dir() -> str:
         This user-provided function specifies where DeepLabCut output files
         will be stored.
     """
-    if hasattr(_linking_module, 'get_dlc_processed_data_dir'):
+    if hasattr(_linking_module, "get_dlc_processed_data_dir"):
         return _linking_module.get_dlc_processed_data_dir()
     else:
         return get_dlc_root_data_dir()[0]
 
+
 # ----------------------------- Table declarations ----------------------
+
 
 @schema
 class VideoSet(dj.Manual):
@@ -125,12 +137,13 @@ class TrainingParamSet(dj.Lookup):
     params                        : longblob  # dictionary of all applicable parameters
     """
 
-    required_parameters = ('shuffle', 'trainingsetindex')
-    skipped_parameters = ('project_path', 'video_sets')
+    required_parameters = ("shuffle", "trainingsetindex")
+    skipped_parameters = ("project_path", "video_sets")
 
     @classmethod
-    def insert_new_params(cls, paramset_desc: str, params: dict,
-                          paramset_idx: int = None):
+    def insert_new_params(
+        cls, paramset_desc: str, params: dict, paramset_idx: int = None
+    ):
         """
         Insert a new set of training parameters into dlc.TrainingParamSet
 
@@ -143,36 +156,41 @@ class TrainingParamSet(dj.Lookup):
         """
 
         for required_param in cls.required_parameters:
-            assert required_param in params, ('Missing required parameter: '
-                                              + required_param)
+            assert required_param in params, (
+                "Missing required parameter: " + required_param
+            )
         for skipped_param in cls.skipped_parameters:
             if skipped_param in params:
                 params.pop(skipped_param)
 
         if paramset_idx is None:
-            paramset_idx = (dj.U().aggr(cls, n='max(paramset_idx)'
-                                        ).fetch1('n') or 0) + 1
+            paramset_idx = (
+                dj.U().aggr(cls, n="max(paramset_idx)").fetch1("n") or 0
+            ) + 1
 
-        param_dict = {'paramset_idx': paramset_idx,
-                      'paramset_desc': paramset_desc,
-                      'params': params,
-                      'param_set_hash':  dict_to_uuid(params)
-                      }
-        param_query = cls & {'param_set_hash': param_dict['param_set_hash']}
+        param_dict = {
+            "paramset_idx": paramset_idx,
+            "paramset_desc": paramset_desc,
+            "params": params,
+            "param_set_hash": dict_to_uuid(params),
+        }
+        param_query = cls & {"param_set_hash": param_dict["param_set_hash"]}
 
         if param_query:  # If the specified param-set already exists
-            existing_paramset_idx = param_query.fetch1('paramset_idx')
-            if existing_paramset_idx == int(paramset_idx): # If existing_idx same:
-                return                                     # job done
+            existing_paramset_idx = param_query.fetch1("paramset_idx")
+            if existing_paramset_idx == int(paramset_idx):  # If existing_idx same:
+                return  # job done
             else:  # If not: human error, adding paramset w/new name
                 raise dj.DataJointError(
-                    f'The specified param-set already exists'
-                    f' - with paramset_idx: {existing_paramset_idx}')
+                    f"The specified param-set already exists"
+                    f" - with paramset_idx: {existing_paramset_idx}"
+                )
         else:
-            if {'paramset_idx': paramset_idx} in cls.proj():
+            if {"paramset_idx": paramset_idx} in cls.proj():
                 raise dj.DataJointError(
-                    f'The specified paramset_idx {paramset_idx} already exists,'
-                    f' please pick a different one.')
+                    f"The specified paramset_idx {paramset_idx} already exists,"
+                    f" please pick a different one."
+                )
         cls.insert1(param_dict)
 
 
@@ -207,46 +225,57 @@ class ModelTraining(dj.Computed):
         from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
 
         training_id, project_path, model_prefix = (TrainingTask & key).fetch1(
-            'training_id', 'project_path', 'model_prefix')
+            "training_id", "project_path", "model_prefix"
+        )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
         # ---- Build and save DLC configuration (yaml) file ----
-        dlc_config = (TrainingParamSet & key).fetch1('params')
-        dlc_config['project_path'] = project_path.as_posix()
-        dlc_config['modelprefix'] = model_prefix
-        dlc_config['train_fraction'] = dlc_config['TrainingFraction'
-                                                  ][int(dlc_config['trainingsetindex'])]
+        dlc_config = (TrainingParamSet & key).fetch1("params")
+        dlc_config["project_path"] = project_path.as_posix()
+        dlc_config["modelprefix"] = model_prefix
+        dlc_config["train_fraction"] = dlc_config["TrainingFraction"][
+            int(dlc_config["trainingsetindex"])
+        ]
         #  These paths aren't used in training. Instead only the training-dataset/*mat
-        video_filepaths = [find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                           for fp in (VideoSet.File & key).fetch('file_path')]
-        dlc_config['video_sets'] = video_filepaths
+        video_filepaths = [
+            find_full_path(get_dlc_root_data_dir(), fp).as_posix()
+            for fp in (VideoSet.File & key).fetch("file_path")
+        ]
+        dlc_config["video_sets"] = video_filepaths
 
         # ---- Write DLC and basefolder yaml (config) files ----
 
         # Write dlc config file to base (data) folder
         # This is important for parsing the DLC in datajoint imaging
-        dlc_cfg_filepath = project_path / 'config.yaml'
-        with open(dlc_cfg_filepath, 'w') as f:
+        dlc_cfg_filepath = project_path / "config.yaml"
+        with open(dlc_cfg_filepath, "w") as f:
             yaml.dump(dlc_config, f)  # DLC has an auxillary write_config - should use?
 
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
-        train_network_kwargs = {k: v for k, v in dlc_config.items()
-                                if k in train_network_input_args}
-        for k in ['shuffle', 'trainingsetindex', 'maxiters']:
+        train_network_kwargs = {
+            k: v for k, v in dlc_config.items() if k in train_network_input_args
+        }
+        for k in ["shuffle", "trainingsetindex", "maxiters"]:
             train_network_kwargs[k] = int(train_network_kwargs[k])
         try:
             train_network(dlc_cfg_filepath, **train_network_kwargs)
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
             pass
 
-        snapshots = list((project_path /
-                          GetModelFolder(trainFraction=dlc_config['train_fraction'],
-                                         shuffle=dlc_config['shuffle'],
-                                         cfg=dlc_config,
-                                         modelprefix=dlc_config['modelprefix'])
-                          / 'train').glob('*index*'))
+        snapshots = list(
+            (
+                project_path
+                / GetModelFolder(
+                    trainFraction=dlc_config["train_fraction"],
+                    shuffle=dlc_config["shuffle"],
+                    cfg=dlc_config,
+                    modelprefix=dlc_config["modelprefix"],
+                )
+                / "train"
+            ).glob("*index*")
+        )
         max_modified_time = 0
         for snapshot in snapshots:
             modified_time = os.path.getmtime(snapshot)
@@ -254,6 +283,6 @@ class ModelTraining(dj.Computed):
                 latest_snapshot = int(snapshot.stem[9:])
                 max_modified_time = modified_time
 
-        self.insert1({**key,
-                      'latest_snapshot': latest_snapshot,
-                      'config_template': dlc_config})
+        self.insert1(
+            {**key, "latest_snapshot": latest_snapshot, "config_template": dlc_config}
+        )
