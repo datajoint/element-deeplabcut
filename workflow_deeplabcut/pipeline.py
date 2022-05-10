@@ -39,7 +39,8 @@ class Equipment(dj.Manual):
     modality              : varchar(64)
     description=null      : varchar(256)
     """
-    contents = [[1, 'Pose Estimation'], [2, 'Pose Estimation']]
+    contents = [['Camera1', 'Pose Estimation', 'Panasonic HC-V380K'],
+                ['Camera2', 'Pose Estimation', 'Panasonic HC-V770K']]
 
 
 # Activate DeepLabCut schema -----------------------------------

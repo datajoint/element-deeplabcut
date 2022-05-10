@@ -2,9 +2,11 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## 0.0.0b1 - unreleased
+## 0.0.0a1 - 2022-05-10
 ### Added
-+ First beta release
++ Proccess.py script
+### Changed
++ Device -> Equipment table for uniformity across Element workflows
 
 ## 0.0.0a0 - 2021-12-15
 ### Added

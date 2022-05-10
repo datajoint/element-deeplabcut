@@ -47,7 +47,7 @@ from workflow_deeplabcut.paths import get_dlc_root_data_dir
 config_path = find_full_path(get_dlc_root_data_dir(), 
                              'openfield-Pranav-2018-10-30/config.yaml')
 
-# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# %% [markdown] tags=[]
 # ### Inserting entries into upstream tables
 
 # %% [markdown]
@@ -79,7 +79,7 @@ session.Session.insert(session_keys)
 # %%
 session.Session() & "session_datetime > '2021-06-01 12:00:00'" & "subject='subject6'"
 
-# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# %% [markdown] tags=[]
 # ### Inserting recordings
 
 # %% [markdown]
@@ -100,7 +100,7 @@ train.VideoSet.File.insert1({'video_set_id':1, 'file_path':
 # %%
 train.VideoSet.File()
 
-# %% [markdown] jp-MarkdownHeadingCollapsed=true tags=[]
+# %% [markdown] tags=[]
 # ### Training a DLC Network
 
 # %% [markdown]
@@ -229,12 +229,17 @@ model.ModelEvaluation()
 # %%
 key = {'subject': 'subject6',
        'session_datetime': '2021-06-02 14:04:22',
-       'recording_id': '1', 'equipment': 1}
+       'recording_id': '1', 'equipment': 'Camera1'}
 model.VideoRecording.insert1(key)
-                         # do not include an initial `/` in relative file paths   
+
+# %% [markdown]
+# Note that `/` at the beginning of a path implies the machine's root directory. Do not include an initial `/` in relative file paths.
+
+# %%
+_ = key.pop('equipment') # get rid of secondary key from master table
 key.update({'file_id': 1, 
             'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4'})
-model.VideoRecording.File.insert1(key, ignore_extra_fields=True)
+model.VideoRecording.File.insert1(key)
 
 # %%
 model.VideoRecording.File()
