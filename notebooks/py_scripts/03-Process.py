@@ -229,7 +229,7 @@ model.ModelEvaluation()
 # %%
 key = {'subject': 'subject6',
        'session_datetime': '2021-06-02 14:04:22',
-       'recording_id': '1', 'camera_id': 1}
+       'recording_id': '1', 'equipment': 1}
 model.VideoRecording.insert1(key)
                          # do not include an initial `/` in relative file paths   
 key.update({'file_id': 1, 
