@@ -1,31 +1,10 @@
 # from pathlib import Path
 import csv
 import ruamel.yaml as yaml
-from element_interface.utils import find_full_path
+from element_interface.utils import find_full_path, ingest_csv_to_table
 
 from .pipeline import subject, session, train, model
 from .paths import get_dlc_root_data_dir
-
-
-def ingest_general(csvs, tables,
-                   skip_duplicates=True):
-    """
-    Inserts data from a series of csvs into their corresponding table:
-        e.g., ingest_general(['./lab.csv', './subject.csv'],
-                                 [lab.Lab(),subject.Subject()]
-    ingest_general(csvs, tables, skip_duplicates=True)
-        :param csvs: list of relative paths to CSV files
-        :param tables: list of datajoint tables with ()
-    """
-    for insert, table in zip(csvs, tables):
-        with open(insert, newline='') as f:
-            data = list(csv.DictReader(f, delimiter=','))
-        prev_len = len(table)
-        table.insert(data, skip_duplicates=skip_duplicates,
-                     ignore_extra_fields=True)
-        insert_len = len(table) - prev_len     # report length change
-        print(f'\n---- Inserting {insert_len} entry(s) '
-              + f'into {table.table_name} ----')
 
 
 def ingest_subjects(subject_csv_path='./user_data/subjects.csv',
@@ -38,7 +17,7 @@ def ingest_subjects(subject_csv_path='./user_data/subjects.csv',
     """
     csvs = [subject_csv_path]
     tables = [subject.Subject()]
-    ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
+    ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates)
 
 
 def ingest_sessions(session_csv_path='./user_data/sessions.csv',
@@ -50,7 +29,7 @@ def ingest_sessions(session_csv_path='./user_data/sessions.csv',
     tables = [session.Session(), session.SessionDirectory(),
               session.SessionNote()]
 
-    ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
+    ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates)
 
 
 def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
@@ -93,8 +72,7 @@ def ingest_dlc_items(config_params_csv_path='./user_data/config_params.csv',
             model_video_csv_path, model_video_csv_path]
     tables = [train.VideoSet(), train.VideoSet.File(),
               model.VideoRecording(), model.VideoRecording.File()]
-    ingest_general(csvs, tables, skip_duplicates=skip_duplicates)
-
+    ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates)
 
 if __name__ == '__main__':
     ingest_subjects()

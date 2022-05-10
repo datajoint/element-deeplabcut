@@ -32,11 +32,15 @@ session.activate(db_prefix + 'session', linking_module=__name__)
 
 
 @lab.schema
-class Device(dj.Lookup):
+class Equipment(dj.Manual):
     definition = """
-    camera_id   : int
+    equipment             : varchar(32)
+    ---
+    modality              : varchar(64)
+    description=null      : varchar(256)
     """
-    contents = zip([1, 2])
+    contents = [['Camera1', 'Pose Estimation', 'Panasonic HC-V380K'],
+                ['Camera2', 'Pose Estimation', 'Panasonic HC-V770K']]
 
 
 # Activate DeepLabCut schema -----------------------------------

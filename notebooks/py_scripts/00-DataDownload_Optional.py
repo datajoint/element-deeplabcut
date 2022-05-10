@@ -66,8 +66,8 @@
 
 # %%
 your_root='/fill/in/your/root/with\ escaped\ spaces'
-from deeplabcut.create_project.demo_data import load_demo_data as dlc_load_demo
-dlc_load_demo(your_root+'/openfield-Pranav-2018-10-30/config.yaml')
+from deeplabcut.create_project.demo_data import load_demo_data
+load_demo_data(your_root+'/openfield-Pranav-2018-10-30/config.yaml')
 
 # %% [markdown]
 # For your own data, we recommend using the DLC gui to intitialize your project and label the data. 

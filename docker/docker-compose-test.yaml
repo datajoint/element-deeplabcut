@@ -21,7 +21,7 @@ services:
       context: ../../
       dockerfile: ./workflow-deeplabcut/docker/Dockerfile.test
     env_file: .env
-    image: workflow-deeplabcut-test:0.0.0a0
+    image: workflow-deeplabcut-test:0.1.0
     container_name: workflow-deeplabcut-test
     environment:
       - DJ_HOST=db
