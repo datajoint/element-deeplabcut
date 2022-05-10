@@ -26,7 +26,7 @@ def run(verbose=True, display_progress=True, reserve_jobs=False, suppress_errors
 
 
 class QuietStdOut:
-    """If verbose set to false, used to quiet tear_down table.delete prints"""
+    """If verbose set to false, used to quiet populate."""
     def __enter__(self):
         self._original_stdout = sys.stdout
         sys.stdout = open(os.devnull, 'w')
