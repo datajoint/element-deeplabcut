@@ -5,6 +5,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ## 0.1.0 - 2022-05-10
 ### Added
 + Process.py script
++ Adopted black formatting into code base
 ### Changed
 + Device -> Equipment table for uniformity across Element workflows
 
