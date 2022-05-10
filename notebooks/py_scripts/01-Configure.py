@@ -28,10 +28,13 @@
 
 # %%
 import os
+
 # change to the upper level folder to detect dj_local_conf.json
-if os.path.basename(os.getcwd())=='notebooks': os.chdir('..')
-assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to the "
-                                                              + "workflow directory")
+if os.path.basename(os.getcwd()) == "notebooks":
+    os.chdir("..")
+assert os.path.basename(os.getcwd()) == "workflow-deeplabcut", (
+    "Please move to the " + "workflow directory"
+)
 
 # %% [markdown]
 # ### Configure database host address and credentials
@@ -42,9 +45,10 @@ assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to th
 # %%
 import datajoint as dj
 import getpass
-dj.config['database.host'] = '{YOUR_HOST}'
-dj.config['database.user'] = '{YOUR_USERNAME}'
-dj.config['database.password'] = getpass.getpass() # enter the password securely
+
+dj.config["database.host"] = "{YOUR_HOST}"
+dj.config["database.user"] = "{YOUR_USERNAME}"
+dj.config["database.password"] = getpass.getpass()  # enter the password securely
 
 # %% [markdown]
 # You should be able to connect to the database at this stage.
@@ -59,32 +63,34 @@ dj.conn()
 # #### Prefix
 
 # %% [markdown]
-# Giving a prefix to your schema could help manage privelages on a server. 
+# Giving a prefix to your schema could help manage privelages on a server.
 # - If we set prefix `neuro_`, every schema created with the current workflow will start with `neuro_`, e.g. `neuro_lab`, `neuro_subject`, `neuro_imaging` etc.
 # - Teams who work on the same schemas should use the same prefix, set as follows:
 
 # %%
-dj.config['custom'] = {'database.prefix': 'neuro_'}
+dj.config["custom"] = {"database.prefix": "neuro_"}
 
 # %% [markdown]
 # #### Root directory
 
 # %% [markdown]
-# The `custom` field also keeps track of your root directory with `dlc_root_data_dir`. It can even accept roots. element-deeplabcut will always figure out which root to use based on the files it expects there. 
+# The `custom` field also keeps track of your root directory with `dlc_root_data_dir`. It can even accept roots. element-deeplabcut will always figure out which root to use based on the files it expects there.
 #
 # - Please set one root to the parent directory of DLC's `openfield-Pranav-2018-10-30` example.
 # - In other cases, this should be the parent of your DLC project path.
 
 # %%
-dj.config['custom'] = {'dlc_root_data_dir' : ['your-root1', 'your-root2']}
+dj.config["custom"] = {"dlc_root_data_dir": ["your-root1", "your-root2"]}
 
 # %% [markdown]
 # Let's check that find the path connects with a tool from [element-interface](https://github.com/datajoint/element-interface).
 
 # %%
 from element_interface.utils import find_full_path
-data_dir = find_full_path(dj.config['custom']['dlc_root_data_dir'],
-                          'openfield-Pranav-2018-10-30')
+
+data_dir = find_full_path(
+    dj.config["custom"]["dlc_root_data_dir"], "openfield-Pranav-2018-10-30"
+)
 assert data_dir.exists(), "Please check the that you have the folder openfield-Pranav"
 
 # %% [markdown]

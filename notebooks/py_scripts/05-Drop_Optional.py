@@ -17,19 +17,23 @@
 # # DataJoint U24 - Workflow DeepLabCut
 
 # %% [markdown]
-# Change into the parent directory to find the `dj_local_conf.json` file. 
+# Change into the parent directory to find the `dj_local_conf.json` file.
 
 # %% tags=[]
-import os; from pathlib import Path
+import os
+from pathlib import Path
+
 # change to the upper level folder to detect dj_local_conf.json
-if os.path.basename(os.getcwd())=='notebooks': os.chdir('..')
-assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to the "
-                                                              + "workflow directory")
+if os.path.basename(os.getcwd()) == "notebooks":
+    os.chdir("..")
+assert os.path.basename(os.getcwd()) == "workflow-deeplabcut", (
+    "Please move to the " + "workflow directory"
+)
 
 # %% [markdown]
 # ## Drop schemas
 #
-# + Schemas are not typically dropped in a production workflow with real data in it. 
+# + Schemas are not typically dropped in a production workflow with real data in it.
 # + At the developmental phase, it might be required for the table redesign.
 # + When dropping all schemas is needed, drop items starting with the most downstream.
 

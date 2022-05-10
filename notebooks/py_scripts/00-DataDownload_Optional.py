@@ -23,7 +23,7 @@
 # We've structured this tool around the example data available from the DLC. If you've already cloned the [main DLC repository](https://github.com/DeepLabCut/DeepLabCut), you already have this folder under `examples/openfield-Pranav-2018-10-30`.
 
 # %% [markdown]
-# [This link](https://downgit.github.io/#/home?url=https://github.com/DeepLabCut/DeepLabCut/tree/master/examples/openfield-Pranav-2018-10-30) via [DownGit](https://downgit.github.io/) will start the single-directory download 
+# [This link](https://downgit.github.io/#/home?url=https://github.com/DeepLabCut/DeepLabCut/tree/master/examples/openfield-Pranav-2018-10-30) via [DownGit](https://downgit.github.io/) will start the single-directory download
 # automatically as a zip. Unpack this zip and place it in a directory we'll refer to as your root.
 
 # %% [markdown]
@@ -60,17 +60,18 @@
 # - `videos` includes the full training video for this example
 #
 # As part of the DeepLabCut demo setup process, you would run the following additional
-# command, as outlined in their 
+# command, as outlined in their
 # [demo notebook](https://github.com/DeepLabCut/DeepLabCut/blob/master/examples/JUPYTER/Demo_labeledexample_Openfield.ipynb).
 # These establishes the project path within the demo config file as well as the `training-datasets` directory, which DLC will use for model training
 
 # %%
-your_root='/fill/in/your/root/with\ escaped\ spaces'
+your_root = "/fill/in/your/root/with\ escaped\ spaces"
 from deeplabcut.create_project.demo_data import load_demo_data
-load_demo_data(your_root+'/openfield-Pranav-2018-10-30/config.yaml')
+
+load_demo_data(your_root + "/openfield-Pranav-2018-10-30/config.yaml")
 
 # %% [markdown]
-# For your own data, we recommend using the DLC gui to intitialize your project and label the data. 
+# For your own data, we recommend using the DLC gui to intitialize your project and label the data.
 
 # %% [markdown]
 # ## Make new video
@@ -89,10 +90,14 @@ load_demo_data(your_root+'/openfield-Pranav-2018-10-30/config.yaml')
 # - `{vid_path}-copy.mp4` output file
 
 # %% tags=[]
-vid_path = your_root + '/openfield-Pranav-2018-10-30/videos/m3v1mp4'
-cmd = (f'ffmpeg -n -hide_banner -loglevel error -ss 0 -t 2 -i {vid_path}.mp4 '
-       + f'-vcodec copy -acodec copy {vid_path}-copy.mp4')
-import os; os.system(cmd)
+vid_path = your_root + "/openfield-Pranav-2018-10-30/videos/m3v1mp4"
+cmd = (
+    f"ffmpeg -n -hide_banner -loglevel error -ss 0 -t 2 -i {vid_path}.mp4 "
+    + f"-vcodec copy -acodec copy {vid_path}-copy.mp4"
+)
+import os
+
+os.system(cmd)
 
 # %% [markdown]
 # In the next notebook, [01-Configure](./01-Configure.ipynb), we'll set up the DataJoint config file with a pointer to your root data directory.
