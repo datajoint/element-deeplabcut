@@ -2,9 +2,12 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## 0.0.0b1 - Unreleased
+## 0.1.0 - 2022-05-10
 ### Added
-+ First beta release
++ Adopted black formatting into code base
++ Table for RecordingInfo
++ File ID for tracking updatable secondary key filepaths
++ `make` functions for Computed/Imported tables
 
 ## 0.0.0a0 - 2021-11-15
 ### Added
