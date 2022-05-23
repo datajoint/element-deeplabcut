@@ -488,8 +488,7 @@ class ModelEvaluation(dj.Computed):
 class PoseEstimationTask(dj.Manual):
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
-    -> Model                              # Must specify a DLC project_path
-
+    -> Model                                    # Must specify a DLC project_path
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
     pose_estimation_output_dir='': varchar(255) # output dir relative to the root dir
@@ -573,7 +572,6 @@ class PoseEstimation(dj.Computed):
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
         -> Model.BodyPart
-
         ---
         frame_index : longblob     # frame index in model
         x_pos       : longblob
@@ -593,21 +591,27 @@ class PoseEstimation(dj.Computed):
             "Your model table must have a 'project_path'"
             + "field pointing to a DLC directory"
         )
-        task_mode, analyze_video_params, output_dir = (PoseEstimationTask & key).fetch1(
-            "task_mode", "pose_estimation_params", "pose_estimation_output_dir"
-        )
-        analyze_video_params = analyze_video_params or {}
-        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
-        video_filepaths = [
-            find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-            for fp in (VideoRecording.File & key).fetch("file_path")
-        ]
-        project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_model["project_path"]
+        task_mode, output_dir = (PoseEstimationTask & key).fetch1(
+            "task_mode", "pose_estimation_output_dir"
         )
 
-        # Triger PoseEstimation,
+        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+
+        # Triger PoseEstimation
         if task_mode == "trigger":
+            # Triggering dlc for pose estimation required: 
+            # - project_path: full path to the directory containing the trained model
+            # - video_filepaths: full paths to the video files for inference
+            # - analyze_video_params: optional parameters to analyze video
+            project_path = find_full_path(
+                get_dlc_root_data_dir(), dlc_model["project_path"]
+            )
+            video_filepaths = [
+                find_full_path(get_dlc_root_data_dir(), fp).as_posix()
+                for fp in (VideoRecording.File & key).fetch("file_path")
+            ]
+            analyze_video_params = (PoseEstimationTask & key).fetch1("pose_estimation_params") or {}
+
             dlc_reader.do_pose_estimation(
                 video_filepaths,
                 dlc_model,
@@ -615,6 +619,7 @@ class PoseEstimation(dj.Computed):
                 output_dir,
                 **analyze_video_params,
             )
+
         dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time).strftime(
             "%Y-%m-%d %H:%M:%S"
