@@ -109,9 +109,9 @@ def get_dlc_processed_data_dir() -> str:
 
 
 @schema
-class BodyParts(dj.Lookup):
+class KeyPoints(dj.Lookup):
     definition = """
-    bodypart_id: int
+    keypoint_id: int
     desc: varchar(255)
     """
     contents = [(0, "left_arm"), (1, "right_arm"), (2, "nose"), (3, "objectA")]
@@ -120,14 +120,14 @@ class BodyParts(dj.Lookup):
     def insert_new_params(cls, desc: str):
         query = cls & {"desc": desc}
         if query:
-            bodypart_id = cls.fetch("bodypart_id")
+            keypoint_id = cls.fetch("bodypart_id")
             raise dj.DataJointError(
-                f"The specified body part already exists"
-                f" - with bodypart_id: {bodypart_id}"
+                f"The specified key point already exists"
+                f" - with keyppoint_id: {keypoint_id}"
             )
         else:
-            bodypart_id = dj.U().aggr(cls, n="max(bodypart_id)").fetch1("n") or 0
-            param_dict = dict(bodypart_id=bodypart_id, desc=desc)
+            keypoint_id = dj.U().aggr(cls, n="max(keypoint_id)").fetch1("n") or 0
+            param_dict = dict(keypoint_id=keypoint_id, desc=desc)
             cls.insert1(param_dict)
 
 
@@ -146,10 +146,10 @@ class TrainingData(dj.Manual):
     class Label(dj.Part):
         definition = """
         -> master
-        -> BodyParts
+        -> Keypoints
         ---
-        x_coord     : int  # x pixel coordinate of the bodypart
-        y_coord     : int  # y pixel coordinate of the bodypart
+        x_coord     : int  # x pixel coordinate of the keypoint
+        y_coord     : int  # y pixel coordinate of the keypoint
         scorer=null : varchar(30)
         """
 
