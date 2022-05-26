@@ -109,19 +109,57 @@ def get_dlc_processed_data_dir() -> str:
 
 
 @schema
-class VideoSet(dj.Manual):
+class BodyParts(dj.Lookup):
     definition = """
-    video_set_id: int
+    bodypart_id: int
+    desc: varchar(255)
+    """
+    contents = [(0, "left_arm"), (1, "right_arm"), (2, "nose"), (3, "objectA")]
+
+    @classmethod
+    def insert_new_params(cls, desc: str):
+        query = cls & {"desc": desc}
+        if query:
+            bodypart_id = cls.fetch("bodypart_id")
+            raise dj.DataJointError(
+                f"The specified body part already exists"
+                f" - with bodypart_id: {bodypart_id}"
+            )
+        else:
+            bodypart_id = dj.U().aggr(cls, n="max(bodypart_id)").fetch1("n") or 0
+            param_dict = dict(bodypart_id=bodypart_id, desc=desc)
+            cls.insert1(param_dict)
+
+
+@schema
+class TrainingData(dj.Manual):
+    definition = """
+    image_id: int
     """
 
-    class File(dj.Part):
+    class ImageFile(dj.Part):
         definition = """
-        # Paths of training files (e.g., labeled pngs, CSV or video)
         -> master
-        file_id: int
-        ---
         file_path: varchar(255)
         """
+
+    class Label(dj.Part):
+        definition = """
+        -> master
+        -> BodyParts
+        ---
+        x_coord     : int  # x pixel coordinate of the bodypart
+        y_coord     : int  # y pixel coordinate of the bodypart
+        scorer=null : varchar(30)
+        """
+
+
+class TrainingDataSet(dj.Manual):
+    definition = """
+    training_dataset_id: int
+    ---
+    training_data_ids: longblob  # A set of ids from TrainingData
+    """
 
 
 @schema
