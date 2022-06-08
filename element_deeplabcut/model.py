@@ -132,7 +132,7 @@ class VideoRecording(dj.Manual):
     -> Session
     recording_id: int
     ---
-    -> Equipment
+    -> Device
     """
 
     class File(dj.Part):
