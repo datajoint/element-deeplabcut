@@ -1,15 +1,12 @@
-"""
-Code adapted from the Mathis Lab
-MIT License Copyright (c) 2022 Mackenzie Mathis
-DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
-"""
-
 import datajoint as dj
+import inspect
+from deeplabcut import train_network
+from deeplabcut.utils.auxiliaryfunctions import get_model_folder
 import importlib
 import inspect
+import yaml
 import os
 from pathlib import Path
-import yaml
 from element_interface.utils import find_full_path, dict_to_uuid
 
 
@@ -109,57 +106,19 @@ def get_dlc_processed_data_dir() -> str:
 
 
 @schema
-class KeyPoints(dj.Lookup):
+class VideoSet(dj.Manual):
     definition = """
-    keypoint_id: int
-    desc: varchar(255)
-    """
-    contents = [(0, "left_arm"), (1, "right_arm"), (2, "nose"), (3, "objectA")]
-
-    @classmethod
-    def insert_new_params(cls, desc: str):
-        query = cls & {"desc": desc}
-        if query:
-            keypoint_id = cls.fetch("bodypart_id")
-            raise dj.DataJointError(
-                f"The specified key point already exists"
-                f" - with keyppoint_id: {keypoint_id}"
-            )
-        else:
-            keypoint_id = dj.U().aggr(cls, n="max(keypoint_id)").fetch1("n") or 0
-            param_dict = dict(keypoint_id=keypoint_id, desc=desc)
-            cls.insert1(param_dict)
-
-
-@schema
-class TrainingData(dj.Manual):
-    definition = """
-    image_id: int
+    video_set_id: int
     """
 
-    class ImageFile(dj.Part):
+    class File(dj.Part):
         definition = """
+        # Paths of training files (e.g., labeled pngs, CSV or video)
         -> master
+        file_id: int
+        ---
         file_path: varchar(255)
         """
-
-    class Label(dj.Part):
-        definition = """
-        -> master
-        -> Keypoints
-        ---
-        x_coord     : int  # x pixel coordinate of the keypoint
-        y_coord     : int  # y pixel coordinate of the keypoint
-        scorer=null : varchar(30)
-        """
-
-
-class TrainingDataSet(dj.Manual):
-    definition = """
-    training_dataset_id: int
-    ---
-    training_data_ids: longblob  # A set of ids from TrainingData
-    """
 
 
 @schema
@@ -258,10 +217,6 @@ class ModelTraining(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch training for each TrainingTask training_id"""
-        import inspect
-        from deeplabcut import train_network
-        from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
-
         training_id, project_path, model_prefix = (TrainingTask & key).fetch1(
             "training_id", "project_path", "model_prefix"
         )
@@ -305,7 +260,7 @@ class ModelTraining(dj.Computed):
         snapshots = list(
             (
                 project_path
-                / GetModelFolder(
+                / get_model_folder(
                     trainFraction=dlc_config["train_fraction"],
                     shuffle=dlc_config["shuffle"],
                     cfg=dlc_config,
