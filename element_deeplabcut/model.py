@@ -355,7 +355,8 @@ class Model(dj.Manual):
 
         # ---- Get scorer name ----
         # "or 'f'" below covers case where config returns None. StrToBool handles else
-        scorer_legacy = 1 if (strtobool(dlc_config.get("scorer_legacy") or "f")) else 0
+        scorer_legacy = strtobool(dlc_config.get("scorer_legacy") or "f")
+
 
         dlc_scorer = GetScorerName(
             cfg=config_template,
