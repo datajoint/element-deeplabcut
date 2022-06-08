@@ -3,17 +3,25 @@ Code adapted from the Mathis Lab
 MIT License Copyright (c) 2022 Mackenzie Mathis
 DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
-
 import datajoint as dj
 import os
+import csv
+import cv2
+import yaml
 import inspect
 import importlib
 import numpy as np
+import pandas as pd
 from pathlib import Path
 from datetime import datetime
-import yaml
-import cv2
+from packaging import version
 from element_interface.utils import find_full_path, find_root_directory
+from distutils.util import strtobool
+from deeplabcut import evaluate_network
+from deeplabcut import __version__ as dlc_version
+from deeplabcut.utils.auxiliaryfunctions import GetScorerName
+from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder
+from .readers import dlc_reader
 
 
 schema = dj.schema()
@@ -144,7 +152,7 @@ class RecordingInfo(dj.Imported):
     px_height                 : smallint  # height in pixels
     px_width                  : smallint  # width in pixels
     nframes                   : smallint  # number of frames 
-    fps = NULL                : int     # (Hz) frames per second
+    fps = NULL                : int       # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
     recording_duration        : float     # video duration (s) from nframes / fps
     """
@@ -310,11 +318,6 @@ class Model(dj.Manual):
         :param body_part_descriptions: optional list for new items in BodyParts table
         :param paramset_idx: optional index from the TrainingParamSet table
         """
-        from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-        from deeplabcut import __version__ as dlc_version
-        from packaging import version
-        from distutils.util import strtobool
-
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -352,14 +355,7 @@ class Model(dj.Manual):
 
         # ---- Get scorer name ----
         # "or 'f'" below covers case where config returns None. StrToBool handles else
-        scorer_legacy = (
-            1
-            if (
-                strtobool(dlc_config.get("scorer_legacy") or "f")
-                or version.parse(dlc_version) < version.parse("2.1")
-            )
-            else 0
-        )  # if old version, or if specified in params
+        scorer_legacy = 1 if (strtobool(dlc_config.get("scorer_legacy") or "f")) else 0
 
         dlc_scorer = GetScorerName(
             cfg=config_template,
@@ -425,10 +421,6 @@ class ModelEvaluation(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch evaulation for each unique entry in Model"""
-        import csv
-        from deeplabcut import evaluate_network
-        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
-
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
         ).fetch1(
@@ -584,8 +576,6 @@ class PoseEstimation(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
-        from .readers import dlc_reader
-
         # ID model and directories
         dlc_model = (Model & key).fetch1()
 
@@ -646,8 +636,6 @@ class PoseEstimation(dj.Computed):
                     and x/y coordinates of each joint name for a camera_id,
                     similar to output of DLC dataframe. If 2D, z is set of zeros
         """
-        import pandas as pd
-
         model_name = key["model_name"]
         if body_parts == "all":
             body_parts = (cls.BodyPartPosition & key).fetch("body_part")
