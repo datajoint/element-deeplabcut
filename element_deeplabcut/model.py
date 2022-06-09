@@ -5,23 +5,12 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
 import datajoint as dj
 import os
-import csv
-import cv2
-import yaml
 import inspect
 import importlib
 import numpy as np
-import pandas as pd
 from pathlib import Path
 from datetime import datetime
-from packaging import version
 from element_interface.utils import find_full_path, find_root_directory
-from distutils.util import strtobool
-from deeplabcut import evaluate_network
-from deeplabcut import __version__ as dlc_version
-from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder
-from .readers import dlc_reader
 
 
 schema = dj.schema()
@@ -318,6 +307,11 @@ class Model(dj.Manual):
         :param body_part_descriptions: optional list for new items in BodyParts table
         :param paramset_idx: optional index from the TrainingParamSet table
         """
+        from deeplabcut.utils.auxiliaryfunctions import GetScorerName
+        from deeplabcut import __version__ as dlc_version
+        from packaging import version
+        from distutils.util import strtobool
+
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -421,6 +415,10 @@ class ModelEvaluation(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch evaulation for each unique entry in Model"""
+        import csv
+        from deeplabcut import evaluate_network
+        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
+
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
         ).fetch1(
@@ -576,6 +574,8 @@ class PoseEstimation(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
+        from .readers import dlc_reader
+
         # ID model and directories
         dlc_model = (Model & key).fetch1()
 
@@ -636,6 +636,8 @@ class PoseEstimation(dj.Computed):
                     and x/y coordinates of each joint name for a camera_id,
                     similar to output of DLC dataframe. If 2D, z is set of zeros
         """
+        import pandas as pd
+
         model_name = key["model_name"]
         if body_parts == "all":
             body_parts = (cls.BodyPartPosition & key).fetch("body_part")
