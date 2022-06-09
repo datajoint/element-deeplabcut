@@ -3,7 +3,6 @@ Code adapted from the Mathis Lab
 MIT License Copyright (c) 2022 Mackenzie Mathis
 DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
-
 import datajoint as dj
 import os
 import inspect
@@ -11,8 +10,6 @@ import importlib
 import numpy as np
 from pathlib import Path
 from datetime import datetime
-import yaml
-import cv2
 from element_interface.utils import find_full_path, find_root_directory
 
 
@@ -124,7 +121,7 @@ class VideoRecording(dj.Manual):
     -> Session
     recording_id: int
     ---
-    -> Equipment
+    -> Device
     """
 
     class File(dj.Part):
@@ -144,7 +141,7 @@ class RecordingInfo(dj.Imported):
     px_height                 : smallint  # height in pixels
     px_width                  : smallint  # width in pixels
     nframes                   : smallint  # number of frames 
-    fps = NULL                : int     # (Hz) frames per second
+    fps = NULL                : int       # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
     recording_duration        : float     # video duration (s) from nframes / fps
     """
@@ -352,14 +349,7 @@ class Model(dj.Manual):
 
         # ---- Get scorer name ----
         # "or 'f'" below covers case where config returns None. StrToBool handles else
-        scorer_legacy = (
-            1
-            if (
-                strtobool(dlc_config.get("scorer_legacy") or "f")
-                or version.parse(dlc_version) < version.parse("2.1")
-            )
-            else 0
-        )  # if old version, or if specified in params
+        scorer_legacy = strtobool(dlc_config.get("scorer_legacy") or "f")
 
         dlc_scorer = GetScorerName(
             cfg=config_template,
@@ -641,7 +631,7 @@ class PoseEstimation(dj.Computed):
         """
         Returns a pandas dataframe of x, y and z coordinates of the specified body_parts
         :param key: A query specifying one PoseEstimation entry, else error is thrown.
-        :param body_parts: optional, body parts as a list. If none, all joints
+        :param body_parts: optional, body parts as a list. If "all", all joints
         returns df: multi index pandas dataframe with DLC scorer names, body_parts
                     and x/y coordinates of each joint name for a camera_id,
                     similar to output of DLC dataframe. If 2D, z is set of zeros
@@ -649,6 +639,7 @@ class PoseEstimation(dj.Computed):
         import pandas as pd
 
         model_name = key["model_name"]
+
         if body_parts == "all":
             body_parts = (cls.BodyPartPosition & key).fetch("body_part")
         else:

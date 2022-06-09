@@ -5,11 +5,14 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
 
 import datajoint as dj
+import inspect
+from deeplabcut import train_network
+from deeplabcut.utils.auxiliaryfunctions import get_model_folder
 import importlib
 import inspect
+import yaml
 import os
 from pathlib import Path
-import yaml
 from element_interface.utils import find_full_path, dict_to_uuid
 
 
@@ -220,10 +223,6 @@ class ModelTraining(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch training for each TrainingTask training_id"""
-        import inspect
-        from deeplabcut import train_network
-        from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
-
         training_id, project_path, model_prefix = (TrainingTask & key).fetch1(
             "training_id", "project_path", "model_prefix"
         )
@@ -267,7 +266,7 @@ class ModelTraining(dj.Computed):
         snapshots = list(
             (
                 project_path
-                / GetModelFolder(
+                / get_model_folder(
                     trainFraction=dlc_config["train_fraction"],
                     shuffle=dlc_config["shuffle"],
                     cfg=dlc_config,
