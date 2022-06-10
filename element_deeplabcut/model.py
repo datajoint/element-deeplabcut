@@ -5,6 +5,7 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
 import datajoint as dj
 import os
+import yaml
 import inspect
 import importlib
 import numpy as np
@@ -151,6 +152,8 @@ class RecordingInfo(dj.Imported):
         return VideoRecording & VideoRecording.File
 
     def make(self, key):
+        import cv2
+
         file_paths = (VideoRecording.File & key).fetch("file_path")
 
         nframes = 0
@@ -478,7 +481,7 @@ class ModelEvaluation(dj.Computed):
 class PoseEstimationTask(dj.Manual):
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
-    -> Model                              # Must specify a DLC project_path
+    -> Model                                    # Must specify a DLC project_path
 
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
