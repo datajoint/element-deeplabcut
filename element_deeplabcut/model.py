@@ -420,7 +420,7 @@ class ModelEvaluation(dj.Computed):
         """.populate() method will launch evaulation for each unique entry in Model"""
         import csv
         from deeplabcut import evaluate_network
-        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
+        from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder
 
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
@@ -446,7 +446,7 @@ class ModelEvaluation(dj.Computed):
             comparisonbodyparts="all",
         )
 
-        eval_folder = GetEvaluationFolder(
+        eval_folder = get_evaluation_folder(
             trainFraction=dlc_config["TrainingFraction"][trainingsetindex],
             shuffle=shuffle,
             cfg=dlc_config,
