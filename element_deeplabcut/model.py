@@ -5,6 +5,7 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
 import datajoint as dj
 import os
+import yaml
 import inspect
 import importlib
 import numpy as np
@@ -151,6 +152,8 @@ class RecordingInfo(dj.Imported):
         return VideoRecording & VideoRecording.File
 
     def make(self, key):
+        import cv2
+
         file_paths = (VideoRecording.File & key).fetch("file_path")
 
         nframes = 0
@@ -258,17 +261,17 @@ class BodyPart(dj.Lookup):
 @schema
 class Model(dj.Manual):
     definition = """
-    model_name           : varchar(64)  # user-friendly model name
+    model_name           : varchar(64)  # User-friendly model name
     ---
-    task                 : varchar(32)  # task in the config yaml
-    date                 : varchar(16)  # date in the config yaml
-    iteration            : int          # iteration/version of this model
+    task                 : varchar(32)  # Task in the config yaml
+    date                 : varchar(16)  # Date in the config yaml
+    iteration            : int          # Iteration/version of this model
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
-    shuffle              : int          # which shuffle of the training dataset
-    trainingsetindex     : int          # which training set fraction to generate model
+    shuffle              : int          # Shuffle (1) or not (0)
+    trainingsetindex     : int          # Trainingset percentage (e.g. 95)
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
-    scorer               : varchar(64)  # scorer/network name - DLC's GetScorerName()
-    config_template      : longblob     # dictionary of the config for analyze_videos()
+    scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
+    config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
     model_prefix=''      : varchar(32)
     model_description='' : varchar(1000)
@@ -287,7 +290,7 @@ class Model(dj.Manual):
     def insert_new_model(
         cls,
         model_name: str,
-        dlc_config: dict,
+        dlc_config,
         *,
         shuffle: int,
         trainingsetindex,
@@ -308,8 +311,6 @@ class Model(dj.Manual):
         :param paramset_idx: optional index from the TrainingParamSet table
         """
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-        from deeplabcut import __version__ as dlc_version
-        from packaging import version
         from distutils.util import strtobool
 
         # handle dlc_config being a yaml file
@@ -324,7 +325,8 @@ class Model(dj.Manual):
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_config["project_path"]
+            get_dlc_root_data_dir(),
+            Path(dlc_config["project_path"].replace("\\", "/")).name,
         )
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
@@ -417,7 +419,7 @@ class ModelEvaluation(dj.Computed):
         """.populate() method will launch evaulation for each unique entry in Model"""
         import csv
         from deeplabcut import evaluate_network
-        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
+        from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder
 
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
@@ -443,7 +445,7 @@ class ModelEvaluation(dj.Computed):
             comparisonbodyparts="all",
         )
 
-        eval_folder = GetEvaluationFolder(
+        eval_folder = get_evaluation_folder(
             trainFraction=dlc_config["TrainingFraction"][trainingsetindex],
             shuffle=shuffle,
             cfg=dlc_config,
@@ -478,7 +480,7 @@ class ModelEvaluation(dj.Computed):
 class PoseEstimationTask(dj.Manual):
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
-    -> Model                              # Must specify a DLC project_path
+    -> Model                                    # Must specify a DLC project_path
 
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
