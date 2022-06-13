@@ -325,7 +325,8 @@ class Model(dj.Manual):
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_config["project_path"]
+            get_dlc_root_data_dir(),
+            Path(dlc_config["project_path"].replace("\\", "/")).name,
         )
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
