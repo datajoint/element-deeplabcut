@@ -261,17 +261,17 @@ class BodyPart(dj.Lookup):
 @schema
 class Model(dj.Manual):
     definition = """
-    model_name           : varchar(64)  # user-friendly model name
+    model_name           : varchar(64)  # User-friendly model name
     ---
-    task                 : varchar(32)  # task in the config yaml
-    date                 : varchar(16)  # date in the config yaml
-    iteration            : int          # iteration/version of this model
+    task                 : varchar(32)  # Task in the config yaml
+    date                 : varchar(16)  # Date in the config yaml
+    iteration            : int          # Iteration/version of this model
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
-    shuffle              : int          # which shuffle of the training dataset
-    trainingsetindex     : int          # which training set fraction to generate model
+    shuffle              : int          # Shuffle (1) or not (0)
+    trainingsetindex     : int          # Trainingset percentage (e.g. 95)
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
-    scorer               : varchar(64)  # scorer/network name - DLC's GetScorerName()
-    config_template      : longblob     # dictionary of the config for analyze_videos()
+    scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
+    config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
     model_prefix=''      : varchar(32)
     model_description='' : varchar(1000)
@@ -290,7 +290,7 @@ class Model(dj.Manual):
     def insert_new_model(
         cls,
         model_name: str,
-        dlc_config: dict,
+        dlc_config,
         *,
         shuffle: int,
         trainingsetindex,
@@ -311,8 +311,6 @@ class Model(dj.Manual):
         :param paramset_idx: optional index from the TrainingParamSet table
         """
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-        from deeplabcut import __version__ as dlc_version
-        from packaging import version
         from distutils.util import strtobool
 
         # handle dlc_config being a yaml file
