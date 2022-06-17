@@ -268,7 +268,7 @@ class Model(dj.Manual):
     iteration            : int          # Iteration/version of this model
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
     shuffle              : int          # Shuffle (1) or not (0)
-    trainingsetindex     : int          # Trainingset percentage (e.g. 95)
+    trainingsetindex     : int          # Index of training fraction list in config.yaml
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
     scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # Dictionary of the config for analyze_videos()
@@ -325,8 +325,7 @@ class Model(dj.Manual):
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(),
-            Path(dlc_config["project_path"].replace("\\", "/")).name,
+            get_dlc_root_data_dir(), dlc_config["project_path"]
         )
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
