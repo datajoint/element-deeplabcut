@@ -294,6 +294,7 @@ class Model(dj.Manual):
         *,
         shuffle: int,
         trainingsetindex,
+        project_path=None,
         model_description="",
         model_prefix="",
         paramset_idx: int = None,
@@ -325,7 +326,7 @@ class Model(dj.Manual):
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_config["project_path"]
+            get_dlc_root_data_dir(), project_path or dlc_config["project_path"]
         )
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
