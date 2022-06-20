@@ -505,7 +505,7 @@ class PoseEstimationTask(dj.Manual):
         recording_key = VideoRecording & key
         device = "-".join(
             str(v)
-            for v in (_linking_module.Equipment & recording_key).fetch1("KEY").values()
+            for v in (_linking_module.Device & recording_key).fetch1("KEY").values()
         )
         output_dir = (
             processed_dir
