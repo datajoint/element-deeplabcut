@@ -9,7 +9,7 @@ services:
       context: .
       args:
         - PY_VER
-        - DISTRO
+        - DIST
         - IMAGE
         - PKG_NAME
         - PKG_VERSION
