@@ -2,7 +2,7 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [Unrelease]
+## [Unreleased]
 ### Added
 + Calling reusable CICD
 
@@ -25,7 +25,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
   Mathis Lab.
 + Support for 2d single-animal models
 
-[Unrelease]: https://github.com/datajoint/element-deeplabcut/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/datajoint/element-deeplabcut/compare/v0.1.1...HEAD
 [0.1.1]: https://github.com/datajoint/element-deeplabcut/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/datajoint/element-deeplabcut/compare/v0.0.0a...v0.1.0
 [0.0.0.a0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.0.0a
