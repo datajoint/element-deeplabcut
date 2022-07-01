@@ -1,25 +1,11 @@
 """Tests ingestion into schema tables: Lab, Subject, Session
-    1. Assert length of populating data from __innit__
+    1. Assert length of populating data conftest
     2. Assert exact matches of inserted data fore key tables
 """
 
-__all__ = [
-    "dj_config",
-    "pipeline",
-    "subjects_csv",
-    "ingest_subjects",
-    "sessions_csv",
-    "ingest_sessions",
-]
 
-from . import (
-    dj_config,
-    pipeline,
-    subjects_csv,
-    ingest_subjects,
-    sessions_csv,
-    ingest_sessions,
-)
+def test_temp(pipeline, csvs):
+    print("--done--")
 
 
 def test_ingest_subjects(pipeline, subjects_csv, ingest_subjects):
