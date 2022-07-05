@@ -10,3 +10,6 @@ jobs:
     with:
       py_ver: 3.9
       image: djbase
+    secrets:
+      TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
+      TWINE_PASSWORD: ${{secrets.TWINE_PASSWORD}}
