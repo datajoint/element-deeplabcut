@@ -6,21 +6,20 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ### Fixed
 + Replace lazy imports
 + Project path in the model.Model
-+ Calling reusable CICD
++ Add - Call reusable CICD
++ Update - Remove direct dependency (`element-interface`) for PyPI release.
 
 ## [0.1.0] - 2022-05-10
-### Added
-+ Adopted black formatting into code base
-+ Table for RecordingInfo
-+ File ID for tracking updatable secondary key filepaths
-+ `make` functions for Computed/Imported tables
+
++ Add - Adopted black formatting into code base
++ Add - Table for RecordingInfo
++ Add - File ID for tracking updatable secondary key filepaths
++ Add - `make` functions for Computed/Imported tables
 
 ## [0.0.0a] - 2021-11-15
-### Added
-+ Drafts from a collection of precursor pipelines, including [DataJoint_Demo_DeepLabCut]
-  (https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) graciously provided by the
-  Mathis Lab.
-+ Support for 2d single-animal models
+
++ Add - Drafts from a collection of precursor pipelines, including [DataJoint_Demo_DeepLabCut](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) graciously provided by the Mathis Lab.
++ Add - Support for 2d single-animal models
 
 [0.1.1]: https://github.com/datajoint/element-deeplabcut/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/datajoint/element-deeplabcut/compare/0.0.0a...0.1.0
