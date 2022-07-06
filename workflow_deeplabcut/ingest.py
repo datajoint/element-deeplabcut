@@ -1,4 +1,3 @@
-# from pathlib import Path
 import csv
 import ruamel.yaml as yaml
 from element_interface.utils import find_full_path, ingest_csv_to_table
@@ -35,7 +34,7 @@ def ingest_sessions(
     ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates)
 
 
-def ingest_train_params(config_params_csv_path, verbose=True):
+def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=True):
     """Use provided path to load TrainingParamSet with relative path to config.yaml"""
     if verbose:
         previous_length = len(train.TrainingParamSet.fetch())
@@ -43,9 +42,19 @@ def ingest_train_params(config_params_csv_path, verbose=True):
         config_csv = list(csv.DictReader(f, delimiter=","))
     for line in config_csv:
         paramset_idx = line.pop("paramset_idx")
+        if skip_duplicates and (
+            paramset_idx in train.TrainingParamSet.fetch("paramset_idx")
+        ):
+            continue
         paramset_desc = line.pop("paramset_desc")
-        config_path = find_full_path(get_dlc_root_data_dir(), line.pop("config_path"))
-        assert config_path.exists(), f"Could not find config_path: {config_path}"
+        try:
+            config_path = find_full_path(
+                get_dlc_root_data_dir(), line.pop("config_path")
+            )
+        except FileNotFoundError as e:
+            if verbose:
+                print(f"Skipping {paramset_desc}:\n\t{e}")
+            continue
         with open(config_path, "rb") as y:
             params = yaml.safe_load(y)
         params.update({**line})
@@ -75,11 +84,42 @@ def ingest_model_vids(model_video_csv_path, skip_duplicates=True, verbose=False)
     ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates, verbose=verbose)
 
 
+def ingest_model(model_model_csv_path, skip_duplicates=True, verbose=False):
+    """Use provided CSV to insert into model.Model table"""
+    # NOTE: not included in ingest_dlc_items because not yet included in notebooks
+    import datajoint as dj
+
+    with open(model_model_csv_path, newline="") as f:
+        data = list(csv.DictReader(f, delimiter=","))
+
+    if verbose:
+        prev_len = len(model.Model())
+
+    for model_row in data:  # replace relative path with full path
+        model_row["dlc_config"] = find_full_path(
+            get_dlc_root_data_dir(), model_row.pop("config_relative_path")
+        )
+        model_row["prompt"] = (  # read as string, convert to bool
+            False if model_row["prompt"].lower() in ["false", "0"] else True
+        )
+        model_name = model_row["model_name"]
+        if skip_duplicates and model_name in model.Model.fetch("model_name"):
+            if verbose:
+                print(f"Skipping model, name already exists: {model_name}")
+            continue
+        else:
+            model.Model.insert_new_model(**model_row)
+
+    if verbose:
+        insert_len = len(model.Model()) - prev_len
+        print(f"\n---- Inserting {insert_len} entry(s) into model ----")
+
+
 def ingest_dlc_items(
     config_params_csv_path="./user_data/config_params.csv",
     train_video_csv_path="./user_data/train_videosets.csv",
     model_video_csv_path="./user_data/model_videos.csv",
-    skip_duplicates=True,
+    skip_duplicates=False,
     verbose=True,
 ):
     """
@@ -89,7 +129,11 @@ def ingest_dlc_items(
     :param train_video_csv_path: csv path for list of training videosets
     :param model_csv_path: csv path for list of modeling videos for pose estimation
     """
-    ingest_train_params(config_params_csv_path=config_params_csv_path, verbose=verbose)
+    ingest_train_params(
+        config_params_csv_path=config_params_csv_path,
+        skip_duplicates=skip_duplicates,
+        verbose=verbose,
+    )
     ingest_train_vids(
         train_video_csv_path=train_video_csv_path,
         skip_duplicates=skip_duplicates,

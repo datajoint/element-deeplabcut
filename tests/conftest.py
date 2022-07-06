@@ -4,12 +4,15 @@ from pathlib import Path
 from contextlib import nullcontext
 from distutils.util import strtobool
 import datajoint as dj
+from element_interface.utils import find_full_path
+from workflow_deeplabcut.paths import get_dlc_root_data_dir
 from workflow_deeplabcut.ingest import (
     ingest_subjects,
     ingest_sessions,
     ingest_train_params,
     ingest_train_vids,
     ingest_model_vids,
+    ingest_model,
 )
 
 __all__ = [
@@ -21,6 +24,11 @@ __all__ = [
 ]
 
 # ---------------------- CONSTANTS ---------------------
+
+test_data_project = "from_top_tracking"
+inference_vid = f"{test_data_project}/videos/test.mp4"
+inf_vid_short = f"{test_data_project}/videos/test-2s.mp4"
+model_name = "FromTop-latest"
 
 
 def pytest_addoption(parser):
@@ -107,18 +115,75 @@ def dj_config():
     """If dj_local_config exists, load"""
     if Path("./dj_local_conf.json").exists():
         dj.config.load("./dj_local_conf.json")
-    dj.config["safemode"] = False
-    dj.config["database.host"] = os.environ.get("DJ_HOST") or dj.config["database.host"]
-    dj.config["database.password"] = (
-        os.environ.get("DJ_PASS") or dj.config["database.password"]
+
+    dj.config.update(
+        {
+            "safemode": False,
+            "database.host": os.environ.get("DJ_HOST") or dj.config["database.host"],
+            "database.password": os.environ.get("DJ_PASS")
+            or dj.config["database.password"],
+            "database.user": os.environ.get("DJ_USER") or dj.config["database.user"],
+            "custom": {
+                "database.prefix": os.environ.get("DATABASE_PREFIX")
+                or dj.config["custom"]["database.prefix"],
+                "dlc_root_data_dir": os.environ.get("DLC_ROOT_DATA_DIR")
+                or dj.config["custom"]["dlc_root_data_dir"],
+            },
+        }
     )
-    dj.config["database.user"] = os.environ.get("DJ_USER") or dj.config["database.user"]
-    dj.config["custom"] = {
-        "database.prefix": os.environ.get("DATABASE_PREFIX")
-        or dj.config["custom"]["database.prefix"],
-        "dlc_root_data_dir": os.environ.get("DLC_ROOT_DATA_DIR")
-        or dj.config["custom"]["dlc_root_data_dir"],
-    }
+
+    return
+
+
+@pytest.fixture()
+def test_data(dj_config):
+    """Load demo data. Try local path. Try DJArchive w/either os environ or config"""
+    try:
+        test_data_dir = find_full_path(get_dlc_root_data_dir(), test_data_project)
+    except FileNotFoundError:
+        try:  # prefer from os env for docker testing
+            djarchive_from_os = {
+                "djarchive.endpoint": os.environ["DJARCHIVE_CLIENT_ENDPOINT"],
+                "djarchive.bucket": os.environ["DJARCHIVE_CLIENT_BUCKET"],
+                "djarchive.access_key": os.environ["DJARCHIVE_CLIENT_ACCESSKEY"],
+                "djarchive.secret_key": os.environ["DJARCHIVE_CLIENT_SECRETKEY"],
+            }
+            dj.config["custom"].update(djarchive_from_os)
+        except KeyError as e:
+            if not all(  # if not in env, permit from config
+                [
+                    k in dj.config["custom"].keys()  # if config, assume default bucket
+                    for k in ["djarchive.access_key", "djarchive.secret_key"]
+                ]
+            ):
+                raise FileNotFoundError(
+                    f"Local: Test data not available from root(s):\n\t"
+                    f"{get_dlc_root_data_dir()}"
+                    f"DJArchive: Missing environment variables:\n\t{str(e)}"
+                    f"DJArchive: Missing config custom variables:\n\t"
+                    "djarchive.access_key and/or djarchive.secret_key"
+                )
+        from workflow_deeplabcut.load_demo_data import download_djarchive_dlc_data
+
+        download_djarchive_dlc_data(get_dlc_root_data_dir()[0])
+
+    else:  # if local version, check for training-dataset dir and full project path
+        from deeplabcut.utils.auxiliaryfunctions import read_config
+
+        training_dataset_exists = (test_data_dir / "training-datasets").exists()
+        project_path_in_config = Path(
+            read_config(test_data_dir / "config.yaml").get("project_path", False)
+        ).exists()
+
+        if training_dataset_exists and project_path_in_config:  # skip project setup
+            return
+
+    with verbose_context:  # Setup - expand relative paths, make a shorter video
+        from workflow_deeplabcut.load_demo_data import setup_bare_project, shorten_video
+
+        setup_bare_project(project=test_data_project)
+        shorten_video(vid_path=inference_vid)
+
     return
 
 
@@ -134,6 +199,7 @@ def pipeline(setup):
         "subject": pipeline.subject,
         "session": pipeline.session,
         "lab": pipeline.lab,
+        "get_dlc_root_data_dir": get_dlc_root_data_dir,
     }
     if _tear_down:
         with verbose_context:
@@ -145,53 +211,51 @@ def pipeline(setup):
             pipeline.subject.Subject.delete()
             pipeline.session.Session.delete()
             pipeline.lab.Lab.delete()
-    with verbose_context:
-        # even when not teardown, because does not have skip-dupe option.
-        pipeline.train.TrainingParamSet.delete()
+            pipeline.train.TrainingParamSet.delete()
 
 
-# CSV filename, content, relevant insert func
-@pytest.fixture(
-    scope="session",
-    params=[
-        [
+@pytest.fixture(scope="session")
+def ingest_csvs(setup, pipeline):
+    """For each input, generates csv in test_user_data_dir and ingests in schema"""
+    # CSV as list of 3: relevant insert func, filename, content
+    all_csvs = [
+        [  # 0
             ingest_subjects,
             "subjects.csv",
             [
                 "subject,sex,subject_birth_date,subject_description,"
                 + "death_date,cull_method",
-                "subject5,F,2020-01-01 00:00:01,rich,2020-10-02 00:00:01,natural",
                 "subject6,M,2020-01-01 00:00:01,manuel,2020-10-03 00:00:01,natural",
             ],
         ],
-        [
+        [  # 1
             ingest_sessions,
             "sessions.csv",
             [
                 "subject,session_datetime,session_dir,session_note",
-                "subject5,2020-04-15 11:16:38,example-dir/subject5/,"
-                + "Successful data collection. No notes",
-                "subject6,2021-06-02 14:04:22,example-dir/subject6/,Model Training"
-                "subject6,2021-06-03 14:04:22,example-dir/subject6/,Test Session",
+                f"subject6,2021-06-01 13:33:33,{test_data_project}/,Model Training",
+                f"subject6,2021-06-02 14:04:22,{test_data_project}/,Test Session",
             ],
         ],
-        [
+        [  # 2
             ingest_train_params,
             "config_params.csv",
             [
                 "paramset_idx,paramset_desc,config_path,shuffle,"
                 + "trainingsetindex,filter_type,track_method,"
                 + "scorer_legacy,maxiters",
+                f"0,{test_data_project},{test_data_project}/config.yaml,1,0,,,False,5",
                 "1,OpenField,openfield-Pranav-2018-10-30/config.yaml,1,0,,,False,5",
                 "2,Reaching,Reaching-Mackenzie-2018-08-30/config.yaml,1,0,,,False,5",
-                "3,ExtraExample,Example/config.yaml,0,0,median,ellipse,False,1",
             ],
         ],
-        [
+        [  # 3
             ingest_train_vids,
             "train_videosets.csv",
             [
                 "video_set_id,file_id,file_path",
+                f"0,1,{test_data_project}/labeled-data/train1/CollectedData_DJ.h5",
+                f"0,2,{test_data_project}/labeled-data/train2/CollectedData_DJ.h5",
                 "1,1,openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.h5",
                 "1,2,openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.csv",
                 "1,3,openfield-Pranav-2018-10-30/labeled-data/m4s1/img0000.png",
@@ -202,134 +266,71 @@ def pipeline(setup):
                 "2,4,Reaching-Mackenzie-2018-08-30/videos/reachingvideo1.avi",
             ],
         ],
-        [
+        [  # 4
             ingest_model_vids,
             "model_videos.csv",
             [
-                "recording_id,subject,session_datetime,file_id,file_path,equipment,paramset_idx",
-                "2,subject6,2021-06-03 14:43:10,1,openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4,Camera1,0",
-                "3,subject5,2020-04-15 11:16:38,1,Reaching-Mackenzie-2018-08-30/videos/reachingvideo1-copy.avi,Camera1,1",
+                "recording_id,subject,session_datetime,file_id,file_path,device,paramset_idx",
+                f"1,subject6,2021-06-02 14:04:22,1,{inf_vid_short},Camera1,0",
             ],
         ],
-    ],
-)
-def csvs(request, setup):
-    """For each above, generates csv in test_user_data_dir and ingests in schema"""
+        [
+            ingest_model,
+            "model_model.csv",
+            [
+                "model_name,config_relative_path,shuffle,trainingsetindex,paramset_idx,prompt,model_description",
+                f"{model_name},{test_data_project}/config.yaml,1,0,1,False,FromTop - latest snapshot",
+            ],
+        ],
+    ]
 
-    csv_path = test_user_data_dir / request.param[1]
-    if not csv_path.exists():
-        write_csv(csv_path, request.param[2])
-    request.param[0](csv_path)
-    yield request.param[1], csv_path
+    # When not tearing down, and if there's already data in last table, can skip insert
+    if len(pipeline["model"].Model()) == 0 and _tear_down:
+        for csv_info in all_csvs:
+            csv_path = test_user_data_dir / csv_info[1]
+            write_csv(csv_path, csv_info[2])
+            csv_info[0](csv_path, skip_duplicates=True, verbose=verbose)
+
+    yield
+
     if _tear_down:
-        csv_path.unlink()
+        with verbose_context:
+            for csv_info in all_csvs:
+                csv_path = test_user_data_dir / csv_info[1]
+                csv_path.unlink()
 
 
-#  Subject data and ingestion
-@pytest.fixture
-def subjects_csv():
-    """Create a 'subjects.csv' file"""
-    subject_content = [
-        "subject,sex,subject_birth_date,subject_description,"
-        + "death_date,cull_method",
-        "subject5,F,2020-01-01 00:00:01,rich,2020-10-02 00:00:01,natural",
-        "subject6,M,2020-01-01 00:00:01,manuel,2020-10-03 00:00:01,natural",
-    ]
-    subject_csv_path = Path("./tests/user_data/subjects.csv")
-    write_csv(subject_content, subject_csv_path)
-
-    yield subject_content, subject_csv_path
-    subject_csv_path.unlink()
+@pytest.fixture(scope="session")
+def populate_settings():
+    yield dict(display_progress=True, reserve_jobs=False, suppress_errors=False)
 
 
-@pytest.fixture
-def ingest_subjects(pipeline, subjects_csv):
-    """From workflow_deeplabcut ingest.py, import ingest_subjects, run"""
-    from workflow_deeplabcut.ingest import ingest_subjects
-
-    _, subject_csv_path = subjects_csv
-    ingest_subjects(subject_csv_path=subject_csv_path)
-    return
-
-
-# Session data and ingestion
-@pytest.fixture
-def sessions_csv():
-    """Create a 'sessions.csv' file"""
-    session_csv_path = Path("./tests/user_data/sessions.csv")
-    session_content = [
-        "subject,session_datetime,session_dir,session_note",
-        "subject,session_datetime,session_dir,session_note",
-        "subject5,2020-04-15 11:16:38,example-dir/subject5/,"
-        + "Successful data collection. No notes",
-        "subject6,2021-06-02 14:04:22,example-dir/subject6/,Model Training Session"
-        "subject6,2021-06-03 14:04:22,example-dir/subject6/,Test Session",
-    ]
-    write_csv(session_content, session_csv_path)
-
-    yield session_content, session_csv_path
-    session_csv_path.unlink()
+@pytest.fixture()
+def training_task(pipeline, ingest_csvs):
+    if 0 not in pipeline["train"].TrainingTask.fetch("training_id"):
+        pipeline["train"].TrainingTask.insert1(
+            {
+                "paramset_idx": 0,
+                "training_id": 0,
+                "video_set_id": 1,
+                "project_path": test_data_project,
+            },
+            skip_duplicates=True,
+        )
+        with verbose_context:
+            print("Added training task")
 
 
-@pytest.fixture
-def ingest_sessions(ingest_subjects, sessions_csv):
-    """From workflow_deeplabcut ingest.py, import ingest_sessions, run"""
-    from workflow_deeplabcut.ingest import ingest_sessions
+@pytest.fixture()
+def pose_estim_task(pipeline, ingest_csvs):
 
-    _, session_csv_path = sessions_csv
-    ingest_sessions(session_csv_path=session_csv_path)
-    return
+    key = (pipeline["model"].VideoRecording & "recording_id=1").fetch1("KEY")
+    key.update({"model_name": model_name, "task_mode": "trigger"})
+    analyze_params = {"save_as_csv": True}
 
-
-@pytest.fixture
-def recordings_csv():
-    """Create a 'recordings.csv file"""
-    recording_csv_path = Path("./tests/user_data/recordings.csv")
-    recording_content = [
-        "recording_id,subject,session_datetime,recording_start_time,"
-        + "file_path,camera_id,paramset_idx",
-        "1,subject6,2021-06-02 14:04:22,2021-06-02 14:07:00,"
-        + "openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4,1,0",
-        "2,subject6,2021-06-03 14:04:22,2021-06-04 14:07:00,"
-        + "openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4,1,0",
-        "3,subject5,2020-04-15 11:16:38,2020-04-15 11:17:00,"
-        + "Reaching-Mackenzie-2018-08-30/videos/reachingvideo1.avi,1,1",
-    ]
-    write_csv(recording_content, recording_csv_path)
-
-    yield recording_content, recording_csv_path
-    recording_csv_path.unlink()
-
-
-@pytest.fixture
-def config_params_csv():
-    """Create a 'config_params.csv file"""
-    config_params_csv_path = Path("./tests/user_data/config_params.csv")
-    config_params_content = [
-        "paramset_idx,paramset_desc,config_path,shuffle,"
-        + "trainingsetindex,filter_type,track_method,"
-        + "scorer_legacy,maxiters",
-        "1,OpenField,openfield-Pranav-2018-10-30/config.yaml,1,0,,,False,5",
-        "2,Reaching,Reaching-Mackenzie-2018-08-30/config.yaml,1,0,,,False,5",
-        "3,ExtraExample,Example/config.yaml,0,0,median,ellipse,False,1",
-    ]
-    write_csv(config_params_content, config_params_csv_path)
-
-    yield config_params_content, config_params_csv_path
-    config_params_csv_path.unlink()
-
-
-@pytest.fixture
-def ingest_dlc_items(
-    ingest_subjects, ingest_sessions, recordings_csv, config_params_csv
-):
-    """From workflow_deeplabcut ingest.py, import ingest_dlc_items, run"""
-    from workflow_deeplabcut.ingest import ingest_dlc_items
-
-    _, recording_csv_path = recordings_csv
-    _, config_params_csv_path = config_params_csv
-    ingest_dlc_items(
-        config_params_csv_path=config_params_csv_path,
-        recording_csv_path=recording_csv_path,
-    )
-    return
+    if 1 not in pipeline["model"].PoseEstimationTask.fetch("recording_id"):
+        pipeline["model"].PoseEstimationTask.insert_estimation_task(
+            key, params=analyze_params
+        )
+        with verbose_context:
+            print("Added estimation task")

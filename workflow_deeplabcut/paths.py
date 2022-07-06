@@ -19,4 +19,4 @@ def get_dlc_processed_data_dir() -> str:
     if dlc_output_dir:
         return Path(dlc_output_dir)
     else:
-        return get_dlc_root_data_dir()[0]
+        return None
