@@ -3,6 +3,7 @@ Code adapted from the Mathis Lab
 MIT License Copyright (c) 2022 Mackenzie Mathis
 DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
+from logging import root
 import datajoint as dj
 import os
 import yaml
@@ -99,7 +100,7 @@ def get_dlc_processed_data_dir() -> str:
     if hasattr(_linking_module, "get_dlc_processed_data_dir"):
         return _linking_module.get_dlc_processed_data_dir()
     else:
-        return get_dlc_root_data_dir()[0]
+        return None
 
 
 # ----------------------------- Table declarations ----------------------
@@ -309,7 +310,7 @@ class Model(dj.Manual):
         paramset_idx (int): Optional. Index from the TrainingParamSet table
         """
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-        from distutils.util import strtobool
+        from distutils.util import strtobool  # depreciated python 3.10, removal in 3.12
 
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
@@ -353,7 +354,7 @@ class Model(dj.Manual):
         dlc_scorer = GetScorerName(
             cfg=config_template,
             shuffle=shuffle,
-            trainFraction=dlc_config["TrainingFraction"][trainingsetindex],
+            trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
             modelprefix=model_prefix,
         )[scorer_legacy]
         if config_template["snapshotindex"] == -1:
@@ -369,7 +370,7 @@ class Model(dj.Manual):
             "iteration": config_template["iteration"],
             "snapshotindex": config_template["snapshotindex"],
             "shuffle": shuffle,
-            "trainingsetindex": trainingsetindex,
+            "trainingsetindex": int(trainingsetindex),
             "project_path": project_path.relative_to(root_dir).as_posix(),
             "paramset_idx": paramset_idx,
             "config_template": config_template,
@@ -498,7 +499,6 @@ class PoseEstimationTask(dj.Manual):
         relative (bool): Report directory relative to get_dlc_processed_data_dir().
         mkdir (bool): Default False. Make directory if it doesn't exist.
         """
-        processed_dir = Path(get_dlc_processed_data_dir())
         video_filepath = find_full_path(
             get_dlc_root_data_dir(),
             (VideoRecording.File & key).fetch("file_path", limit=1)[0],
@@ -509,6 +509,11 @@ class PoseEstimationTask(dj.Manual):
             str(v)
             for v in (_linking_module.Device & recording_key).fetch1("KEY").values()
         )
+        if get_dlc_processed_data_dir():
+            processed_dir = Path(get_dlc_processed_data_dir())
+        else:  # if processed not provided, default to where video is
+            processed_dir = root_dir
+
         output_dir = (
             processed_dir
             / video_filepath.parent.relative_to(root_dir)
