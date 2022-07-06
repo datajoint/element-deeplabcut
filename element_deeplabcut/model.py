@@ -19,32 +19,29 @@ _linking_module = None
 
 
 def activate(
-    dlc_schema_name, *, create_schema=True, create_tables=True, linking_module=None
+    model_schema_name, *, create_schema=True, create_tables=True, linking_module=None
 ):
-    """
-    activate(schema_name, *, create_schema=True, create_tables=True,
-             linking_module=None)
-        :param schema_name: schema name on the database server to activate the
-                            `deeplabcut` element
+    """Activate this schema.
 
-        :param create_schema: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param create_tables: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param linking_module: a module (or name) containing the required dependencies
-                               to activate the `session` element:
-        Upstream tables:
-            + Session: parent table to VideoRecording, identifying a recording session
-            + Equipment: parent table to VideoRecording, identifying recording device
-        Functions:
-            + get_dlc_root_data_dir() -> list Retrieve the root data director(y/ies)
-                with behavioral recordings for all subject/sessions.
-                :return: a string for full path to the root data directory
-            + get_dlc_processed_data_dir(session_key: dict) -> str
-                Optional function to retrive the desired output directory for DeepLabCut
-                files for a given session. If unspecified,
-                output stored in the session video folder, per DLC default
-                :return: a string for the absolute path of output directory
+    Parameters
+    ----------
+    schema_name (str): schema name on the database server
+    create_schema (bool): when True (default), create schema in the database if it
+                          does not yet exist.
+    create_tables (str): when True (default), create schema tabkes in the database if
+                         they do not yet exist.
+    linking_module (str): a module (or name) containing the required dependencies.
+
+    Dependencies
+    ------------
+    Upstream tables:
+        Session: A parent table to VideoRecording, identifying a recording session.
+        Equipment: A parent table to VideoRecording, identifying a recording device.
+    Functions:
+        get_dlc_root_data_dir(): Returns absolute path for root data director(y/ies)
+                                 with all behavioral recordings, as (list of) string(s).
+        get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
+                                      data. Defaults to session video subfolder.
     """
 
     if isinstance(linking_module, str):
@@ -61,7 +58,7 @@ def activate(
 
     # activate
     schema.activate(
-        dlc_schema_name,
+        model_schema_name,
         create_schema=create_schema,
         create_tables=create_tables,
         add_objects=_linking_module.__dict__,
@@ -72,17 +69,12 @@ def activate(
 
 
 def get_dlc_root_data_dir() -> list:
-    """
+    """Pulls relevant func from parent namespace to specify root data dir(s).
+
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
-    root(s) may vary between data modalities and user machines
-
-    get_dlc_root_data_dir() -> list
-        This user-provided function retrieves the possible root data
-        director(y/ies) containing continuous behavioral data for all subjects
-        and sessions (e.g. acquired video or treadmill raw files)
-        :return: a string for full path to the behavioral root data directory,
-         or list of strings for possible root data directories
+    root(s) may vary between data modalities and user machines. Returns a full path
+    string or list of strongs for possible root data directories.
     """
     root_directories = _linking_module.get_dlc_root_data_dir()
     if isinstance(root_directories, (str, Path)):
@@ -98,14 +90,11 @@ def get_dlc_root_data_dir() -> list:
 
 
 def get_dlc_processed_data_dir() -> str:
-    """
-    If specified by the user, this function provides DeepLabCut with an output
-    directory for processed files. If unspecified, output files will be stored
-    in the session directory 'videos' folder, per DeepLabCut default
+    """Pulls relevant func from parent namespace. Defaults to DLC's project /videos/.
 
-    get_dlc_processed_data_dir -> str
-        This user-provided function specifies where DeepLabCut output files
-        will be stored.
+    Method in parent namespace should provide a string to a directory where DLC output
+    files will be stored. If unspecified, output files will be stored in the
+    session directory 'videos' folder, per DeepLabCut default.
     """
     if hasattr(_linking_module, "get_dlc_processed_data_dir"):
         return _linking_module.get_dlc_processed_data_dir()
@@ -149,9 +138,11 @@ class RecordingInfo(dj.Imported):
 
     @property
     def key_source(self):
+        """Defines order of keys for make function when called via `populate()`"""
         return VideoRecording & VideoRecording.File
 
     def make(self, key):
+        """Populates table with video metadata using CV2."""
         import cv2
 
         file_paths = (VideoRecording.File & key).fetch("file_path")
@@ -196,10 +187,12 @@ class BodyPart(dj.Lookup):
 
     @classmethod
     def extract_new_body_parts(cls, dlc_config: dict, verbose=True):
-        """Print a list of new body parts from a dlc config,
-        to examine before generating descriptions
-        :param dlc_config:  path to a config.y*ml, or dict including contents thereof
-        :param verbose:     default True. Print existing/new items to console
+        """Returns list of body parts present in dlc config, but not BodyPart table.
+
+        Parameters
+        ----------
+        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+        verbose (bool): Default True. Print both existing and new items to console.
         """
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -223,10 +216,13 @@ class BodyPart(dj.Lookup):
     def insert_from_config(
         cls, dlc_config: dict, descriptions: list = None, prompt=True
     ):
-        """Insert all body parts from a config file
+        """Insert all body parts from a config file.
 
-        :param dlc_config: path to a config.y*ml, or dict including contents thereof
-        :param descriptions: optional list describing new body parts
+        Parameters
+        ----------
+        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+        descriptions (list): Optional. List of strings describing new body parts.
+        prompt (bool): Optional, default True. Promp for confirmation before insert.
         """
 
         # handle dlc_config being a yaml file
@@ -278,7 +274,6 @@ class Model(dj.Manual):
     -> [nullable] train.TrainingParamSet
     """
     # project_path is the only item required downstream in the pose schema
-    # what happens if TrainingParamSet isn't in the namespace?
 
     class BodyPart(dj.Part):
         definition = """
@@ -300,16 +295,18 @@ class Model(dj.Manual):
         paramset_idx: int = None,
         prompt=True,
     ):
-        """Insert new model into the dlc.Model table
+        """Insert new model into the dlc.Model table.
 
-        :param model_name: User-friendly name for this model
-        :param dlc_config: path to a config.y*ml, or dict including contents thereof
-        :param shuffle: integer, shuffle number
-        :param trainingsetindex: index of training fraction list in config.yaml
-        :param model_description: Description of this model
-        :param model_prefix: Filename prefix used across DLC project
-        :param body_part_descriptions: optional list for new items in BodyParts table
-        :param paramset_idx: optional index from the TrainingParamSet table
+        Parameters
+        ----------
+        model_name (str): User-friendly name for this model.
+        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+        shuffle (int): Shuffled or not as 1 or 0.
+        trainingsetindex (int): Index of training fraction list in config.yaml.
+        model_description (str): Optional. Description of this model.
+        model_prefix (str): Optional. Filename prefix used across DLC project
+        body_part_descriptions (list): Optional. List of descriptions for BodyParts.
+        paramset_idx (int): Optional. Index from the TrainingParamSet table
         """
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
         from distutils.util import strtobool
@@ -416,7 +413,7 @@ class ModelEvaluation(dj.Computed):
     """
 
     def make(self, key):
-        """.populate() method will launch evaulation for each unique entry in Model"""
+        """.populate() method will launch evaulation for each unique entry in Model."""
         import csv
         from deeplabcut import evaluate_network
         from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder
@@ -490,12 +487,16 @@ class PoseEstimationTask(dj.Manual):
 
     @classmethod
     def infer_output_dir(cls, key, relative=False, mkdir=False):
-        """Return the expected pose_estimation_output_dir based on the convention
-                 / video_dir / Equipment_{}_recording_{}_model_{}
-        Spaces in model name are replaced with hyphens
-        :param key: key specifying a pairing of VideoRecording and Model
-        :param relative: report directory relative to get_dlc_processed_data_dir()
-        :param mkdir: default False, make directory if it doesn't exist
+        """Return the expected pose_estimation_output_dir.
+
+        With spaces in model name are replaced with hyphens.
+        Based on convention: / video_dir / Device_{}_Recording_{}_Model_{}
+
+        Parameters
+        ----------
+        key: DataJoint key specifying a pairing of VideoRecording and Model.
+        relative (bool): Report directory relative to get_dlc_processed_data_dir().
+        mkdir (bool): Default False. Make directory if it doesn't exist.
         """
         processed_dir = Path(get_dlc_processed_data_dir())
         video_filepath = find_full_path(
@@ -530,15 +531,19 @@ class PoseEstimationTask(dj.Manual):
         mkdir=True,
         skip_duplicates=False,
     ):
-        """Insert PoseEstimationTask with inferred output dir based on the convention
-                processed_dir / video_dir / device_{}_recording_{}_model_{}
-        :param key: key specifying a pairing of VideoRecording and Model
-        :param task_mode: default 'trigger' computation. Or 'load' existing results
-        :param params: DLC's analyze_videos parameters if other than the defaults:
+        """Insert PoseEstimationTask in inferred output dir.
+
+        Based on the convention / video_dir / device_{}_recording_{}_model_{}
+
+        Parameters
+        ----------
+        key: DataJoint key specifying a pairing of VideoRecording and Model.
+        task_mode (bool): Default 'trigger' computation. Or 'load' existing results.
+        params (dict): Optional. Parameters passed to DLC's analyze_videos:
             videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
             dynamic, robust_nframes, allow_growth, use_shelve
-        :param relative: report directory relative to get_dlc_processed_data_dir()
-        :param mkdir: default False, make directory if it doesn't exist
+        relative (bool): Report directory relative to get_dlc_processed_data_dir().
+        mkdir (bool): Default False. Make directory if it doesn't exist.
         """
         output_dir = cls.infer_output_dir(key, relative=relative, mkdir=mkdir)
 
@@ -630,13 +635,18 @@ class PoseEstimation(dj.Computed):
 
     @classmethod
     def get_trajectory(cls, key, body_parts="all"):
-        """
-        Returns a pandas dataframe of x, y and z coordinates of the specified body_parts
-        :param key: A query specifying one PoseEstimation entry, else error is thrown.
-        :param body_parts: optional, body parts as a list. If "all", all joints
-        returns df: multi index pandas dataframe with DLC scorer names, body_parts
-                    and x/y coordinates of each joint name for a camera_id,
-                    similar to output of DLC dataframe. If 2D, z is set of zeros
+        """Returns a pandas dataframe of coordinates of the specified body_part(s)
+
+        Parameters
+        ----------
+        key: A DataJoint query specifying one PoseEstimation entry. body_parts:
+        Optional. Body parts as a list. If "all", all joints
+
+        Returns
+        -------
+        df: multi index pandas dataframe with DLC scorer names, body_parts
+            and x/y coordinates of each joint name for a camera_id, similar to output of
+            DLC dataframe. If 2D, z is set of zeros
         """
         import pandas as pd
 

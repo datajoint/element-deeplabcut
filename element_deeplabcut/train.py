@@ -6,8 +6,6 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 
 import datajoint as dj
 import inspect
-from deeplabcut import train_network
-from deeplabcut.utils.auxiliaryfunctions import get_model_folder
 import importlib
 import inspect
 import yaml
@@ -21,25 +19,26 @@ _linking_module = None
 
 
 def activate(
-    dlc_schema_name, *, create_schema=True, create_tables=True, linking_module=None
+    train_schema_name, *, create_schema=True, create_tables=True, linking_module=None
 ):
-    """
-    activate(schema_name, *, create_schema=True, create_tables=True,
-             linking_module=None)
-        :param schema_name: schema name on the database server to activate the
-                            `deeplabcut` element
-        :param create_schema: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param create_tables: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param linking_module: a module (or name) containing the required dependencies
-                               to activate the `session` element:
-        Upstream tables:
-            + Session: parent table to VideoRecording, identifying a recording session
-        Functions:
-            + get_dlc_root_data_dir() -> list Retrieve the root data director(y/ies)
-                with behavioral recordings for all subject/sessions.
-                :return: a string for full path to the root data directory
+    """Activate this schema.
+
+    Parameters
+    ----------
+    schema_name (str): schema name on the database server
+    create_schema (bool): when True (default), create schema in the database if it
+                          does not yet exist.
+    create_tables (str): when True (default), create schema tabkes in the database if
+                         they do not yet exist.
+    linking_module (str): a module (or name) containing the required dependencies.
+
+    Dependencies
+    ------------
+    Functions:
+        get_dlc_root_data_dir(): Returns absolute path for root data director(y/ies)
+                                 with all behavioral recordings, as (list of) string(s).
+        get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
+                                      data. Defaults to session video subfolder.
     """
 
     if isinstance(linking_module, str):
@@ -56,7 +55,7 @@ def activate(
 
     # activate
     schema.activate(
-        dlc_schema_name,
+        train_schema_name,
         create_schema=create_schema,
         create_tables=create_tables,
         add_objects=_linking_module.__dict__,
@@ -67,17 +66,12 @@ def activate(
 
 
 def get_dlc_root_data_dir() -> list:
-    """
+    """Pulls relevant func from parent namespace to specify root data dir(s).
+
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
-    root(s) may vary between data modalities and user machines
-
-    get_dlc_root_data_dir() -> list
-        This user-provided function retrieves the possible root data
-        director(y/ies) containing continuous behavioral data for all subjects
-        and sessions (e.g. acquired video or treadmill raw files)
-        :return: a string for full path to the behavioral root data directory,
-         or list of strings for possible root data directories
+    root(s) may vary between data modalities and user machines. Returns a full path
+    string or list of strongs for possible root data directories.
     """
     root_directories = _linking_module.get_dlc_root_data_dir()
     if isinstance(root_directories, (str, Path)):
@@ -93,14 +87,11 @@ def get_dlc_root_data_dir() -> list:
 
 
 def get_dlc_processed_data_dir() -> str:
-    """
-    If specified by the user, this function provides DeepLabCut with an output
-    directory for processed files. If unspecified, output files will be stored
-    in the session directory 'videos' folder, per DeepLabCut default
+    """Pulls relevant func from parent namespace. Defaults to DLC's project /videos/.
 
-    get_dlc_processed_data_dir -> str
-        This user-provided function specifies where DeepLabCut output files
-        will be stored.
+    Method in parent namespace should provide a string to a directory where DLC output
+    files will be stored. If unspecified, output files will be stored in the
+    session directory 'videos' folder, per DeepLabCut default.
     """
     if hasattr(_linking_module, "get_dlc_processed_data_dir"):
         return _linking_module.get_dlc_processed_data_dir()
@@ -148,14 +139,16 @@ class TrainingParamSet(dj.Lookup):
         cls, paramset_desc: str, params: dict, paramset_idx: int = None
     ):
         """
-        Insert a new set of training parameters into dlc.TrainingParamSet
+        Insert a new set of training parameters into dlc.TrainingParamSet.
 
-        :param paramset_desc: Description of parameter set to be inserted
-        :param params: Dictionary including all settings to specify model training.
+        Parameters
+        ----------
+        paramset_desc (str): Description of parameter set to be inserted
+        params (dict): Dictionary including all settings to specify model training.
                        Must include shuffle & trainingsetindex b/c not in config.yaml.
                        project_path and video_sets will be overwritten by config.yaml.
                        Note that trainingsetindex is 0-indexed
-        :param paramset_idx: optional, integer to represent parameters.
+        paramset_idx (int): optional, integer to represent parameters.
         """
 
         for required_param in cls.required_parameters:
@@ -178,23 +171,13 @@ class TrainingParamSet(dj.Lookup):
             "param_set_hash": dict_to_uuid(params),
         }
         param_query = cls & {"param_set_hash": param_dict["param_set_hash"]}
-
-        if param_query:  # If the specified param-set already exists
+        # If the specified param-set already exists
+        if param_query:
             existing_paramset_idx = param_query.fetch1("paramset_idx")
             if existing_paramset_idx == int(paramset_idx):  # If existing_idx same:
                 return  # job done
-            else:  # If not: human error, adding paramset w/new name
-                raise dj.DataJointError(
-                    f"The specified param-set already exists"
-                    f" - with paramset_idx: {existing_paramset_idx}"
-                )
         else:
-            if {"paramset_idx": paramset_idx} in cls.proj():
-                raise dj.DataJointError(
-                    f"The specified paramset_idx {paramset_idx} already exists,"
-                    f" please pick a different one."
-                )
-        cls.insert1(param_dict)
+            cls.insert1(param_dict)  # if duplicate, will raise duplicate error
 
 
 @schema
@@ -222,10 +205,18 @@ class ModelTraining(dj.Computed):
     # https://github.com/DeepLabCut/DeepLabCut/issues/70
 
     def make(self, key):
-        """.populate() method will launch training for each TrainingTask training_id"""
-        training_id, project_path, model_prefix = (TrainingTask & key).fetch1(
-            "training_id", "project_path", "model_prefix"
+        """Launch training for each train.TrainingTask training_id via `.populate()`."""
+        project_path, model_prefix = (TrainingTask & key).fetch1(
+            "project_path", "model_prefix"
         )
+        from deeplabcut import train_network
+
+        try:
+            from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
+        except ImportError:
+            from deeplabcut.utils.auxiliaryfunctions import (
+                get_model_folder as GetModelFolder,
+            )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
@@ -261,12 +252,12 @@ class ModelTraining(dj.Computed):
         try:
             train_network(dlc_cfg_filepath, **train_network_kwargs)
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
-            pass
+            print("DLC training stopped via Keyboard Interrupt")
 
         snapshots = list(
             (
                 project_path
-                / get_model_folder(
+                / GetModelFolder(
                     trainFraction=dlc_config["train_fraction"],
                     shuffle=dlc_config["shuffle"],
                     cfg=dlc_config,

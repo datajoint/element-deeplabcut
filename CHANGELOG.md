@@ -6,6 +6,9 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 + Add - Call reusable CICD
 + Update - Remove direct dependency (`element-interface`) for PyPI release.
++ Update - Docstring PEP257 compliance #24 
++ Update - Explicit handling of KeyboardInterrupt #26
++ Update - Streamline insert_new_params #27
 
 ## [0.1.1] - 2022-06-10
 
