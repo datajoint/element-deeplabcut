@@ -1,0 +1,11 @@
+name: u24_element_build_call
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+jobs:
+  call_u24_elements_build_alpine:
+    uses: yambottle/djsciops-cicd/.github/workflows/u24_element_build.yaml@main
+    with:
+      py_ver: 3.9
+      image: djbase

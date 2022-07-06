@@ -3,6 +3,7 @@ on:
   pull_request:
   push:
   workflow_dispatch:
+
 jobs:
   test_call_u24_elements_build_release_alpine:
     if: startsWith(github.ref, 'refs/tags') != true
