@@ -1,8 +1,9 @@
-import os, sys
+import os
+import sys
 import pytest
 from pathlib import Path
 from contextlib import nullcontext
-from distutils.util import strtobool
+from element_deeplabcut.model import str_to_bool
 import datajoint as dj
 from element_interface.utils import find_full_path
 from workflow_deeplabcut.paths import get_dlc_root_data_dir
@@ -68,8 +69,8 @@ def setup(request):
     """Take passed commandline variables, set as global"""
     global verbose, _tear_down, test_user_data_dir, verbose_context
 
-    verbose = strtobool(request.config.getoption("--dj-verbose"))
-    _tear_down = strtobool(request.config.getoption("--dj-teardown"))
+    verbose = str_to_bool(request.config.getoption("--dj-verbose"))
+    _tear_down = str_to_bool(request.config.getoption("--dj-teardown"))
     test_user_data_dir = Path(request.config.getoption("--dj-datadir"))
     test_user_data_dir.mkdir(exist_ok=True)
 
@@ -77,6 +78,8 @@ def setup(request):
         verbose_context = nullcontext()
     else:
         verbose_context = QuietStdOut()
+
+    yield verbose_context
 
 
 # ------------------ GENERAL FUCNTION ------------------
@@ -171,16 +174,23 @@ def test_data(dj_config):
         from deeplabcut.utils.auxiliaryfunctions import read_config
 
         training_dataset_exists = (test_data_dir / "training-datasets").exists()
-        project_path_in_config = Path(
-            read_config(test_data_dir / "config.yaml").get("project_path", False)
-        ).exists()
+        project_path_in_config = (
+            True
+            if read_config(test_data_dir / "config.yaml").get("project_path", False)
+            else False
+        )
 
         if training_dataset_exists and project_path_in_config:  # skip project setup
             return
 
     with verbose_context:  # Setup - expand relative paths, make a shorter video
-        from workflow_deeplabcut.load_demo_data import setup_bare_project, shorten_video
+        from workflow_deeplabcut.load_demo_data import (
+            download_weights,
+            setup_bare_project,
+            shorten_video,
+        )
 
+        download_weights()
         setup_bare_project(project=test_data_project)
         shorten_video(vid_path=inference_vid)
 
@@ -278,14 +288,14 @@ def ingest_csvs(setup, pipeline):
             ingest_model,
             "model_model.csv",
             [
-                "model_name,config_relative_path,shuffle,trainingsetindex,paramset_idx,prompt,model_description",
-                f"{model_name},{test_data_project}/config.yaml,1,0,1,False,FromTop - latest snapshot",
+                "model_name,config_relative_path,shuffle,trainingsetindex,paramset_idx,prompt,model_description,params",
+                f"{model_name},{test_data_project}/config.yaml,1,0,0,False,FromTop - latest snapshot,{{'snapshotindex':4}}",
             ],
         ],
     ]
 
     # When not tearing down, and if there's already data in last table, can skip insert
-    if len(pipeline["model"].Model()) == 0 and _tear_down:
+    if len(pipeline["model"].Model()) == 0:
         for csv_info in all_csvs:
             csv_path = test_user_data_dir / csv_info[1]
             write_csv(csv_path, csv_info[2])
@@ -302,7 +312,7 @@ def ingest_csvs(setup, pipeline):
 
 @pytest.fixture(scope="session")
 def populate_settings():
-    yield dict(display_progress=True, reserve_jobs=False, suppress_errors=False)
+    yield dict(display_progress=verbose, reserve_jobs=False, suppress_errors=False)
 
 
 @pytest.fixture()

@@ -1,5 +1,7 @@
 import csv
+from pathlib import Path
 import ruamel.yaml as yaml
+from element_deeplabcut.model import str_to_bool
 from element_interface.utils import find_full_path, ingest_csv_to_table
 
 from .pipeline import subject, session, train, model
@@ -43,7 +45,7 @@ def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=Tr
     for line in config_csv:
         paramset_idx = line.pop("paramset_idx")
         if skip_duplicates and (
-            paramset_idx in train.TrainingParamSet.fetch("paramset_idx")
+            paramset_idx in list(train.TrainingParamSet.fetch("paramset_idx"))
         ):
             continue
         paramset_desc = line.pop("paramset_desc")
@@ -99,9 +101,8 @@ def ingest_model(model_model_csv_path, skip_duplicates=True, verbose=False):
         model_row["dlc_config"] = find_full_path(
             get_dlc_root_data_dir(), model_row.pop("config_relative_path")
         )
-        model_row["prompt"] = (  # read as string, convert to bool
-            False if model_row["prompt"].lower() in ["false", "0"] else True
-        )
+        model_row["project_path"] = Path(model_row["dlc_config"]).parent
+        model_row["prompt"] = str_to_bool(model_row["prompt"])
         model_name = model_row["model_name"]
         if skip_duplicates and model_name in model.Model.fetch("model_name"):
             if verbose:

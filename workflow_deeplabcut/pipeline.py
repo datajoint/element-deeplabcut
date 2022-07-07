@@ -40,7 +40,7 @@ session.activate(db_prefix + "session", linking_module=__name__)
 
 
 @lab.schema
-class Device(dj.Manual):
+class Device(dj.Lookup):
     definition = """
     device             : varchar(32)
     ---
