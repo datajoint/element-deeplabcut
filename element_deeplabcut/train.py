@@ -210,6 +210,7 @@ class ModelTraining(dj.Computed):
             "project_path", "model_prefix"
         )
         from deeplabcut import train_network
+        from .readers import dlc_reader
 
         try:
             from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
@@ -234,13 +235,8 @@ class ModelTraining(dj.Computed):
         ]
         dlc_config["video_sets"] = video_filepaths
 
-        # ---- Write DLC and basefolder yaml (config) files ----
-
-        # Write dlc config file to base (data) folder
-        # This is important for parsing the DLC in datajoint imaging
-        dlc_cfg_filepath = project_path / "config.yaml"
-        with open(dlc_cfg_filepath, "w") as f:
-            yaml.dump(dlc_config, f)  # DLC has an auxillary write_config - should use?
+        # Write dlc config file to base project folder
+        dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config)
 
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
@@ -267,6 +263,8 @@ class ModelTraining(dj.Computed):
             ).glob("*index*")
         )
         max_modified_time = 0
+        # DLC goes by snapshot magnitude when judging 'latest' for evaluation
+        # Here, we mean most recently generated
         for snapshot in snapshots:
             modified_time = os.path.getmtime(snapshot)
             if modified_time > max_modified_time:

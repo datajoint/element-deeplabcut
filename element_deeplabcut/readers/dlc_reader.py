@@ -149,6 +149,29 @@ class PoseEstimation:
         return body_parts_position
 
 
+def save_yaml(output_dir, config_dict, filename="dlc_config_file", mkdir=True):
+    """Save config_dict to output_path as filename.yaml. By default, preserves original.
+
+    Parameters
+    ----------
+    output_dir: where to save yaml file
+    config_dict: dict of config params or element-deeplabcut model.Model dict
+    filename: Optional, default 'dlc_config_file' or preserve original 'config'
+              Set to 'config' to overwrite original file.
+    mkdir (bool): Optional, True. Make new directory if output_dir not exist
+
+    Returns: path of saved file as string - due to DLC func preference for strings
+    """
+    if "config_template" in config_dict.keys():  # if passed full model.Model dict
+        config_dict = config_dict["config_template"]
+    if mkdir:
+        output_dir.mkdir(exist_ok=True)
+    output_filepath = Path(output_dir) / f"{filename}.yaml"
+    with open(output_filepath, "w") as f:
+        yaml.dump(config_dict, f)
+    return str(output_filepath)
+
+
 def do_pose_estimation(
     video_filepaths,
     dlc_model,
@@ -167,11 +190,14 @@ def do_pose_estimation(
     modelprefix="",  # need from paramset
 ):
     """Launch DLC's analyze_videos within element-deeplabcut
-    :param video_filepaths: list of videos to analyze
-    :param dlc_model: element-deeplabcut dlc.Model dict
-    :param project_path: path to project config.yml
-    :param output_dir: where to save output
-    Remaining parameters are DLC's defaults
+
+    Parameters
+    ----------
+    video_filepaths: list of videos to analyze
+    dlc_model: element-deeplabcut dlc.Model dict
+    project_path: path to project config.yml
+    output_dir: where to save output
+    OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters
     """
     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
@@ -180,22 +206,16 @@ def do_pose_estimation(
     dlc_project_path = Path(project_path)
     dlc_config["project_path"] = dlc_project_path.as_posix()
 
-    # ---- Write DLC and basefolder yaml (config) files ----
-    # Write dlc config file to base (data) folder
-    # This is important for parsing the DLC in datajoint imaging
-    # This is required to load the results
-    output_dir.mkdir(exist_ok=True)
-    with open(output_dir / "dlc_config_file.yaml", "w") as f:
-        yaml.dump(dlc_config, f)
-
-    # This is required by DLC to run the analyze_videos
-    dlc_cfg_filepath = dlc_project_path / "dlc_config_file.yaml"
-    with open(dlc_cfg_filepath, "w") as f:
-        yaml.dump(dlc_config, f)
+    # ---- Write config files ----
+    # To output dir: Important for loading/parsing output in datajoint
+    _ = save_yaml(output_dir, dlc_config)
+    # To project dir: Required by DLC to run the analyze_videos
+    if dlc_project_path != output_dir:
+        config_filepath = save_yaml(dlc_project_path, dlc_config)
 
     # ---- Trigger DLC prediction job ----
     analyze_videos(
-        config=dlc_cfg_filepath.as_posix(),
+        config=config_filepath,
         videos=video_filepaths,
         shuffle=dlc_model["shuffle"],
         trainingsetindex=dlc_model["trainingsetindex"],

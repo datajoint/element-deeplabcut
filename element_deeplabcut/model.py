@@ -295,6 +295,7 @@ class Model(dj.Manual):
         model_prefix="",
         paramset_idx: int = None,
         prompt=True,
+        params=None,
     ):
         """Insert new model into the dlc.Model table.
 
@@ -308,9 +309,10 @@ class Model(dj.Manual):
         model_prefix (str): Optional. Filename prefix used across DLC project
         body_part_descriptions (list): Optional. List of descriptions for BodyParts.
         paramset_idx (int): Optional. Index from the TrainingParamSet table
+        params: Optional. If dlc_config is path, dict of override items
         """
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-        from distutils.util import strtobool  # depreciated python 3.10, removal in 3.12
+        from .readers import dlc_reader
 
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
@@ -321,43 +323,40 @@ class Model(dj.Manual):
             if dlc_config_fp.suffix in (".yml", ".yaml"):
                 with open(dlc_config_fp, "rb") as f:
                     dlc_config = yaml.safe_load(f)
+            if isinstance(params, dict):
+                dlc_config.update(params)
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(), project_path or dlc_config["project_path"]
+            get_dlc_root_data_dir(), project_path or dlc_config.get("project_path")
         )
+        dlc_config["project_path"] = str(project_path)  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
-        # ---- Build config ----
-        template_attributes = [
+        # ---- Verify config ----
+        needed_attributes = [
             "Task",
             "date",
-            "TrainingFraction",
             "iteration",
             "snapshotindex",
-            "batch_size",
-            "cropping",
-            "x1",
-            "x2",
-            "y1",
-            "y2",
-            "project_path",
+            "TrainingFraction",
         ]
-        config_template = {
-            k: v for k, v in dlc_config.items() if k in template_attributes
-        }
+        for attribute in needed_attributes:
+            assert (
+                attribute in dlc_config.keys()
+            ), f"Couldn't find {attribute} in config"
 
         # ---- Get scorer name ----
-        # "or 'f'" below covers case where config returns None. StrToBool handles else
-        scorer_legacy = strtobool(dlc_config.get("scorer_legacy") or "f")
+        # "or 'f'" below covers case where config returns None. str_to_bool handles else
+        scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy") or "f")
 
         dlc_scorer = GetScorerName(
-            cfg=config_template,
+            cfg=dlc_config,
             shuffle=shuffle,
             trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
             modelprefix=model_prefix,
         )[scorer_legacy]
-        if config_template["snapshotindex"] == -1:
+        if dlc_config["snapshotindex"] == -1:
             dlc_scorer = "".join(dlc_scorer.split("_")[:-1])
 
         # ---- Insert ----
@@ -365,15 +364,15 @@ class Model(dj.Manual):
             "model_name": model_name,
             "model_description": model_description,
             "scorer": dlc_scorer,
-            "task": config_template["Task"],
-            "date": config_template["date"],
-            "iteration": config_template["iteration"],
-            "snapshotindex": config_template["snapshotindex"],
+            "task": dlc_config["Task"],
+            "date": dlc_config["date"],
+            "iteration": dlc_config["iteration"],
+            "snapshotindex": dlc_config["snapshotindex"],
             "shuffle": shuffle,
             "trainingsetindex": int(trainingsetindex),
             "project_path": project_path.relative_to(root_dir).as_posix(),
             "paramset_idx": paramset_idx,
-            "config_template": config_template,
+            "config_template": dlc_config,
         }
 
         # -- prompt for confirmation --
@@ -382,7 +381,7 @@ class Model(dj.Manual):
             if k != "config_template":
                 print("\t{}: {}".format(k, v))
             else:
-                print("\t-- Template for config.yaml --")
+                print("\t-- Template/Contents of config.yaml --")
                 for k, v in model_dict["config_template"].items():
                     print("\t\t{}: {}".format(k, v))
 
@@ -392,6 +391,9 @@ class Model(dj.Manual):
         ):
             print("Canceled insert.")
             return
+        # ---- Save DJ-managed config ----
+        _ = dlc_reader.save_yaml(project_path, dlc_config)
+        # ____ Insert into table ----
         with cls.connection.transaction:
             cls.insert1(model_dict)
             # Returns array, so check size for unambiguous truth value
@@ -430,14 +432,19 @@ class ModelEvaluation(dj.Computed):
         )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
-        yml_paths = list(project_path.glob("*.y*ml"))
-        assert len(yml_paths) == 1, (
-            "Unable to find one unique .yaml file in: "
-            + f"{project_path} - Found: {len(yml_paths)}"
-        )
+        yml_paths = sorted(list(project_path.glob("*.y*ml")))
+
+        only_two_yamls = [  # bool for only original and DJ-saved yamls
+            f.name for f in sorted(list(project_path.glob("*.y*ml")))
+        ] == ["config.yaml", "dlc_config_file.yaml"]
+        assert (
+            len(yml_paths) == 1 or only_two_yamls
+        ), f"Found more yaml files than expected: {len(yml_paths)}\n{project_path}"
+
+        which_config = 1 if only_two_yamls else 0  # if DJ-saved, used that
 
         evaluate_network(
-            yml_paths[0],
+            yml_paths[which_config],
             Shuffles=[shuffle],  # this needs to be a list
             trainingsetindex=trainingsetindex,
             comparisonbodyparts="all",
@@ -568,7 +575,7 @@ class PoseEstimation(dj.Computed):
     definition = """
     -> PoseEstimationTask
     ---
-    post_estimation_time: datetime  # time of generation of this set of DLC results
+    pose_estimation_time: datetime  # time of generation of this set of DLC results
     """
 
     class BodyPartPosition(dj.Part):
@@ -591,10 +598,8 @@ class PoseEstimation(dj.Computed):
         # ID model and directories
         dlc_model = (Model & key).fetch1()
 
-        assert dlc_model["project_path"], (
-            "Your model table must have a 'project_path'"
-            + "field pointing to a DLC directory"
-        )
+        # NOTE: removed prev assertion bc enforced by table
+
         task_mode, analyze_video_params, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_params", "pose_estimation_output_dir"
         )
@@ -635,7 +640,7 @@ class PoseEstimation(dj.Computed):
             for k, v in dlc_result.data.items()
         ]
 
-        self.insert1({**key, "post_estimation_time": creation_time})
+        self.insert1({**key, "pose_estimation_time": creation_time})
         self.BodyPartPosition.insert(body_parts)
 
     @classmethod
@@ -679,3 +684,12 @@ class PoseEstimation(dj.Computed):
             frame = pd.DataFrame(a, columns=pdindex, index=range(0, a.shape[0]))
             df = pd.concat([df, frame], axis=1)
         return df
+
+
+def str_to_bool(value) -> bool:
+    """Return whether the provided string represents true. Otherwise false."""
+    # Due to distutils equivalent depreciation in 3.10
+    # Adopted from github.com/PostHog/posthog/blob/master/posthog/utils.py
+    if not value:
+        return False
+    return str(value).lower() in ("y", "yes", "t", "true", "on", "1")
