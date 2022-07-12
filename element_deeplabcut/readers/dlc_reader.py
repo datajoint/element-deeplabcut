@@ -213,6 +213,25 @@ def do_pose_estimation(
     if dlc_project_path != output_dir:
         config_filepath = save_yaml(dlc_project_path, dlc_config)
 
+    # --- Load extensions as videotype ---
+    if [Path(i).is_dir() for i in video_filepaths] != [True] and videotype == None:
+        # if passed only a directory, don't need videotype.
+
+        from deeplabcut.utils.auxfun_videos import SUPPORTED_VIDEOS
+        from collections import abc
+
+        if not isinstance(video_filepaths, abc.Sequence):
+            video_filepaths = [video_filepaths]
+        passed_exts = [Path(v).suffix for v in video_filepaths]
+        # Check that they're all supported
+        for ext in passed_exts:
+            assert ext[1:] in SUPPORTED_VIDEOS, (
+                f"{ext} files not supported by DLC."
+                + f"List of supported video types: {SUPPORTED_VIDEOS}"
+            )
+        # Generate videotype list from videos passed
+        videotype = [ext[1:] for ext in passed_exts]
+
     # ---- Trigger DLC prediction job ----
     analyze_videos(
         config=config_filepath,

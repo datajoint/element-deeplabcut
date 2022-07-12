@@ -245,6 +245,7 @@ class ModelTraining(dj.Computed):
         }
         for k in ["shuffle", "trainingsetindex", "maxiters"]:
             train_network_kwargs[k] = int(train_network_kwargs[k])
+
         try:
             train_network(dlc_cfg_filepath, **train_network_kwargs)
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
