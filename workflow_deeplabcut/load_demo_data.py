@@ -1,4 +1,3 @@
-from cgi import test
 from deeplabcut.utils.auxiliaryfunctions import get_deeplabcut_path
 from deeplabcut.utils.auxiliaryfunctions import read_plainconfig, write_plainconfig
 from element_interface.utils import find_full_path, find_root_directory
@@ -13,25 +12,28 @@ def download_djarchive_dlc_data(target_directory="/tmp/workflow_dlc_data/"):
     from workflow_deeplabcut import version
 
     client = djarchive_client.client()
-    revision = version.__version__.replace(".", "_")
     os.makedirs(target_directory)
 
     client.download(
-        "workflow-dlc-data", target_directory=target_directory, revision=revision
+        "workflow-dlc-data", target_directory=target_directory, revision="v1"
     )
 
 
-def update_pose_cfg(project="from_top_tracking", update_snapshot=0):
+def update_pose_cfg(project="from_top_tracking", net_type=None, update_snapshot=0):
     """Updates weight paths to absolute. If update_snapshot, changes weights to snap #
-
 
     Parameters
     ---------
-    project: Poject name, matching folder in dlc_root_data_dir
+    project: Optional, default from 'from_top_tracking'.
+             Poject name/folder in dlc_root_data_dir
+    net_type: Optional. Project net (e.g., resnet50).
+              If project is 'from_top_tracking', 'mobilenet_v2_1.0'
     update_snapshot: Optional, default 0 = no. If -1, highest integer value available.
                      If integer, look for that snapshot.
     """
     project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")
+    if project == "from_top_tracking":
+        net_type == "mobilenet_v2_1.0"
     for phase in ["test", "train"]:
         config_search = list(project_path.rglob(f"{phase}/pose_cfg.yaml"))
         if not config_search:
@@ -39,35 +41,60 @@ def update_pose_cfg(project="from_top_tracking", update_snapshot=0):
         config_path = config_search[0]
         cfg = read_plainconfig(config_path)
         if update_snapshot and phase == "train":
-            snaps_on_disk = set(  # get all snapshots on disk
+            # Get available snapshots
+            snaps_on_disk = set(
                 [
                     int(i.split("-")[1])
                     for i in [f.stem for f in list(project_path.rglob("snapshot-*"))]
                 ]
             )
-            if update_snapshot == -1:  # optionally take last in set
-                update_snapshot = snaps_on_disk.pop()
+            # If -1, take most recent
+            if update_snapshot == -1:
+                update_snapshot = snaps_on_disk.pop()  # last in sorted set
             else:
-                assert (  # if desired snap not available
+                # Assert desired snapshot is available
+                assert (
                     update_snapshot in snaps_on_disk
                 ), f"Couldn't find snapshot {update_snapshot} in {config_path.parent}"
+            # Set snaphot value
             cfg["init_weights"] = str(
                 config_path.parent / f"snapshot-{update_snapshot}"
             )
         else:
-            init_weights = Path(cfg["init_weights"])
+            init_weights = Path(
+                cfg["init_weights"]
+            )  # e.g., path/to/snapshot-1 (no ext)
             cfg["init_weights"] = str(
                 find_full_path(get_deeplabcut_path(), init_weights.parent)
-                / init_weights.name
+                / init_weights.name  # need parent/name bc it isn't on disk
             )
+
+        if net_type:  # if net_type explicitly provided, update
+            cfg["net_type"] = net_type
+
+        # For train, pull datatype_set for next function
+        if phase == "train":
+            augmenter_type = cfg.get("dataset_type")
+
         write_plainconfig(config_path, cfg)
 
+    return augmenter_type
 
-def setup_bare_project(project="from_top_tracking"):
-    """Adds absolute paths to config files and generates training-datasets folder"""
+
+def setup_bare_project(project="from_top_tracking", net_type=None):
+    """Adds absolute paths to config files and generates training-datasets folder
+
+    Parameters
+    ----------
+    project: Optional, default 'from_top_tracking'. DLC project folder
+    net_type: Optional. Project net (e.g., resnet50) passed to creat_training_dataset
+              if project is default, 'mobilenet_v2_1.0'
+    """
     from deeplabcut import create_training_dataset
 
-    # from deeplabcut import merge_datasets # creates new iteration, requires retrain
+    if project == "from_top_tracking":  # set net_type for example data
+        net_type = "mobilenet_v2_1.0"
+
     # NOTE: variable conventions following DLC for potential PR
     # _ = merge_datasets(config)
 
@@ -81,30 +108,20 @@ def setup_bare_project(project="from_top_tracking"):
         cfg_videoset_paths[os.path.join(project_path, video)] = value
     project_cfg["video_sets"] = cfg_videoset_paths  # save new fullpaths
     write_plainconfig(project_config_path, project_cfg)
-    # Update train/test pose_cfg
-    update_pose_cfg(project=project, update_snapshot=-1)
+    # Update train/test pose_cfg, return augmenter type
+    augmenter_type = update_pose_cfg(
+        project=project, net_type=net_type, update_snapshot=-1
+    )
 
     # ---- Create training dataset ----
     # Folder deleted from publicly available data to cut down on size
     _ = create_training_dataset(
         project_config_path,
         num_shuffles=1,
+        net_type=net_type,
+        augmenter_type=augmenter_type,
         posecfg_template=str(next(Path(project_path).rglob("train/pose_cfg.y?ml"))),
     )
-
-
-def download_weights(weights="mobilenet_v2_1.0"):
-    """Downloads model to default DLC path. For from-top project, use default model
-
-    Parameters
-    ---------
-    model: Optional, default mobilenet v2_1.0. Which model to download
-    force: Optional, default False. Even if files already present, download again.
-    """
-    from deeplabcut.utils.auxfun_models import Check4weights
-    from deeplabcut.utils.auxiliaryfunctions import get_deeplabcut_path
-
-    Check4weights(weights, get_deeplabcut_path(), 0)
 
 
 def shorten_video(
@@ -134,3 +151,18 @@ def shorten_video(
         + f"{vid_path_full} -vcodec copy -acodec copy {output_path_full}"
     )
     _ = os.system(cmd)
+
+
+def revert_checkpoint_file(
+    project="from_top_tracking", original_checkpoint="checkpoint_orig"
+):
+    import shutil
+
+    project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")
+    original_checkpoint_path = list(project_path.rglob(original_checkpoint))
+    assert (
+        len(original_checkpoint_path) == 1
+    ), f"Found more than one original checkpoint:\n{original_checkpoint_path}"
+    shutil.copy(
+        original_checkpoint_path[0], original_checkpoint_path[0].parent / "checkpoint"
+    )

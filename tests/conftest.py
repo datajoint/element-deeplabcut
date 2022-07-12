@@ -74,10 +74,7 @@ def setup(request):
     test_user_data_dir = Path(request.config.getoption("--dj-datadir"))
     test_user_data_dir.mkdir(exist_ok=True)
 
-    if verbose:
-        verbose_context = nullcontext()
-    else:
-        verbose_context = QuietStdOut()
+    verbose_context = nullcontext() if verbose else QuietStdOut()
 
     yield verbose_context
 
@@ -184,13 +181,8 @@ def test_data(dj_config):
             return
 
     with verbose_context:  # Setup - expand relative paths, make a shorter video
-        from workflow_deeplabcut.load_demo_data import (
-            download_weights,
-            setup_bare_project,
-            shorten_video,
-        )
+        from workflow_deeplabcut.load_demo_data import setup_bare_project, shorten_video
 
-        download_weights()
         setup_bare_project(project=test_data_project)
         shorten_video(vid_path=inference_vid)
 
@@ -209,7 +201,7 @@ def pipeline(setup):
         "subject": pipeline.subject,
         "session": pipeline.session,
         "lab": pipeline.lab,
-        "get_dlc_root_data_dir": get_dlc_root_data_dir,
+        "Device": pipeline.Device,
     }
     if _tear_down:
         with verbose_context:
@@ -317,24 +309,27 @@ def populate_settings():
 
 @pytest.fixture()
 def training_task(pipeline, ingest_csvs):
+    """Add task to train.TrainingTask"""
     if 0 not in pipeline["train"].TrainingTask.fetch("training_id"):
         pipeline["train"].TrainingTask.insert1(
             {
                 "paramset_idx": 0,
                 "training_id": 0,
-                "video_set_id": 1,
+                "video_set_id": 0,
                 "project_path": test_data_project,
             },
             skip_duplicates=True,
         )
         with verbose_context:
-            print("Added training task")
+            print("\nAdded training task")
 
 
 @pytest.fixture()
 def pose_estim_task(pipeline, ingest_csvs):
-
-    key = (pipeline["model"].VideoRecording & "recording_id=1").fetch1("KEY")
+    """Add model.PoseEstimationTask. Return key and device ID"""
+    key, device = (pipeline["model"].VideoRecording & "recording_id=1").fetch1(
+        "KEY", "device"
+    )
     key.update({"model_name": model_name, "task_mode": "trigger"})
     analyze_params = {"save_as_csv": True}
 
@@ -343,4 +338,46 @@ def pose_estim_task(pipeline, ingest_csvs):
             key, params=analyze_params
         )
         with verbose_context:
-            print("Added estimation task")
+            print("\nAdded estimation task")
+
+    yield key, device
+
+
+@pytest.fixture()
+def pose_output_path(setup, pose_estim_task):
+    """Run model.PoseEstimation populate. Return expected output dir."""
+    from workflow_deeplabcut.load_demo_data import revert_checkpoint_file
+
+    verbose_context = setup
+    _, device = pose_estim_task
+
+    revert_checkpoint_file()  # ensures checkpoint has access to well-trained model
+
+    output_path = find_full_path(
+        get_dlc_root_data_dir(),
+        (  # essentially tests model.PoseEstim.infer_output_path() is working
+            f"{test_data_project}/videos/device_{device}_recording_1_model_"
+            + model_name.replace(" ", "-")
+        ),
+    )
+    yield output_path
+
+    if _tear_down:
+        with verbose_context:
+            for results_file in output_path.glob("*"):
+                results_file.unlink()
+
+
+@pytest.fixture()
+def run_pose_estim(setup, pipeline, pose_estim_task, populate_settings):
+    """Run pose estimation"""
+    verbose_context = setup
+    with verbose_context:
+        pipeline["model"].PoseEstimation.populate(**populate_settings)
+
+
+@pytest.fixture()
+def get_trajectory(pipeline, pose_estim_task, run_pose_estim):
+    """Run model.PoseEstimation.get_trajectory for sample task, return pandas df"""
+    key, _ = pose_estim_task
+    yield pipeline["model"].PoseEstimation.get_trajectory(key)
