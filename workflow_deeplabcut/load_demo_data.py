@@ -9,7 +9,6 @@ import os
 def download_djarchive_dlc_data(target_directory="/tmp/workflow_dlc_data/"):
     """Download DLC demo data from djarchive"""
     import djarchive_client
-    from workflow_deeplabcut import version
 
     client = djarchive_client.client()
     os.makedirs(target_directory)

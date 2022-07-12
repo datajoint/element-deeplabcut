@@ -2,7 +2,8 @@
 #   TEST_DATA_DIR=<local parent directory of workflow_dlc_data{1,2}>
 #   GITHUB_USERNAME=datajoint
 #   INSTALL_OPTION=local-all, local-dlc, or git
-#   TEST_CMD="pytest" # --dj-{verbose,teardown} False; True (do nothing)
+#   TEST_CMD="pytest" # pytest --dj-{verbose,teardown} False  # options
+                      # to do nothing, set as "True"
 # export COMPOSE_DOCKER_CLI_BUILD=0 # some machines need for smooth --build
 # docker-compose -f ./docker/docker-compose-test.yaml up --build --force-recreate --detached
 # docker exec -it workflow-deeplabcut_workflow_1 /bin/bash
@@ -39,7 +40,6 @@ services:
       - bash
       - -c
       - |
-        echo "------ INTEGRATION TESTS ------"
         eval ${TEST_CMD}
         tail -f /dev/null
     volumes:
@@ -54,4 +54,4 @@ services:
       db:
         condition: service_healthy
 networks:
-  main:
+  deeplabcut:

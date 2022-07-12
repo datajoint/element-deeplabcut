@@ -141,28 +141,6 @@ def test_data(dj_config):
     try:
         test_data_dir = find_full_path(get_dlc_root_data_dir(), test_data_project)
     except FileNotFoundError:
-        try:  # prefer from os env for docker testing
-            djarchive_from_os = {
-                "djarchive.endpoint": os.environ["DJARCHIVE_CLIENT_ENDPOINT"],
-                "djarchive.bucket": os.environ["DJARCHIVE_CLIENT_BUCKET"],
-                "djarchive.access_key": os.environ["DJARCHIVE_CLIENT_ACCESSKEY"],
-                "djarchive.secret_key": os.environ["DJARCHIVE_CLIENT_SECRETKEY"],
-            }
-            dj.config["custom"].update(djarchive_from_os)
-        except KeyError as e:
-            if not all(  # if not in env, permit from config
-                [
-                    k in dj.config["custom"].keys()  # if config, assume default bucket
-                    for k in ["djarchive.access_key", "djarchive.secret_key"]
-                ]
-            ):
-                raise FileNotFoundError(
-                    f"Local: Test data not available from root(s):\n\t"
-                    f"{get_dlc_root_data_dir()}"
-                    f"DJArchive: Missing environment variables:\n\t{str(e)}"
-                    f"DJArchive: Missing config custom variables:\n\t"
-                    "djarchive.access_key and/or djarchive.secret_key"
-                )
         from workflow_deeplabcut.load_demo_data import download_djarchive_dlc_data
 
         download_djarchive_dlc_data(get_dlc_root_data_dir()[0])
@@ -358,6 +336,7 @@ def pose_output_path(setup, pose_estim_task):
         (  # essentially tests model.PoseEstim.infer_output_path() is working
             f"{test_data_project}/videos/device_{device}_recording_1_model_"
             + model_name.replace(" ", "-")
+            + "/"
         ),
     )
     yield output_path

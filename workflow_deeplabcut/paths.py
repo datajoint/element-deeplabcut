@@ -1,11 +1,12 @@
 import datajoint as dj
+from collections import abc
 
 
 def get_dlc_root_data_dir():
     dlc_root_dirs = dj.config.get("custom", {}).get("dlc_root_data_dir")
     if not dlc_root_dirs:
         return None
-    elif not isinstance(dlc_root_dirs, list):
+    elif not isinstance(dlc_root_dirs, abc.Sequence):
         return list(dlc_root_dirs)
     else:
         return dlc_root_dirs
