@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.13.7
 #   kernelspec:
-#     display_name: venv-dlc
+#     display_name: Python 3.8.11 ('ele')
 #     language: python
-#     name: venv-dlc
+#     name: python3
 # ---
 
 # %% [markdown] tags=[]
@@ -20,35 +20,31 @@
 # ## Configure DataJoint
 
 # %% [markdown] tags=[]
-# - To run `workflow-deeplabcut`, we need to set up the DataJoint configuration file, called `dj_local_conf.json`, unique to each machine.
+# - To run `workflow-deeplabcut`, we need to set up the DataJoint config file, called `dj_local_conf.json`, unique to each machine.
 #
-# - The config only needs to be set up once. If you have gone through the configuration before, directly go to [02-Workflow-Structure](./02-WorkflowStructure_Optional.ipynb).
+# - The config only needs to be set up once. If you already have one, skip to [02-Workflow-Structure](./02-WorkflowStructure_Optional.ipynb).
 #
-# - By convention, we set the config up in the root directory of `workflow-deeplabcut` package. After you set up DataJoint once, you may be interested in [setting a global config](https://docs.datajoint.org/python/setup/01-Install-and-Connect.html).
+# - By convention, we set a local config in the workflow directory. You may be interested in [setting a global config](https://docs.datajoint.org/python/setup/01-Install-and-Connect.html).
 
 # %%
 import os
-
 # change to the upper level folder to detect dj_local_conf.json
-if os.path.basename(os.getcwd()) == "notebooks":
-    os.chdir("..")
-assert os.path.basename(os.getcwd()) == "workflow-deeplabcut", (
-    "Please move to the " + "workflow directory"
-)
+if os.path.basename(os.getcwd())=='notebooks': os.chdir('..')
+assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to the "
+                                                              + "workflow directory")
 
 # %% [markdown]
 # ### Configure database host address and credentials
 
 # %% [markdown]
-# Now let's set up the host, user and password in the `dj.config` following [instructions here](https://tutorials.datajoint.io/setting-up/get-database.html).
+# Now we can set up credentials following [instructions here](https://tutorials.datajoint.io/setting-up/get-database.html).
 
 # %%
 import datajoint as dj
 import getpass
-
-dj.config["database.host"] = "{YOUR_HOST}"
-dj.config["database.user"] = "{YOUR_USERNAME}"
-dj.config["database.password"] = getpass.getpass()  # enter the password securely
+dj.config['database.host'] = '{YOUR_HOST}'
+dj.config['database.user'] = '{YOUR_USERNAME}'
+dj.config['database.password'] = getpass.getpass() # enter the password securely
 
 # %% [markdown]
 # You should be able to connect to the database at this stage.
@@ -57,56 +53,46 @@ dj.config["database.password"] = getpass.getpass()  # enter the password securel
 dj.conn()
 
 # %% [markdown]
-# ### Configure the `custom` field in `dj.config` for element-deeplabcut
+# ### Configure the `custom` field
 
 # %% [markdown]
 # #### Prefix
 
 # %% [markdown]
-# Giving a prefix to your schema could help manage privelages on a server.
-# - If we set prefix `neuro_`, every schema created with the current workflow will start with `neuro_`, e.g. `neuro_lab`, `neuro_subject`, `neuro_imaging` etc.
-# - Teams who work on the same schemas should use the same prefix, set as follows:
+# A schema prefix can help manage privelages on a server. Teams who work on the same schemas should use the same prefix
+#
+# Setting the prefix to `neuro_` means that every schema we then create will start with `neuro_` (e.g. `neuro_lab`, `neuro_subject`, `neuro_model` etc.)
 
 # %%
-dj.config["custom"] = {"database.prefix": "neuro_"}
+dj.config['custom'] = {'database.prefix': 'neuro_'}
 
 # %% [markdown]
 # #### Root directory
 
 # %% [markdown]
-# The `custom` field also keeps track of your root directory with `dlc_root_data_dir`. It can even accept roots. element-deeplabcut will always figure out which root to use based on the files it expects there.
-#
-# - Please set one root to the parent directory of DLC's `openfield-Pranav-2018-10-30` example.
-# - In other cases, this should be the parent of your DLC project path.
+# `dlc_root_data_dir` sets the root path(s) for the Element. Given multiple, the Element will always figure out which root to use based on the files it expects there. This should be the directory above your DeepLabCut project path.
 
 # %%
-dj.config["custom"] = {"dlc_root_data_dir": ["your-root1", "your-root2"]}
+dj.config['custom'] = {'dlc_root_data_dir' : ['/tmp/test_data/', '/tmp/example/']}
 
-# %% [markdown]
-# Let's check that find the path connects with a tool from [element-interface](https://github.com/datajoint/element-interface).
-
-# %%
+# Check the connection with `find_full_path`
 from element_interface.utils import find_full_path
-
-data_dir = find_full_path(
-    dj.config["custom"]["dlc_root_data_dir"], "openfield-Pranav-2018-10-30"
-)
-assert data_dir.exists(), "Please check the that you have the folder openfield-Pranav"
+data_dir = find_full_path(dj.config['custom']['dlc_root_data_dir'],
+                          'from_top_tracking')
+assert data_dir.exists(), "Please check the that you have the from_top_tracking folder"
 
 # %% [markdown]
-# ## Save the config as a json file
+# ## Save the config as a json
 #
-# With the proper configurations, we could save this as a file, either as a local json file, or a global file.
+# Once set, the config can either be saved locally or globally. 
+#
+# - The local config would be saved as `dj_local_conf.json` in the workflow directory. This is usefull for managing multiple (demo) pipelines.
+# - A global config would be saved as `datajoint_config.json` in the home directory.
+#
+# When imported, DataJoint will first check for a local config. If none, it will check for a global config.
 
 # %%
 dj.config.save_local()
-
-# %% [markdown]
-# The local config is saved as `dj_local_conf.json` in the root directory of this `workflow-deeplabcut`. Next time you import DataJoint while in this directory, the same settings will be loaded.
-#
-# If saved globally, there will be a hidden configuration file saved in your computer's root directory that will be loaded when no local version is present.
-
-# %%
 # dj.config.save_global()
 
 # %% [markdown]

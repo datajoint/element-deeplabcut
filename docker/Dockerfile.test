@@ -3,7 +3,7 @@ FROM datajoint/djbase:py3.9-debian-8eb1715
 # ARG GITHUB_USERNAME=datajoint # tried moving to ENV
 USER anaconda:anaconda
 
-COPY ./docker/apt_requirements.txt /tmp/
+COPY ./workflow-deeplabcut/docker/apt_requirements.txt /tmp/
 RUN /entrypoint.sh echo "Installed dependencies."
 
 WORKDIR /main/workflow-deeplabcut
@@ -13,17 +13,22 @@ RUN pip install --no-deps "element-interface@git+https://github.com/datajoint/el
 RUN pip install --no-deps "djarchive-client@git+https://github.com/datajoint/djarchive-client"
 
 # Always move local to temp, if they exist - conditional install in setup.sh
-COPY --chown=anaconda:anaconda . \
-                               ../element-lab? \
-                               ../element-animal? \
-                               ../element-session? \
-                               ../element-event? \
-                               ../element-interface? \
-                               ../element-deeplabcut? \
-                               /main/ 
+COPY --chown=anaconda:anaconda ./element-lab/ \
+                               ./element-animal/ \
+                               ./element-session/ \
+                               ./element-event/ \
+                               ./element-interface/ \
+                               ./element-deeplabcut/ \
+                               ./workflow-deeplabcut/ \
+                               /main/
+# COPY --chown=anaconda:anaconda . /main/workflow-deeplabcut/
 
 # Conditional install - local-all, local-dlc, or git
-RUN ./setup.sh 
+COPY --chown=anaconda:anaconda ./workflow-deeplabcut/docker/setup.sh /main/
+# RUN chmod 755 /main/.env
+# RUN dotenv -f /main/.env -q always set
+RUN chmod 755 /main/setup.sh
+RUN /main/setup.sh 
 
 RUN rm -f ./dj_local_conf.json
-RUN pip install -r ./requirements_test.txt
+# RUN pip install -r ./requirements_test.txt

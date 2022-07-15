@@ -1,8 +1,11 @@
+#! /bin/bash
+echo "INSALL OPTION:" $INSTALL_OPTION
 # all local installs, mapped from host
 if [ "$INSTALL_OPTION" == "local-all" ]; then
-    for f in $(ls -d ./{ele,work}*); do 
-        pip install -e /main/${f}
+    for f in lab animal session event deeplabcut; do 
+        pip install -e ./element-${f}
     done
+    pip install -e ./workflow-deeplabcut
 # all except workflow pip installed
 else 
     pip install git+https://github.com/${GITHUB_USERNAME}/element-lab.git
@@ -11,10 +14,10 @@ else
     pip install git+https://github.com/${GITHUB_USERNAME}/element-event.git
     # only deeplabcut items from local install
     if [ "$INSTALL_OPTION" == "local-dlc" ]; then
-        pip install -e /main/element-deeplabcut
-        pip install -e /main/workflow-deeplabcut
-    # unless specified, defualts to git install
-    else
+        pip install -e ./element-deeplabcut
+        pip install -e ./workflow-deeplabcut
+    # all from github
+    elif [ "$INSTALL_OPTION" == "git" ]; then
         pip install git+https://github.com/${GITHUB_USERNAME}/element-deeplabcut.git
         pip install git+https://github.com/${GITHUB_USERNAME}/workflow-deeplabcut.git
     fi

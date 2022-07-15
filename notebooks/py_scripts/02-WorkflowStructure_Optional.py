@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.13.7
 #   kernelspec:
-#     display_name: venv-dlc
+#     display_name: Python 3.8.11 ('ele')
 #     language: python
-#     name: venv-dlc
+#     name: python3
 # ---
 
 # %% [markdown] tags=[]
@@ -21,7 +21,7 @@
 # ## Introduction
 
 # %% [markdown]
-# This notebook gives a brief overview and introduces some useful DataJoint tools to facilitate the exploration.
+# This notebook gives an overview and introduces some useful DataJoint tools to facilitate the exploration.
 #
 # + DataJoint needs to be configured before running this notebook, if you haven't done so, refer to the [01-Configure](./01-Configure.ipynb) notebook.
 # + If you are familar with DataJoint and the workflow structure, proceed to the next notebook [03-Process](./03-Process.ipynb) directly to run the workflow.
@@ -32,12 +32,9 @@
 
 # %%
 import os
-
-if os.path.basename(os.getcwd()) == "notebooks":
-    os.chdir("..")
-assert os.path.basename(os.getcwd()) == "workflow-deeplabcut", (
-    "Please move to the " + "workflow directory"
-)
+if os.path.basename(os.getcwd())=='notebooks': os.chdir('..')
+assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to the "
+                                                              + "workflow directory")
 
 # %% [markdown]
 # ## Schemas and tables
@@ -69,22 +66,22 @@ train.schema.list_tables()
 # While the `model` schema is required for pose estimation, the `train` schema is optional, and can be used to manage model training within DataJoint
 
 # %% `dj.Diagram()`: plot tables and dependencies
-dj.Diagram(train)  # - 1
+dj.Diagram(train) #- 1
 
 # %%
 dj.Diagram(model)
 
 # %% [markdown]
-# ### Table tiers
-# - **Manual table**: green box, manually inserted table, expect new entries daily, e.g. Subject, ProbeInsertion.
-# - **Lookup table**: gray box, pre inserted table, commonly used for general facts or parameters. e.g. Strain, ClusteringMethod, ClusteringParamSet.
-# - **Imported table**: blue oval, auto-processing table, the processing depends on the importing of external files. e.g. process of Clustering requires output files from kilosort2.
-# - **Computed table**: red circle, auto-processing table, the processing does not depend on files external to the database, commonly used for
+# ### Table tiers 
+# - **Manual table**: green box, manually inserted table, expect new entries daily, e.g. Subject, ProbeInsertion.  
+# - **Lookup table**: gray box, pre inserted table, commonly used for general facts or parameters. e.g. Strain, ClusteringMethod, ClusteringParamSet.  
+# - **Imported table**: blue oval, auto-processing table, the processing depends on the importing of external files. e.g. process of Clustering requires output files from kilosort2.  
+# - **Computed table**: red circle, auto-processing table, the processing does not depend on files external to the database, commonly used for     
 # - **Part table**: plain text, as an appendix to the master table, all the part entries of a given master entry represent a intact set of the master entry. e.g. Unit of a CuratedClustering.
 #
 # ### Dependencies
 #
-# - **One-to-one primary**: thick solid line, share the exact same primary key, meaning the child table inherits all the primary key fields from the parent table as its own primary key.
+# - **One-to-one primary**: thick solid line, share the exact same primary key, meaning the child table inherits all the primary key fields from the parent table as its own primary key.     
 # - **One-to-many primary**: thin solid line, inherit the primary key from the parent table, but have additional field(s) as part of the primary key as well
 # - **secondary dependency**: dashed line, the child table inherits the primary key fields from parent table as its own secondary attribute.
 
@@ -97,12 +94,8 @@ lab.schema.list_tables()
 
 # %%
 # plot diagram of selected tables and schemas
-(
-    dj.Diagram(subject.Subject)
-    + dj.Diagram(session.Session)
-    + dj.Diagram(model.VideoRecording)
-    + dj.Diagram(model.PoseEstimationTask)
-)
+(dj.Diagram(subject.Subject) + dj.Diagram(session.Session) 
+ + dj.Diagram(model.VideoRecording) + dj.Diagram(model.PoseEstimationTask)) 
 
 # %% Each datajoint table class inside the module corresponds to a table inside the schema. For example, the class `ephys.EphysRecording` correponds to the table `_ephys_recording` in the schema `neuro_ephys` in the database.
 # preview columns and contents in a table
@@ -134,7 +127,7 @@ dj.Diagram(lab)
 dj.Diagram(subject)
 
 # %% [subject](https://github.com/datajoint/element-animal): contains the basic information of subject, including Strain, Line, Subject, Zygosity, and SubjectDeath information.
-subject.Subject.describe()
+subject.Subject.describe();
 
 # %% [markdown]
 # [`session`](https://github.com/datajoint/element-session): General information of experimental sessions.

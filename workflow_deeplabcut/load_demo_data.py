@@ -91,14 +91,15 @@ def setup_bare_project(project="from_top_tracking", net_type=None):
     """
     from deeplabcut import create_training_dataset
 
-    if project == "from_top_tracking":  # set net_type for example data
+    if "from_top_tracking" in project:  # set net_type for example data
         net_type = "mobilenet_v2_1.0"
 
-    # NOTE: variable conventions following DLC for potential PR
-    # _ = merge_datasets(config)
+    if os.path.isabs(project) and Path(project).exists():
+        project_path = Path(project)
+    else:
+        project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")
 
     # ---- Write roots to project config ----
-    project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")
     project_config_path = project_path / "config.yaml"
     project_cfg = read_plainconfig(project_config_path)
     project_cfg["project_path"] = str(project_path)
@@ -137,14 +138,21 @@ def shorten_video(
                  Where N in first_n_sec
     first_n_sec: Default 2. Number of seconds to extract from beginning of video
     """
-    vid_path_full = find_full_path(get_dlc_root_data_dir(), vid_path)
 
-    vid_path_root = find_root_directory(get_dlc_root_data_dir(), vid_path_full)
+    if os.path.isabs(vid_path) and Path(vid_path).exists():
+        vid_path_full = Path(vid_path)
+    else:
+        vid_path_full = find_full_path(get_dlc_root_data_dir(), vid_path)
+
     if not output_path:
-        output_path = vid_path_full.with_name(
+        output_path_full = vid_path_full.with_name(
             vid_path_full.stem + f"-{first_n_sec}s" + vid_path_full.suffix
         )
-    output_path_full = vid_path_root / output_path
+    else:
+        output_path_full = (
+            find_root_directory(get_dlc_root_data_dir(), vid_path_full) / output_path
+        )
+
     cmd = (  # adjust -ss 0 to start later
         f"ffmpeg -n -hide_banner -loglevel error -ss 0 -t {first_n_sec} -i "
         + f"{vid_path_full} -vcodec copy -acodec copy {output_path_full}"

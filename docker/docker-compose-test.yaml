@@ -1,12 +1,13 @@
 # .env file: 
+#   COMPOSE_PROJECT_NAME='dlc'
 #   TEST_DATA_DIR=<local parent directory of workflow_dlc_data{1,2}>
 #   GITHUB_USERNAME=datajoint
 #   INSTALL_OPTION=local-all, local-dlc, or git
 #   TEST_CMD="pytest" # pytest --dj-{verbose,teardown} False  # options
-                      # to do nothing, set as "True"
+#                     # to do nothing, set as "True"
 # export COMPOSE_DOCKER_CLI_BUILD=0 # some machines need for smooth --build
-# docker-compose -f ./docker/docker-compose-test.yaml up --build --force-recreate --detached
-# docker exec -it workflow-deeplabcut_workflow_1 /bin/bash
+# docker-compose --env-file ./docker/.env -f ./docker/docker-compose-test.yaml up --build --force-recreate --detached
+# docker exec -it workflow-deeplabcut /bin/bash
 # docker-compose -f ./docker/docker-compose-test.yaml down --volumes
 
 version: "2.4"
@@ -24,10 +25,10 @@ services:
     networks:
       deeplabcut:
     build:
-      context: ../.
-      dockerfile: ./docker/Dockerfile.test
+      context: ../../
+      dockerfile: ./workflow-deeplabcut/docker/Dockerfile.test
       args:
-        - GITHUB_USERNAME=datajoint
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
     image: workflow-deeplabcut:0.1.1
     container_name: workflow-deeplabcut
     environment:
@@ -36,6 +37,10 @@ services:
       - DJ_PASS=simple
       - DLC_ROOT_DATA_DIR=/main/test_data/
       - DATABASE_PREFIX=test_
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - INSTALL_OPTION=${INSTALL_OPTION}
+      - TEST_CMD=${TEST_CMD}
     command:
       - bash
       - -c
@@ -44,12 +49,12 @@ services:
         tail -f /dev/null
     volumes:
       - ${TEST_DATA_DIR}:/main/test_data
-      - ./apt_requirements.txt:/tmp/apt_requirements.txt
-      - ../element-lab:/main/element-lab
-      - ../element-animal:/main/element-animal
-      - ../element-session:/main/element-session
-      - ../element-deeplabcut:/main/element-deeplabcut
-      - ..:/main/workflow-deeplabcut
+      # - ./workflow-deeplabcut/apt_requirements.txt:/tmp/apt_requirements.txt
+      - ./element-lab:/main/element-lab
+      - ./element-animal:/main/element-animal
+      - ./element-session:/main/element-session
+      - ./element-deeplabcut:/main/element-deeplabcut
+      - ./workflow-deeplabcut:/main/workflow-deeplabcut
     depends_on:
       db:
         condition: service_healthy

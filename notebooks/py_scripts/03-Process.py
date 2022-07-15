@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.13.7
 #   kernelspec:
-#     display_name: venv-dlc
+#     display_name: Python 3.8.11 ('ele')
 #     language: python
-#     name: venv-dlc
+#     name: python3
 # ---
 
 # %% [markdown] tags=[]
@@ -29,13 +29,10 @@
 
 # %%
 import os
-
 # change to the upper level folder to detect dj_local_conf.json
-if os.path.basename(os.getcwd()) == "notebooks":
-    os.chdir("..")
-assert os.path.basename(os.getcwd()) == "workflow-deeplabcut", (
-    "Please move to the " + "workflow directory"
-)
+if os.path.basename(os.getcwd())=='notebooks': os.chdir('..')
+assert os.path.basename(os.getcwd())=='workflow-deeplabcut', ("Please move to the "
+                                                              + "workflow directory")
 
 # %% [markdown]
 # `Pipeline.py` activates the DataJoint `elements` and declares other required tables.
@@ -47,10 +44,8 @@ from workflow_deeplabcut.pipeline import lab, subject, session, train, model
 # Directing our pipeline to the appropriate config location
 from element_interface.utils import find_full_path
 from workflow_deeplabcut.paths import get_dlc_root_data_dir
-
-config_path = find_full_path(
-    get_dlc_root_data_dir(), "openfield-Pranav-2018-10-30/config.yaml"
-)
+config_path = find_full_path(get_dlc_root_data_dir(), 
+                             'openfield-Pranav-2018-10-30/config.yaml')
 
 # %% [markdown] tags=[]
 # ### Inserting entries into upstream tables
@@ -62,29 +57,23 @@ config_path = find_full_path(
 subject.Subject.heading
 
 # %%
-subject.Subject.insert1(
-    dict(
-        subject="subject6",
-        sex="F",
-        subject_birth_date="2020-01-01",
-        subject_description="hneih_E105",
-    )
-)
+subject.Subject.insert1(dict(subject='subject6', 
+                             sex='F', 
+                             subject_birth_date='2020-01-01', 
+                             subject_description='hneih_E105'))
 
 # %%
 subject.Subject & "subject='subject6'"
 
 # %%
-session.Session.describe()
+session.Session.describe();
 
 # %%
 session.Session.heading
 
 # %%
-session_keys = [
-    dict(subject="subject6", session_datetime="2021-06-02 14:04:22"),
-    dict(subject="subject6", session_datetime="2021-06-03 14:43:10"),
-]
+session_keys = [dict(subject='subject6', session_datetime='2021-06-02 14:04:22'),
+                dict(subject='subject6', session_datetime='2021-06-03 14:43:10')]
 session.Session.insert(session_keys)
 
 # %%
@@ -97,14 +86,16 @@ session.Session() & "session_datetime > '2021-06-01 12:00:00'" & "subject='subje
 # The `VideoSet` table handles all files generated in the video labeling process, including the `h5`, `csv`, and `png` files under the `labeled-data` directory. While these aren't required for launching DLC training, it may be helpful to retain records. DLC will instead refer to the `mat` file located under the `training-datasets` directory.
 
 # %%
-train.VideoSet.insert1({"video_set_id": 1})
-labeled_dir = "openfield-Pranav-2018-10-30/labeled-data/m4s1/"
-training_files = ["CollectedData_Pranav.h5", "CollectedData_Pranav.csv", "img0000.png"]
+train.VideoSet.insert1({'video_set_id': 1})
+labeled_dir = 'openfield-Pranav-2018-10-30/labeled-data/m4s1/'
+training_files = ['CollectedData_Pranav.h5',
+                  'CollectedData_Pranav.csv',
+                  'img0000.png']
 for file in training_files:
-    train.VideoSet.File.insert1({"video_set_id": 1, "file_path": (labeled_dir + file)})
-train.VideoSet.File.insert1(
-    {"video_set_id": 1, "file_path": "openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4"}
-)
+    train.VideoSet.File.insert1({'video_set_id': 1,
+                                 'file_path': (labeled_dir + file)})
+train.VideoSet.File.insert1({'video_set_id':1, 'file_path': 
+                            'openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4'})
 
 # %%
 train.VideoSet.File()
@@ -119,12 +110,11 @@ train.VideoSet.File()
 train.TrainingParamSet.heading
 
 # %% [markdown]
-# The `params` longblob should be a dictionary that includes all items to be included in model training via the `train_network` function. At minimum, this is the contents of the project's config file, as well as `suffle` and `trainingsetindex`, which are not included in the config.
+# The `params` longblob should be a dictionary that includes all items to be included in model training via the `train_network` function. At minimum, this is the contents of the project's config file, as well as `suffle` and `trainingsetindex`, which are not included in the config. 
 
 # %%
 from deeplabcut import train_network
-
-help(train_network)  # for more information on optional parameters
+help(train_network) # for more information on optional parameters
 
 # %% [markdown]
 # Below, we give the parameters and index and description and load the config contents. We can then overwrite any defaults, including `maxiters`, to restrict our training iterations to 5.
@@ -132,23 +122,20 @@ help(train_network)  # for more information on optional parameters
 # %%
 import yaml
 
-paramset_idx = 1
-paramset_desc = "OpenField"
+paramset_idx = 1; paramset_desc='OpenField'
 
-with open(config_path, "rb") as y:
+with open(config_path, 'rb') as y:
     config_params = yaml.safe_load(y)
-training_params = {
-    "shuffle": "1",
-    "trainingsetindex": "0",
-    "maxiters": "5",
-    "scorer_legacy": "False",
-    "maxiters": "5",
-    "multianimalproject": "False",
-}
+training_params = {'shuffle': '1',
+                   'trainingsetindex': '0',
+                   'maxiters': '5',
+                   'scorer_legacy': 'False',
+                   'maxiters': '5', 
+                   'multianimalproject':'False'}
 config_params.update(training_params)
-train.TrainingParamSet.insert_new_params(
-    paramset_idx=paramset_idx, paramset_desc=paramset_desc, params=config_params
-)
+train.TrainingParamSet.insert_new_params(paramset_idx=paramset_idx,
+                                         paramset_desc=paramset_desc,
+                                         params=config_params)
 
 # %% [markdown]
 # Then we add training to the the `TrainingTask` table. The `ModelTraining` table can automatically train and populate all tasks outlined in `TrainingTask`.
@@ -157,12 +144,8 @@ train.TrainingParamSet.insert_new_params(
 train.TrainingTask.heading
 
 # %%
-key = {
-    "video_set_id": 1,
-    "paramset_idx": 1,
-    "training_id": 1,
-    "project_path": "openfield-Pranav-2018-10-30/",
-}
+key={'video_set_id': 1, 'paramset_idx':1,'training_id':1,
+     'project_path':'openfield-Pranav-2018-10-30/'}
 train.TrainingTask.insert1(key, skip_duplicates=True)
 train.TrainingTask()
 
@@ -173,7 +156,7 @@ train.ModelTraining.populate()
 train.ModelTraining()
 
 # %% [markdown]
-# To start training from a previous instance, one would need to
+# To start training from a previous instance, one would need to 
 # [edit the relevant config file](https://github.com/DeepLabCut/DeepLabCut/issues/70) and
 # adjust the `maxiters` paramset (if present) to a higher threshold (e.g., 10 for 5 more itterations).
 # Emperical work from the Mathis team suggests 200k iterations for any true use-case.
@@ -197,8 +180,8 @@ model.BodyPart.extract_new_body_parts(config_path)
 # Now, we can make a list of descriptions in the same order, and insert them into the table
 
 # %%
-bp_desc = ["Left Ear", "Right Ear", "Snout Position", "Base of Tail"]
-model.BodyPart.insert_from_config(config_path, bp_desc)
+bp_desc=['Left Ear', 'Right Ear', 'Snout Position', 'Base of Tail']
+model.BodyPart.insert_from_config(config_path,bp_desc)
 
 # %% [markdown]
 # If we skip this step, body parts (without descriptions) will be added when we insert a model. We can [update](https://docs.datajoint.org/python/v0.13/manipulation/3-Cautious-Update.html) empty descriptions at any time.
@@ -210,14 +193,10 @@ model.BodyPart.insert_from_config(config_path, bp_desc)
 # If training appears successful, the result can be inserted into the `Model` table for automatic evaluation.
 
 # %%
-model.Model.insert_new_model(
-    model_name="OpenField-5",
-    dlc_config=config_path,
-    shuffle=1,
-    trainingsetindex=0,
-    model_description="Open field model trained 5 iterations",
-    paramset_idx=1,
-)
+model.Model.insert_new_model(model_name='OpenField-5',dlc_config=config_path,
+                             shuffle=1,trainingsetindex=0,
+                             model_description='Open field model trained 5 iterations',
+                             paramset_idx=1)
 
 # %%
 model.Model()
@@ -248,22 +227,18 @@ model.ModelEvaluation()
 # To put this model to use, we'll conduct pose estimation on the video generated in the [DataDownload notebook](./00_DataDownload_Optional.ipynb). First, we need to update the `VideoRecording` table with the recording from a session.
 
 # %%
-key = {
-    "subject": "subject6",
-    "session_datetime": "2021-06-02 14:04:22",
-    "recording_id": "1",
-    "equipment": "Camera1",
-}
+key = {'subject': 'subject6',
+       'session_datetime': '2021-06-02 14:04:22',
+       'recording_id': '1', 'equipment': 'Camera1'}
 model.VideoRecording.insert1(key)
 
 # %% [markdown]
 # Note that `/` at the beginning of a path implies the machine's root directory. Do not include an initial `/` in relative file paths.
 
 # %%
-key.pop("equipment")  # get rid of secondary key from master table
-key.update(
-    {"file_id": 1, "file_path": "openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4"}
-)
+_ = key.pop('equipment') # get rid of secondary key from master table
+key.update({'file_id': 1, 
+            'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4'})
 model.VideoRecording.File.insert1(key)
 
 # %%
@@ -280,12 +255,12 @@ model.RecordingInfo()
 #  Next, we need to specify if the `PoseEstimation` table should load results from an existing file or trigger the estimation command. Here, we can also specify parameters accepted by the `analyze_videos` function as a dictionary.
 
 # %%
-key = (model.VideoRecording & {"recording_id": "1"}).fetch1("KEY")
-key.update({"model_name": "OpenField-5", "task_mode": "trigger"})
+key = (model.VideoRecording & {'recording_id': '1'}).fetch1('KEY')
+key.update({'model_name': 'OpenField-5', 'task_mode': 'trigger'})
 key
 
 # %%
-model.PoseEstimationTask.insert_estimation_task(key, params={"save_as_csv": True})
+model.PoseEstimationTask.insert_estimation_task(key,params={'save_as_csv':True})
 
 # %%
 model.PoseEstimation.populate()
@@ -294,10 +269,10 @@ model.PoseEstimation.populate()
 # By default, DataJoint will store the results of pose estimation in a subdirectory
 # >  processed_dir / videos / device_<#>_recording_<#>_model_<name>
 #
-# Pulling processed_dir from `get_dlc_processed_dir`, and device/recording information
+# Pulling processed_dir from `get_dlc_processed_dir`, and device/recording information 
 # from the `VideoRecording` table. The model name is taken from the primary key of the
 # `Model` table, with spaced replaced by hyphens.
-#
+#     
 # We can get this estimation directly as a pandas dataframe.
 
 # %%
