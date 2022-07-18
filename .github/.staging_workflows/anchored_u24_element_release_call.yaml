@@ -17,7 +17,7 @@ anchor-prod-release-call: &prod-release-call
 
 jobs:
   test_call_u24_elements_release_alpine:
-    if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
+    #if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
     !!merge <<: *$STAGE-release-call
     with:
       TWINE_REPO: testpypi
