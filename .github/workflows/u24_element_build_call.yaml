@@ -10,5 +10,7 @@ jobs:
   #     py_ver: 3.9
   #     image: djbase
   skip_build:
-    run: |-
-      echo "Build finished"
+    steps:
+      - name: Skip build
+        run: |-
+          echo "Build finished"
