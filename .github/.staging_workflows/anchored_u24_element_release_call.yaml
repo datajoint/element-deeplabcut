@@ -17,10 +17,10 @@ anchor-prod-release-call: &prod-release-call
 
 jobs:
   test_call_u24_elements_release_alpine:
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      ( startsWith(github.ref, 'refs/tags/test') || 
-        github.event.workflow_run.event == 'pull_request')
+    if: >
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          ( startsWith(github.ref, 'refs/tags/test') || 
+            github.event.workflow_run.event == 'pull_request') }}
     !!merge <<: *$STAGE-release-call
     with:
       TWINE_REPO: testpypi
@@ -29,10 +29,10 @@ jobs:
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
   
   call_u24_elements_release_alpine:
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      startsWith(github.ref, 'refs/tags') &&
-      startsWith(github.ref, 'refs/tags/test') != true
+    if: >
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          startsWith(github.ref, 'refs/tags') &&
+          !startsWith(github.ref, 'refs/tags/test')}}
     !!merge <<: *$STAGE-release-call
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
