@@ -16,8 +16,16 @@ anchor-prod-release-call: &prod-release-call
   uses: dj-sciops/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
 
 jobs:
+  condition_check:
+    runs_on: ubuntu
+    steps:
+      - name: condition_check
+        run: |
+          echo ${{github.event.workflow_run.conclusion}}
+          echo ${{github.ref}}
+          echo ${{github.event.workflow_run.event}}
   test_call_u24_elements_release_alpine:
-    #if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
+    if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
     !!merge <<: *$STAGE-release-call
     with:
       TWINE_REPO: testpypi
