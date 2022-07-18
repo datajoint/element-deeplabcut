@@ -7,13 +7,13 @@ on:
       - completed
 
 anchor-dev-release-call: &dev-release-call
-  uses: yambottle/djsciops-cicd/.github/workflows/u24_element_test_release.yaml@main
+  uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
 
 anchor-test-release-call: &test-release-call
-  uses: yambottle/djsciops-cicd/.github/workflows/u24_element_test_release.yaml@main
+  uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
 
 anchor-prod-release-call: &prod-release-call
-  uses: dj-sciops/djsciops-cicd/.github/workflows/u24_element_test_release.yaml@main
+  uses: dj-sciops/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
 
 jobs:
   test_call_u24_elements_release_alpine:
