@@ -294,10 +294,11 @@ labeled_dir = 'openfield-Pranav-2018-10-30/labeled-data/m4s1/'
 training_files = ['CollectedData_Pranav.h5',
                   'CollectedData_Pranav.csv',
                   'img0000.png']
-for file in training_files:
+for idx, filename in training_files:
     train.VideoSet.File.insert1({'video_set_id': 1,
+                                 'file_id': idx,   
                                  'file_path': (labeled_dir + file)})
-train.VideoSet.File.insert1({'video_set_id':1, 'file_path': 
+train.VideoSet.File.insert1({'video_set_id':1, 'file_id': 4, 'file_path': 
                             'openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4'})
 
 # %%
@@ -418,10 +419,10 @@ model.ModelEvaluation()
 # %%
 key = {'subject': 'subject6',
        'session_datetime': '2021-06-02 14:04:22',
-       'recording_id': '1', 'equipment': 'Camera1'}
+       'recording_id': '1', 'device': 'Camera1'}
 model.VideoRecording.insert1(key)
 
-_ = key.pop('equipment') # get rid of secondary key from master table
+_ = key.pop('device') # get rid of secondary key from master table
 key.update({'file_id': 1, 
             'file_path': 'openfield-Pranav-2018-10-30/videos/m3v1mp4-copy.mp4'})
 model.VideoRecording.File.insert1(key)

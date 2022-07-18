@@ -72,11 +72,12 @@ def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=Tr
         )
 
 
-def ingest_train_vids(train_video_csv_path, skip_duplicates=True, verbose=False):
+def ingest_train_vids(train_video_csv_path, verbose=False, **kwargs):
     """Use provided CSV to insert into train.VideoSet and train.VideoSet.File"""
     csvs = [train_video_csv_path, train_video_csv_path]
     tables = [train.VideoSet(), train.VideoSet.File()]
-    ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates, verbose=verbose)
+    # With current CSV organization, must skip vids, as primary key is duplicated
+    ingest_csv_to_table(csvs, tables, skip_duplicates=True, verbose=verbose)
 
 
 def ingest_model_vids(model_video_csv_path, skip_duplicates=True, verbose=False):

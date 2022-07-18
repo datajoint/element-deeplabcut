@@ -51,6 +51,7 @@ from workflow_deeplabcut.pipeline import lab, subject, session, train, model
 
 dj.list_schemas()
 
+# %%
 train.schema.list_tables()
 
 # %% [markdown]
@@ -60,10 +61,10 @@ train.schema.list_tables()
 # - `model`: Schema to manage pose estimation
 
 # %% `dj.Diagram()`: plot tables and dependencies
-dj.Diagram(train) #- 1
+dj.Diagram(train)
 
 # %%
-dj.Diagram(model)
+dj.Diagram(model) - 1
 
 # %% [markdown]
 # ### Table Types
