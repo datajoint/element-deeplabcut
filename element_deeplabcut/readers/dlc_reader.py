@@ -158,6 +158,7 @@ def save_yaml(output_dir, config_dict, filename="dlc_config_file", mkdir=True):
     config_dict: dict of config params or element-deeplabcut model.Model dict
     filename: Optional, default 'dlc_config_file' or preserve original 'config'
               Set to 'config' to overwrite original file.
+              If extension is included, removed and replaced with "yaml".
     mkdir (bool): Optional, True. Make new directory if output_dir not exist
 
     Returns: path of saved file as string - due to DLC func preference for strings
@@ -166,6 +167,9 @@ def save_yaml(output_dir, config_dict, filename="dlc_config_file", mkdir=True):
         config_dict = config_dict["config_template"]
     if mkdir:
         output_dir.mkdir(exist_ok=True)
+    if "." in filename:  # if user provided extension, remove
+        filename = filename.split(".")[0]
+
     output_filepath = Path(output_dir) / f"{filename}.yaml"
     with open(output_filepath, "w") as f:
         yaml.dump(config_dict, f)
