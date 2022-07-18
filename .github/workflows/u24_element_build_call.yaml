@@ -4,8 +4,11 @@ on:
   push:
   workflow_dispatch:
 jobs:
-  call_u24_elements_build_alpine:
-    uses: yambottle/djsciops-cicd/.github/workflows/u24_element_build.yaml@main
-    with:
-      py_ver: 3.9
-      image: djbase
+  # call_u24_elements_build_alpine:
+  #   !!merge <<: *dev-build-call
+  #   with:
+  #     py_ver: 3.9
+  #     image: djbase
+  skip_build:
+    run: |-
+      echo "Build finished"

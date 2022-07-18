@@ -15,8 +15,11 @@ anchor-prod-build-call: &prod-build-call
   uses: dj-sciops/djsciops-cicd/.github/workflows/u24_element_build.yaml@main
 
 jobs:
-  call_u24_elements_build_alpine:
-    !!merge <<: *$STAGE-build-call
-    with:
-      py_ver: 3.9
-      image: djbase
+  # call_u24_elements_build_alpine:
+  #   !!merge <<: *$STAGE-build-call
+  #   with:
+  #     py_ver: 3.9
+  #     image: djbase
+  skip_build:
+    run: |
+      echo "Build finished"
