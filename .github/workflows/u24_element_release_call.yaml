@@ -6,7 +6,7 @@ on:
       - completed
 jobs:
   test_call_u24_elements_release_alpine:
-    if: "${{ github.event.workflow_run.conclusion == 'success' &&\n    ( contains(github.ref, 'test') || \n      github.event.workflow_run.event == 'pull_request') }}\n"
+    if: ${{ github.event.workflow_run.conclusion == 'success' && ( contains(github.ref, 'test') || github.event.workflow_run.event == 'pull_request') }}
     uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
     with:
       TWINE_REPO: testpypi
@@ -14,11 +14,7 @@ jobs:
       TWINE_USERNAME: ${{secrets.TWINE_TEST_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
   call_u24_elements_release_alpine:
-    if: >
-      ${{ github.event.workflow_run.conclusion == 'success' &&
-
-          startsWith(github.ref, 'refs/tags') &&
-          !contains(github.ref, 'test')}}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.ref, 'refs/tags') && !contains(github.ref, 'test') }}
     uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
