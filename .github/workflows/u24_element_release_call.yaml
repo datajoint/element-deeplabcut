@@ -6,7 +6,7 @@ on:
       - completed
 jobs:
   condition_check:
-    runs_on: ubuntu
+    runs-on: ubuntu-latest
     steps:
       - name: condition_check
         run: |
