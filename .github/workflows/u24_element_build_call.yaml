@@ -16,4 +16,3 @@ jobs:
         run: |-
           echo "Build finished"
           echo ${{github.ref}}
-          echo ${{github.event.workflow_run.event}}
