@@ -23,6 +23,8 @@ jobs:
         run: |
           echo ${{github.event.workflow_run.conclusion}}
           echo ${{github.ref}}
+          echo ${{github.repository.git_refs_url}}
+          echo ${{github.repository.git_tags_url}}
           echo ${{github.event.workflow_run.event}}
   test_call_u24_elements_release_alpine:
     if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
