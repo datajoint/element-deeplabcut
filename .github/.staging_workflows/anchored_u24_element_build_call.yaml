@@ -26,3 +26,5 @@ jobs:
       - name: Skip build
         run: |
           echo "Build finished"
+          echo ${{github.ref}}
+          echo ${{github.event.workflow_run.event}}
