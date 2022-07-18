@@ -24,7 +24,6 @@ jobs:
     !!merge <<: *$STAGE-release-call
     inputs:
       TWINE_REPO: testpypi
-      DRAFT_RELEASE: true
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_TEST_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
@@ -35,8 +34,6 @@ jobs:
       startsWith(github.ref, 'refs/tags') &&
       startsWith(github.ref, 'refs/tags/test') != true
     !!merge <<: *$STAGE-release-call
-    inputs:
-      DRAFT_RELEASE: false
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_PASSWORD}}

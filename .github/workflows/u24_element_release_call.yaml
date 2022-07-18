@@ -10,7 +10,6 @@ jobs:
     uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
     inputs:
       TWINE_REPO: testpypi
-      DRAFT_RELEASE: true
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_TEST_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
@@ -20,8 +19,6 @@ jobs:
       startsWith(github.ref, 'refs/tags') &&
       startsWith(github.ref, 'refs/tags/test') != true
     uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
-    inputs:
-      DRAFT_RELEASE: false
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_PASSWORD}}
