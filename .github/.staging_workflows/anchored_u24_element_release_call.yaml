@@ -25,7 +25,8 @@ jobs:
       (github.event.workflow_run.event == 'pull_request'))
     !!merge <<: *$STAGE-release-call
     with:
-      TWINE_REPO: testpypi
+      py_ver: 3.9
+      twine_repo: testpypi
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_TEST_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
@@ -37,6 +38,8 @@ jobs:
       github.event.workflow_run.head_branch != 'main' && 
       !contains(github.event.workflow_run.head_branch, 'test')
     !!merge <<: *$STAGE-release-call
+    with:
+      py_ver: 3.9
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_PASSWORD}}
