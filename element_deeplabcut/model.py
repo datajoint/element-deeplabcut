@@ -328,7 +328,8 @@ class Model(dj.Manual):
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(), project_path or dlc_config.get("project_path")
+            get_dlc_root_data_dir(), dlc_config.get("project_path", project_path)
+
         )
         dlc_config["project_path"] = str(project_path)  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
@@ -346,7 +347,8 @@ class Model(dj.Manual):
 
         # ---- Get scorer name ----
         # "or 'f'" below covers case where config returns None. str_to_bool handles else
-        scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy") or "f")
+        scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
+
 
         dlc_scorer = GetScorerName(
             cfg=dlc_config,
