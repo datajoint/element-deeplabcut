@@ -434,7 +434,7 @@ class ModelEvaluation(dj.Computed):
 
         only_two_yamls = [  # bool for only original and DJ-saved yamls
             f.name for f in sorted(list(project_path.glob("*.y*ml")))
-        ] == ["config.yaml", "dlc_config_file.yaml"]
+        ] == ["config.yaml", "dj_dlc_config.yaml"]
         assert (
             len(yml_paths) == 1 or only_two_yamls
         ), f"Found more yaml files than expected: {len(yml_paths)}\n{project_path}"
@@ -595,8 +595,6 @@ class PoseEstimation(dj.Computed):
 
         # ID model and directories
         dlc_model = (Model & key).fetch1()
-
-        # NOTE: removed prev assertion bc enforced by table
 
         task_mode, analyze_video_params, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_params", "pose_estimation_output_dir"

@@ -213,10 +213,10 @@ class ModelTraining(dj.Computed):
         from .readers import dlc_reader
 
         try:
-            from deeplabcut.utils.auxiliaryfunctions import GetModelFolder
+            from deeplabcut.utils.auxiliaryfunctions import get_model_folder
         except ImportError:
             from deeplabcut.utils.auxiliaryfunctions import (
-                get_model_folder as GetModelFolder,
+                GetModelFolder as get_model_folder,
             )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
@@ -254,7 +254,7 @@ class ModelTraining(dj.Computed):
         snapshots = list(
             (
                 project_path
-                / GetModelFolder(
+                / get_model_folder(
                     trainFraction=dlc_config["train_fraction"],
                     shuffle=dlc_config["shuffle"],
                     cfg=dlc_config,

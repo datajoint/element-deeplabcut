@@ -55,12 +55,9 @@ class PoseEstimation:
         # config file: yaml - configuration for invoking the DLC post estimation step
         if yml_path is None:
             yml_paths = list(self.dlc_dir.glob(f"{filename_prefix}*.y*ml"))
-            # If multiple, remove the one we save.
-            # Otherwise errs when dlc_dir is inferred output_dir
+            # If multiple, defer to the one we save.
             if len(yml_paths) > 1:
-                yml_paths = [
-                    val for val in yml_paths if not val.stem == "dlc_config_file"
-                ]
+                yml_paths = [val for val in yml_paths if val.stem == "dj_dlc_config"]
             assert len(yml_paths) == 1, (
                 "Unable to find one unique .yaml file in: "
                 + f"{dlc_dir} - Found: {len(yml_paths)}"
@@ -149,14 +146,14 @@ class PoseEstimation:
         return body_parts_position
 
 
-def save_yaml(output_dir, config_dict, filename="dlc_config_file", mkdir=True):
+def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
     """Save config_dict to output_path as filename.yaml. By default, preserves original.
 
     Parameters
     ----------
     output_dir: where to save yaml file
     config_dict: dict of config params or element-deeplabcut model.Model dict
-    filename: Optional, default 'dlc_config_file' or preserve original 'config'
+    filename: Optional, default 'dj_dlc_config' or preserve original 'config'
               Set to 'config' to overwrite original file.
               If extension is included, removed and replaced with "yaml".
     mkdir (bool): Optional, True. Make new directory if output_dir not exist
