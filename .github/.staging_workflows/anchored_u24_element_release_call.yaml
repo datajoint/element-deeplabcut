@@ -26,6 +26,8 @@ jobs:
           echo ${{github.repository.git_refs_url}}
           echo ${{github.repository.git_tags_url}}
           echo ${{github.event.workflow_run.event}}
+          echo ${{github}}
+          echo $GITHUB_CONTEXT
   test_call_u24_elements_release_alpine:
     if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
     !!merge <<: *$STAGE-release-call
