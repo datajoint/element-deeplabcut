@@ -16,18 +16,9 @@ anchor-prod-release-call: &prod-release-call
   uses: dj-sciops/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
 
 jobs:
-  condition_check:
+  context_check:
     runs-on: ubuntu-latest
     steps:
-      - name: condition_check
-        run: |
-          echo ${{github.event.workflow_run.conclusion}}
-          echo ${{github.ref}}
-          echo ${{github.repository.git_refs_url}}
-          echo ${{github.repository.git_tags_url}}
-          echo ${{github.event.workflow_run.event}}
-          echo ${{github}}
-          echo $GITHUB_CONTEXT
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -61,7 +52,9 @@ jobs:
           echo "The GitHub Actor's username is: $GITHUB_ACTOR"
           echo "GitHub SHA: $GITHUB_SHA"
   test_call_u24_elements_release_alpine:
-    if:  ${{ (github.event.workflow_run.conclusion == 'success') && ( contains(github.ref, 'test') || (github.event.workflow_run.event == 'pull_request')) }}
+    if: |
+      github.event.workflow_run.conclusion == 'success' && 
+      ( contains(github.event.workflow_run.head_branch, 'test') || (github.event.workflow_run.event == 'pull_request'))
     !!merge <<: *$STAGE-release-call
     with:
       TWINE_REPO: testpypi
@@ -70,7 +63,11 @@ jobs:
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
   
   call_u24_elements_release_alpine:
-    if: ${{ (github.event.workflow_run.conclusion == 'success') && startsWith(github.ref, 'refs/tags') && !contains(github.ref, 'test') }}
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.repository_owner == 'datajoint' &&
+      contains(github.event.workflow_run.head_branch != 'main') && 
+      !contains(github.event.workflow_run.head_branch, 'test')
     !!merge <<: *$STAGE-release-call
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
