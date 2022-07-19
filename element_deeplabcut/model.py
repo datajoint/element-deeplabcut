@@ -342,9 +342,7 @@ class Model(dj.Manual):
             "TrainingFraction",
         ]
         for attribute in needed_attributes:
-            assert (
-                attribute in dlc_config.keys()
-            ), f"Couldn't find {attribute} in config"
+            assert attribute in dlc_config, f"Couldn't find {attribute} in config"
 
         # ---- Get scorer name ----
         # "or 'f'" below covers case where config returns None. str_to_bool handles else

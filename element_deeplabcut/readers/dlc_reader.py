@@ -163,7 +163,7 @@ def save_yaml(output_dir, config_dict, filename="dlc_config_file", mkdir=True):
 
     Returns: path of saved file as string - due to DLC func preference for strings
     """
-    if "config_template" in config_dict.keys():  # if passed full model.Model dict
+    if "config_template" in config_dict:  # if passed full model.Model dict
         config_dict = config_dict["config_template"]
     if mkdir:
         output_dir.mkdir(exist_ok=True)
