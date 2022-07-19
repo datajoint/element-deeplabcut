@@ -40,7 +40,7 @@ jobs:
           echo "The GitHub Actor's username is: $GITHUB_ACTOR"
           echo "GitHub SHA: $GITHUB_SHA"
   test_call_u24_elements_release_alpine:
-    if: "github.event.workflow_run.conclusion == 'success' && \n( contains(github.event.workflow_run.head_branch, 'test') || (github.event.workflow_run.event == 'pull_request'))\n"
+    if: "${{ github.event.workflow_run.conclusion == 'success' && \n    ( contains(github.event.workflow_run.head_branch, 'test') || \n      (github.event.workflow_run.event == 'pull_request')) }}\n"
     uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
     with:
       TWINE_REPO: testpypi
@@ -48,7 +48,7 @@ jobs:
       TWINE_USERNAME: ${{secrets.TWINE_TEST_USERNAME}}
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
   call_u24_elements_release_alpine:
-    if: "github.event.workflow_run.conclusion == 'success' &&\ngithub.repository_owner == 'datajoint' &&\ncontains(github.event.workflow_run.head_branch != 'main') && \n!contains(github.event.workflow_run.head_branch, 'test')\n"
+    if: "${{ github.event.workflow_run.conclusion == 'success' &&\n    github.repository_owner == 'datajoint' &&\n    contains(github.event.workflow_run.head_branch != 'main') && \n    !contains(github.event.workflow_run.head_branch, 'test') }}\n"
     uses: yambottle/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
