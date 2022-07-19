@@ -1,6 +1,6 @@
-# .env file: 
+# .env file. Careful that vscode black does not add spaces around '='
 #   COMPOSE_PROJECT_NAME='dlc'
-#   TEST_DATA_DIR=<local parent directory of workflow_dlc_data{1,2}>
+#   TEST_DATA_DIR=<local dir for from_top_tracking>
 #   GITHUB_USERNAME=datajoint
 #   INSTALL_OPTION=local-all, local-dlc, or git
 #   TEST_CMD="pytest" # pytest --dj-{verbose,teardown} False  # options
@@ -48,15 +48,16 @@ services:
         eval ${TEST_CMD}
         tail -f /dev/null
     volumes:
-      - ${TEST_DATA_DIR}:/main/test_data
-      # - ./workflow-deeplabcut/apt_requirements.txt:/tmp/apt_requirements.txt
-      - ./element-lab:/main/element-lab
-      - ./element-animal:/main/element-animal
-      - ./element-session:/main/element-session
-      - ./element-deeplabcut:/main/element-deeplabcut
-      - ./workflow-deeplabcut:/main/workflow-deeplabcut
+      - ${TEST_DATA_DIR}:/main/test_data/
+      - ../../workflow-deeplabcut/docker/apt_requirements.txt:/tmp/apt_requirements.txt
+      - ../../element-lab:/main/element-lab
+      - ../../element-animal:/main/element-animal
+      - ../../element-session:/main/element-session
+      - ../../element-deeplabcut:/main/element-deeplabcut
+      - ../../workflow-deeplabcut:/main/workflow-deeplabcut
     depends_on:
       db:
         condition: service_healthy
+
 networks:
   deeplabcut:

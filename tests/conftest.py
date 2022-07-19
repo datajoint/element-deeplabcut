@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import logging
 from pathlib import Path
 from contextlib import nullcontext
 from element_deeplabcut.model import str_to_bool
@@ -74,9 +75,14 @@ def setup(request):
     test_user_data_dir = Path(request.config.getoption("--dj-datadir"))
     test_user_data_dir.mkdir(exist_ok=True)
 
+    if not verbose:
+        logging.getLogger("deeplabcut").setLevel(logging.CRITICAL)
+        logging.getLogger("torch").setLevel(logging.CRITICAL)
+        logging.getLogger("tensorflow").setLevel(logging.CRITICAL)
+
     verbose_context = nullcontext() if verbose else QuietStdOut()
 
-    yield verbose_context
+    yield verbose_context, verbose
 
 
 # ------------------ GENERAL FUCNTION ------------------
@@ -135,36 +141,26 @@ def dj_config():
     return
 
 
-@pytest.fixture()
-def test_data(dj_config):
+@pytest.fixture(scope="session")
+def test_data(setup, dj_config):
     """Load demo data. Try local path. Try DJArchive w/either os environ or config"""
+    from workflow_deeplabcut.load_demo_data import (
+        download_djarchive_dlc_data,
+        setup_bare_project,
+        shorten_video,
+    )
+
+    verbose_context, _ = setup
     try:
-        test_data_dir = find_full_path(get_dlc_root_data_dir(), test_data_project)
+        _ = find_full_path(get_dlc_root_data_dir(), test_data_project)
+
     except FileNotFoundError:
-        from workflow_deeplabcut.load_demo_data import download_djarchive_dlc_data
-
-        download_djarchive_dlc_data(get_dlc_root_data_dir()[0])
-
-    else:  # if local version, check for training-dataset dir and full project path
-        from deeplabcut.utils.auxiliaryfunctions import read_config
-
-        training_dataset_exists = (test_data_dir / "training-datasets").exists()
-        project_path_in_config = (
-            True
-            if read_config(test_data_dir / "config.yaml").get("project_path", False)
-            else False
-        )
-
-        if training_dataset_exists and project_path_in_config:  # skip project setup
-            return
+        with verbose_context:
+            download_djarchive_dlc_data(target_directory="/main/test_data/")
 
     with verbose_context:  # Setup - expand relative paths, make a shorter video
-        from workflow_deeplabcut.load_demo_data import setup_bare_project, shorten_video
-
         setup_bare_project(project=test_data_project)
         shorten_video(vid_path=inference_vid)
-
-    return
 
 
 @pytest.fixture(scope="session")
@@ -195,7 +191,7 @@ def pipeline(setup):
 
 
 @pytest.fixture(scope="session")
-def ingest_csvs(setup, pipeline):
+def ingest_csvs(setup, test_data, pipeline):
     """For each input, generates csv in test_user_data_dir and ingests in schema"""
     # CSV as list of 3: relevant insert func, filename, content
     all_csvs = [
@@ -225,8 +221,6 @@ def ingest_csvs(setup, pipeline):
                 + "trainingsetindex,filter_type,track_method,"
                 + "scorer_legacy,maxiters",
                 f"0,{test_data_project},{test_data_project}/config.yaml,1,0,,,False,5",
-                "1,OpenField,openfield-Pranav-2018-10-30/config.yaml,1,0,,,False,5",
-                "2,Reaching,Reaching-Mackenzie-2018-08-30/config.yaml,1,0,,,False,5",
             ],
         ],
         [  # 3
@@ -264,7 +258,7 @@ def ingest_csvs(setup, pipeline):
         ],
     ]
 
-    # When not tearing down, and if there's already data in last table, can skip insert
+    # If data in last table, presume didn't tear down last time, skip insert
     if len(pipeline["model"].Model()) == 0:
         for csv_info in all_csvs:
             csv_path = test_user_data_dir / csv_info[1]
@@ -322,14 +316,30 @@ def pose_estim_task(pipeline, ingest_csvs):
 
 
 @pytest.fixture()
-def pose_output_path(setup, pose_estim_task):
-    """Run model.PoseEstimation populate. Return expected output dir."""
+def revert_checkpoint(setup):
+    """Reverts checkpoint to included downloaded well-trained model"""
     from workflow_deeplabcut.load_demo_data import revert_checkpoint_file
 
-    verbose_context = setup
-    _, device = pose_estim_task
+    revert_checkpoint_file()
 
-    revert_checkpoint_file()  # ensures checkpoint has access to well-trained model
+
+@pytest.fixture()
+def run_pose_estim(
+    setup, pipeline, pose_estim_task, populate_settings, revert_checkpoint
+):
+    """Run pose estimation"""
+
+    verbose_context, _ = setup
+    with verbose_context:
+        pipeline["model"].PoseEstimation.populate(**populate_settings)
+
+
+@pytest.fixture()
+def pose_output_path(setup, pose_estim_task, run_pose_estim):
+    """Run model.PoseEstimation populate. Return expected output dir."""
+
+    verbose_context, _ = setup
+    _, device = pose_estim_task
 
     output_path = find_full_path(
         get_dlc_root_data_dir(),
@@ -345,14 +355,6 @@ def pose_output_path(setup, pose_estim_task):
         with verbose_context:
             for results_file in output_path.glob("*"):
                 results_file.unlink()
-
-
-@pytest.fixture()
-def run_pose_estim(setup, pipeline, pose_estim_task, populate_settings):
-    """Run pose estimation"""
-    verbose_context = setup
-    with verbose_context:
-        pipeline["model"].PoseEstimation.populate(**populate_settings)
 
 
 @pytest.fixture()

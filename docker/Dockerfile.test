@@ -12,23 +12,19 @@ WORKDIR /main/workflow-deeplabcut
 RUN pip install --no-deps "element-interface@git+https://github.com/datajoint/element-interface"
 RUN pip install --no-deps "djarchive-client@git+https://github.com/datajoint/djarchive-client"
 
-# Always move local to temp, if they exist - conditional install in setup.sh
-COPY --chown=anaconda:anaconda ./element-lab/ \
-                               ./element-animal/ \
-                               ./element-session/ \
-                               ./element-event/ \
-                               ./element-interface/ \
-                               ./element-deeplabcut/ \
-                               ./workflow-deeplabcut/ \
-                               /main/
-# COPY --chown=anaconda:anaconda . /main/workflow-deeplabcut/
+# Always move local - conditional install in setup.sh
+COPY --chown=anaconda:anaconda ./element-lab/ /main/element-lab/
+COPY --chown=anaconda:anaconda ./element-animal/ /main/element-animal/
+COPY --chown=anaconda:anaconda ./element-session/ /main/element-session/
+COPY --chown=anaconda:anaconda ./element-event/ /main/element-event/
+COPY --chown=anaconda:anaconda ./element-interface/ /main/element-interface/
+COPY --chown=anaconda:anaconda ./element-deeplabcut/ /main/element-deeplabcut/
+COPY --chown=anaconda:anaconda ./workflow-deeplabcut/ /main/workflow-deeplabcut/
 
 # Conditional install - local-all, local-dlc, or git
 COPY --chown=anaconda:anaconda ./workflow-deeplabcut/docker/setup.sh /main/
-# RUN chmod 755 /main/.env
-# RUN dotenv -f /main/.env -q always set
+COPY --chown=anaconda:anaconda ./workflow-deeplabcut/docker/.env /main/
 RUN chmod 755 /main/setup.sh
+RUN chmod 755 /main/.env
 RUN /main/setup.sh 
-
 RUN rm -f ./dj_local_conf.json
-# RUN pip install -r ./requirements_test.txt

@@ -1,5 +1,8 @@
 #! /bin/bash
+export $(grep -v '^#' /main/.env | xargs)
+
 echo "INSALL OPTION:" $INSTALL_OPTION
+cd /main/
 # all local installs, mapped from host
 if [ "$INSTALL_OPTION" == "local-all" ]; then
     for f in lab animal session event deeplabcut; do 
@@ -22,3 +25,13 @@ else
         pip install git+https://github.com/${GITHUB_USERNAME}/workflow-deeplabcut.git
     fi
 fi
+
+# If test cmd contains pytest, install 
+if [[ "$TEST_CMD" == *pytest* ]]; then
+    pip install pytest
+    pip install pytest-cov
+fi
+
+# additional installs for running DLC
+pip install torch
+pip install ffmpeg

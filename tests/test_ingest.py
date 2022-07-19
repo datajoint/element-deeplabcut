@@ -16,7 +16,7 @@ def test_ingest(pipeline, ingest_csvs):
     table_lengths = [
         (subject.Subject(), 1, "subject6"),
         (session.Session(), 2, datetime.datetime(2021, 6, 1, 13, 33, 33)),
-        (train.TrainingParamSet(), 3, "from_top_tracking"),
+        (train.TrainingParamSet(), 1, "from_top_tracking"),
         (train.VideoSet(), 3, 0),
         (
             train.VideoSet.File(),

@@ -6,12 +6,12 @@ from pathlib import Path
 import os
 
 
-def download_djarchive_dlc_data(target_directory="/tmp/workflow_dlc_data/"):
+def download_djarchive_dlc_data(target_directory="/tmp/test_data/"):
     """Download DLC demo data from djarchive"""
     import djarchive_client
 
     client = djarchive_client.client()
-    os.makedirs(target_directory)
+    os.makedirs(target_directory, exist_ok=True)
 
     client.download(
         "workflow-dlc-data", target_directory=target_directory, revision="v1"

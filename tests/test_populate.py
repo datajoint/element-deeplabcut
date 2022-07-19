@@ -1,19 +1,25 @@
 """Run each populate command - for computed/imported tables
 """
 
+import logging
 from .conftest import find_full_path, get_dlc_root_data_dir
 
 from time import time
 import pytest
+import logging
 
 
 def test_training(setup, test_data, pipeline, populate_settings, training_task):
-    verbose_context = setup
+    verbose_context, verbose = setup
     train = pipeline["train"]
 
     # Run training
     with verbose_context:
         train.ModelTraining.populate(**populate_settings)
+
+    if not verbose:  # train command in DLC resets logger
+        logging.getLogger("deeplabcut").setLevel(logging.WARNING)
+
     project_path = find_full_path(
         get_dlc_root_data_dir(), train.TrainingTask.fetch("project_path", limit=1)[0]
     )
@@ -28,7 +34,7 @@ def test_training(setup, test_data, pipeline, populate_settings, training_task):
 
 
 def test_record_info(setup, test_data, pipeline, populate_settings, ingest_csvs):
-    verbose_context = setup
+    verbose_context, _ = setup
     model = pipeline["model"]
 
     # Run recording info populate
@@ -41,9 +47,11 @@ def test_record_info(setup, test_data, pipeline, populate_settings, ingest_csvs)
     assert fps == 60, f"Test video fps didn't match 60: {fps}"
 
 
-def test_model_eval(setup, test_data, pipeline, populate_settings, ingest_csvs):
+def test_model_eval(
+    setup, test_data, pipeline, populate_settings, ingest_csvs, revert_checkpoint
+):
     """Test model evaluation"""
-    verbose_context = setup
+    verbose_context, _ = setup
     model = pipeline["model"]
 
     # Run model evaluation
@@ -63,7 +71,7 @@ def test_model_eval(setup, test_data, pipeline, populate_settings, ingest_csvs):
     assert time() == pytest.approx(eval_time, 1e4), f"Eval result is old: {eval_file}"
 
 
-def test_pose_estim(setup, test_data, pipeline, populate_settings, pose_output_path):
+def test_pose_estim(setup, test_data, pipeline, pose_output_path):
     """Test pose estimation"""
     output_path = pose_output_path
 

@@ -33,7 +33,7 @@ def ingest_sessions(
     csvs = [session_csv_path, session_csv_path, session_csv_path]
     tables = [session.Session(), session.SessionDirectory(), session.SessionNote()]
 
-    ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates)
+    ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates, verbose=verbose)
 
 
 def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=True):
@@ -90,7 +90,6 @@ def ingest_model_vids(model_video_csv_path, skip_duplicates=True, verbose=False)
 def ingest_model(model_model_csv_path, skip_duplicates=True, verbose=False):
     """Use provided CSV to insert into model.Model table"""
     # NOTE: not included in ingest_dlc_items because not yet included in notebooks
-    import datajoint as dj
 
     with open(model_model_csv_path, newline="") as f:
         data = list(csv.DictReader(f, delimiter=","))
