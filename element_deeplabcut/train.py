@@ -233,7 +233,7 @@ class ModelTraining(dj.Computed):
             find_full_path(get_dlc_root_data_dir(), fp).as_posix()
             for fp in (VideoSet.File & key).fetch("file_path")
         ]
-        dlc_config["video_sets"] = video_filepaths
+        dlc_config["video_sets"] = {v: [] for v in video_filepaths}
 
         # Write dlc config file to base project folder
         dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config)
