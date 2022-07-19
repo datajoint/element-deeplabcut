@@ -52,10 +52,10 @@ jobs:
           echo "The GitHub Actor's username is: $GITHUB_ACTOR"
           echo "GitHub SHA: $GITHUB_SHA"
   test_call_u24_elements_release_alpine:
-    if: |
-      ${{ github.event.workflow_run.conclusion == 'success' && 
-          ( contains(github.event.workflow_run.head_branch, 'test') || 
-            (github.event.workflow_run.event == 'pull_request')) }}
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      ( contains(github.event.workflow_run.head_branch, 'test') ||
+      (github.event.workflow_run.event == 'pull_request'))
     !!merge <<: *$STAGE-release-call
     with:
       TWINE_REPO: testpypi
@@ -64,11 +64,11 @@ jobs:
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
   
   call_u24_elements_release_alpine:
-    if: |
-      ${{ github.event.workflow_run.conclusion == 'success' &&
-          github.repository_owner == 'datajoint' &&
-          github.event.workflow_run.head_branch != 'main' && 
-          !contains(github.event.workflow_run.head_branch, 'test') }}
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.repository_owner == 'datajoint' &&
+      github.event.workflow_run.head_branch != 'main' && 
+      !contains(github.event.workflow_run.head_branch, 'test')
     !!merge <<: *$STAGE-release-call
     secrets:
       TWINE_USERNAME: ${{secrets.TWINE_USERNAME}}
