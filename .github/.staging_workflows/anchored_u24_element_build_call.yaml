@@ -16,7 +16,7 @@ anchor-prod-build-call: &prod-build-call
 
 jobs:
   call_context_check:
-    uses: yambottle/djsciops-cicd/.github/workflows/context_check.yaml@main
+    uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
   call_u24_elements_build_alpine:
     !!merge <<: *$STAGE-build-call
     with:

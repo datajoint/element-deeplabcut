@@ -6,7 +6,7 @@ on:
       - completed
 jobs:
   call_context_check:
-    uses: yambottle/djsciops-cicd/.github/workflows/context_check.yaml@main
+    uses: dj-sciops/djsciops-cicd/.github/workflows/context_check.yaml@main
   test_call_u24_elements_release_alpine:
     if: >-
       github.event.workflow_run.conclusion == 'success' && ( contains(github.event.workflow_run.head_branch, 'test') || (github.event.workflow_run.event == 'pull_request'))
