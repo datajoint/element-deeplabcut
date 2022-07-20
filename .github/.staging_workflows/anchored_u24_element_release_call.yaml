@@ -15,6 +15,27 @@ anchor-test-release-call: &test-release-call
 anchor-prod-release-call: &prod-release-call
   uses: dj-sciops/djsciops-cicd/.github/workflows/u24_element_release.yaml@main
 
+anchor-dev-release-if: &dev-release-if
+  if: >-
+    github.event.workflow_run.conclusion == 'success' &&
+    github.repository_owner == 'yambottle' &&
+    github.event.workflow_run.head_branch != 'main' && 
+    !contains(github.event.workflow_run.head_branch, 'test')
+
+anchor-test-release-if: &test-release-if
+  if: >-
+    github.event.workflow_run.conclusion == 'success' &&
+    github.repository_owner == 'yambottle' &&
+    github.event.workflow_run.head_branch != 'main' && 
+    !contains(github.event.workflow_run.head_branch, 'test')
+
+anchor-prod-release-if: &prod-release-if
+  if: >-
+    github.event.workflow_run.conclusion == 'success' &&
+    github.repository_owner == 'datajoint' &&
+    github.event.workflow_run.head_branch != 'main' && 
+    !contains(github.event.workflow_run.head_branch, 'test')
+
 jobs:
   call_context_check:
     uses: yambottle/djsciops-cicd/.github/workflows/context_check.yaml@main
@@ -32,11 +53,7 @@ jobs:
       TWINE_PASSWORD: ${{secrets.TWINE_TEST_PASSWORD}}
   
   call_u24_elements_release_alpine:
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.repository_owner == 'yambottle' &&
-      github.event.workflow_run.head_branch != 'main' && 
-      !contains(github.event.workflow_run.head_branch, 'test')
+    !!merge <<: *$STAGE-release-if
     !!merge <<: *$STAGE-release-call
     with:
       py_ver: 3.9
