@@ -154,7 +154,7 @@ def do_pose_estimation(
     dlc_model,
     project_path,
     output_dir,
-    videotype=None,
+    videotype="",
     gputouse=None,
     save_as_csv=False,
     batchsize=None,
