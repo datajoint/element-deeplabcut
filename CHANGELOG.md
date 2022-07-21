@@ -2,12 +2,19 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.0] - Unreleased
+
++ Add - Call reusable CICD
++ Update - Remove direct dependency (`element-interface`) for PyPI release.
++ Update - Docstring PEP257 compliance #24 
++ Update - Explicit handling of KeyboardInterrupt #26
++ Update - Streamline insert_new_params #27
++ Change - Rename datajoint-saved config to `dj_dlc_config.yaml`
+
 ## [0.1.1] - 2022-06-10
 ### Fixed
 + Replace lazy imports
 + Project path in the model.Model
-+ Add - Call reusable CICD
-+ Update - Remove direct dependency (`element-interface`) for PyPI release.
 
 ## [0.1.0] - 2022-05-10
 
