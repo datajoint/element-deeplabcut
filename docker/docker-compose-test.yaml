@@ -6,9 +6,9 @@
 #   TEST_CMD="pytest" # pytest --dj-{verbose,teardown} False  # options
 #                     # to do nothing, set as "True"
 # export COMPOSE_DOCKER_CLI_BUILD=0 # some machines need for smooth --build
-# docker-compose --env-file ./docker/.env -f ./docker/docker-compose-test.yaml up --build --force-recreate --detached
+# docker compose --env-file ./docker/.env -f ./docker/docker-compose-test.yaml up --build --force-recreate --detached
 # docker exec -it workflow-deeplabcut /bin/bash
-# docker-compose -f ./docker/docker-compose-test.yaml down --volumes
+# docker compose -f ./docker/docker-compose-test.yaml down --volumes
 
 version: "2.4"
 
