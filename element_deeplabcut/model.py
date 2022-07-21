@@ -605,7 +605,6 @@ class PoseEstimation(dj.Computed):
                 dlc_model,
                 project_path,
                 output_dir,
-                videotype="",
                 **analyze_video_params,
             )
         dlc_result = dlc_reader.PoseEstimation(output_dir)
