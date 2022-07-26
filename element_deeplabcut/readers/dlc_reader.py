@@ -1,9 +1,16 @@
 import re
+import logging
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import pickle
 import ruamel.yaml as yaml
+from element_interface.utils import find_root_directory
+from .. import model
+from ..model import get_dlc_root_data_dir
+from datajoint.errors import DataJointError
+
+logger = logging.getLogger("datajoint")
 
 
 class PoseEstimation:
@@ -215,7 +222,11 @@ def do_pose_estimation(
     use_shelve=False,
     modelprefix="",  # need from paramset
 ):
-    """Launch DLC's analyze_videos within element-deeplabcut
+    """Launch DLC's analyze_videos within element-deeplabcut.
+
+    Also saves a copy of the current config in the output dir, with ensuring analyzed
+    videos in the video_set. NOTE: Config-specificed cropping not supported when adding
+    to config in this manner.
 
     Parameters
     ----------
@@ -231,6 +242,28 @@ def do_pose_estimation(
     dlc_config = dlc_model["config_template"]
     dlc_project_path = Path(project_path)
     dlc_config["project_path"] = dlc_project_path.as_posix()
+
+    # ---- Add current video to config ---
+    for video_filepath in video_filepaths:
+        if video_filepath not in dlc_config["video_sets"]:
+            root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath)
+            relative_path = Path(video_filepath).relative_to(root_dir)
+            recording_id = (
+                model.VideoRecording.File & f'file_path="{relative_path}"'
+            ).fetch1("recording_id")
+            try:
+                px_width, px_height = (
+                    model.RecordingInfo & f'recording_id="{recording_id}"'
+                ).fetch1("px_width", "px_height")
+            except DataJointError:
+                logging.warn(
+                    f"Could not find RecordingInfo for {video_filepath.stem}"
+                    + "\n\tUsing zeros for crop value in config."
+                )
+                px_height, px_width = 0, 0
+            dlc_config["video_sets"].update(
+                {str(video_filepath): {"crop": f"0, {px_width}, 0, {px_height}"}}
+            )
 
     # ---- Write config files ----
     # To output dir: Important for loading/parsing output in datajoint
