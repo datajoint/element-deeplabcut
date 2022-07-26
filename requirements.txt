@@ -1,2 +1,2 @@
 datajoint>=0.13
-deeplabcut>=2.2.1.0
+deeplabcut>=2.2.1.1
