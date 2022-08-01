@@ -222,19 +222,21 @@ class ModelTraining(dj.Computed):
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
         # ---- Build and save DLC configuration (yaml) file ----
-        dlc_config = (TrainingParamSet & key).fetch1("params")
-        dlc_config["project_path"] = project_path.as_posix()
-        dlc_config["modelprefix"] = model_prefix
-        dlc_config["train_fraction"] = dlc_config["TrainingFraction"][
-            int(dlc_config["trainingsetindex"])
-        ]
-        #  These paths aren't used in training. Instead only the training-dataset/*mat
-        video_filepaths = [
-            find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-            for fp in (VideoSet.File & key).fetch("file_path")
-        ]
-        dlc_config["video_sets"] = {v: [] for v in video_filepaths}
-
+        _, dlc_config = dlc_reader.read_yaml(project_path)  # load existing
+        dlc_config.update((TrainingParamSet & key).fetch1("params"))
+        dlc_config.update(
+            {
+                "project_path": project_path.as_posix(),
+                "modelprefix": model_prefix,
+                "train_fraction": dlc_config["TrainingFraction"][
+                    int(dlc_config["trainingsetindex"])
+                ],
+                "training_filelist_datajoint": [  # don't overwrite origin video_sets
+                    find_full_path(get_dlc_root_data_dir(), fp).as_posix()
+                    for fp in (VideoSet.File & key).fetch("file_path")
+                ],
+            }
+        )
         # Write dlc config file to base project folder
         dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config)
 

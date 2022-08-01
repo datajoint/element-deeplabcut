@@ -3,7 +3,6 @@ Code adapted from the Mathis Lab
 MIT License Copyright (c) 2022 Mackenzie Mathis
 DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
-from logging import root
 import datajoint as dj
 import os
 import yaml
@@ -227,7 +226,7 @@ class BodyPart(dj.Lookup):
         """
 
         # handle dlc_config being a yaml file
-        new_body_parts = cls.extract_new_body_parts(dlc_config)
+        new_body_parts = cls.extract_new_body_parts(dlc_config, verbose=False)
         if new_body_parts is not None:  # Required bc np.array is ambiguous as bool
             if descriptions:
                 assert len(descriptions) == len(new_body_parts), (
@@ -309,7 +308,8 @@ class Model(dj.Manual):
         model_prefix (str): Optional. Filename prefix used across DLC project
         body_part_descriptions (list): Optional. List of descriptions for BodyParts.
         paramset_idx (int): Optional. Index from the TrainingParamSet table
-        params: Optional. If dlc_config is path, dict of override items
+        prompt (bool): Optional.
+        params (dict): Optional. If dlc_config is path, dict of override items
         """
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName
         from .readers import dlc_reader
@@ -376,14 +376,15 @@ class Model(dj.Manual):
         }
 
         # -- prompt for confirmation --
-        print("--- DLC Model specification to be inserted ---")
-        for k, v in model_dict.items():
-            if k != "config_template":
-                print("\t{}: {}".format(k, v))
-            else:
-                print("\t-- Template/Contents of config.yaml --")
-                for k, v in model_dict["config_template"].items():
-                    print("\t\t{}: {}".format(k, v))
+        if prompt:
+            print("--- DLC Model specification to be inserted ---")
+            for k, v in model_dict.items():
+                if k != "config_template":
+                    print("\t{}: {}".format(k, v))
+                else:
+                    print("\t-- Template/Contents of config.yaml --")
+                    for k, v in model_dict["config_template"].items():
+                        print("\t\t{}: {}".format(k, v))
 
         if (
             prompt
@@ -418,6 +419,7 @@ class ModelEvaluation(dj.Computed):
     def make(self, key):
         """.populate() method will launch evaulation for each unique entry in Model."""
         import csv
+        from .readers import dlc_reader
         from deeplabcut import evaluate_network
         from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder
 
@@ -432,19 +434,10 @@ class ModelEvaluation(dj.Computed):
         )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
-        yml_paths = sorted(list(project_path.glob("*.y*ml")))
-
-        only_two_yamls = [  # bool for only original and DJ-saved yamls
-            f.name for f in sorted(list(project_path.glob("*.y*ml")))
-        ] == ["config.yaml", "dj_dlc_config.yaml"]
-        assert (
-            len(yml_paths) == 1 or only_two_yamls
-        ), f"Found more yaml files than expected: {len(yml_paths)}\n{project_path}"
-
-        which_config = 1 if only_two_yamls else 0  # if DJ-saved, used that
+        yml_path, _ = dlc_reader.read_yaml(project_path)
 
         evaluate_network(
-            yml_paths[which_config],
+            yml_path,
             Shuffles=[shuffle],  # this needs to be a list
             trainingsetindex=trainingsetindex,
             comparisonbodyparts="all",

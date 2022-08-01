@@ -146,6 +146,30 @@ class PoseEstimation:
         return body_parts_position
 
 
+def read_yaml(fullpath, filename="*"):
+    """Return contents of yml in fullpath. If available, defer to DJ-saved version
+
+    Parameters
+    ----------
+    fullpath: String or pathlib path. Directory with yaml files
+    filename: String. Filename, no extension. Permits wildcards.
+
+    Returns filepath and contents as dict
+    """
+    from deeplabcut.utils.auxiliaryfunctions import read_config
+
+    # Take the DJ-saved if there. If not, return list of available
+    yml_paths = list(Path(fullpath).glob("dj_dlc_config.yaml")) or sorted(
+        list(Path(fullpath).glob("{filename}.y*ml"))
+    )
+
+    assert (  # If more than 1 and not DJ-saved,
+        len(yml_paths) == 1
+    ), f"Found more yaml files than expected: {len(yml_paths)}\n{fullpath}"
+
+    return yml_paths[0], read_config(yml_paths[0])
+
+
 def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
     """Save config_dict to output_path as filename.yaml. By default, preserves original.
 
@@ -160,6 +184,8 @@ def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
 
     Returns: path of saved file as string - due to DLC func preference for strings
     """
+    from deeplabcut.utils.auxiliaryfunctions import write_config
+
     if "config_template" in config_dict:  # if passed full model.Model dict
         config_dict = config_dict["config_template"]
     if mkdir:
@@ -168,8 +194,7 @@ def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
         filename = filename.split(".")[0]
 
     output_filepath = Path(output_dir) / f"{filename}.yaml"
-    with open(output_filepath, "w") as f:
-        yaml.dump(config_dict, f)
+    write_config(output_filepath, config_dict)
     return str(output_filepath)
 
 
