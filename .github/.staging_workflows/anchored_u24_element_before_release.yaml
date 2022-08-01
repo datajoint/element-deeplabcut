@@ -3,6 +3,8 @@ name: u24_element_before_release
 on:
   pull_request:
   push:
+    branches:
+      - '**'
     tags-ignore:
       - '*.*.*'
       - 'test*.*.*'
