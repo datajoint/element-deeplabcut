@@ -2,6 +2,8 @@ name: u24_element_before_release
 on:
   pull_request:
   push:
+    tags-ignore:
+      - '**'
   workflow_dispatch:
 jobs:
   call_context_check:
