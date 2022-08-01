@@ -3,9 +3,6 @@ name: u24_element_before
 on:
   pull_request:
   push:
-    tags-ignore:
-      - '*.*.*'
-      - 'test*.*.*'
   workflow_dispatch:
 
 anchor-dev-build-call: &dev-build-call
