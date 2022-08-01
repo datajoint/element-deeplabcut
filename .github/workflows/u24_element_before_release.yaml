@@ -1,4 +1,4 @@
-name: u24_element_before_release
+name: u24_element_before
 on:
   pull_request:
   push:
