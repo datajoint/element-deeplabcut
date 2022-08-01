@@ -3,7 +3,8 @@ on:
   pull_request:
   push:
     tags-ignore:
-      - '**'
+      - '*.*.*'
+      - 'test*.*.*'
   workflow_dispatch:
 jobs:
   call_context_check:
