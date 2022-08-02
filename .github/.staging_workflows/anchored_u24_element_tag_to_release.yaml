@@ -1,9 +1,10 @@
-name: u24_element_build_call
+name: u24_element_tag_to_release
 
 on:
-  pull_request:
   push:
-  workflow_dispatch:
+    tags:
+      - '*.*.*'
+      - 'test*.*.*'
 
 anchor-dev-build-call: &dev-build-call
   uses: yambottle/djsciops-cicd/.github/workflows/u24_element_build.yaml@main
