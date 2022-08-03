@@ -1,4 +1,5 @@
 import re
+import logging
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -8,6 +9,8 @@ from element_interface.utils import find_root_directory
 from .. import model
 from ..model import get_dlc_root_data_dir
 from datajoint.errors import DataJointError
+
+logger = logging.getLogger("datajoint")
 
 
 class PoseEstimation:
@@ -253,7 +256,7 @@ def do_pose_estimation(
                     model.RecordingInfo & f'recording_id="{recording_id}"'
                 ).fetch1("px_width", "px_height")
             except DataJointError:
-                logging.warn(
+                logger.warn(
                     f"Could not find RecordingInfo for {video_filepath.stem}"
                     + "\n\tUsing zeros for crop value in config."
                 )
