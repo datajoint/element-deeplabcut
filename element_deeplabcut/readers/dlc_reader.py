@@ -1,5 +1,4 @@
 import re
-import logging
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -9,8 +8,6 @@ from element_interface.utils import find_root_directory
 from .. import model
 from ..model import get_dlc_root_data_dir
 from datajoint.errors import DataJointError
-
-logger = logging.getLogger("datajoint")
 
 
 class PoseEstimation:
