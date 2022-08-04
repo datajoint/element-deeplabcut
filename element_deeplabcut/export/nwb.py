@@ -47,7 +47,7 @@ def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
         output_dir = model.PoseEstimationTask.infer_output_dir(key)
         config_file = str(output_dir / "dj_dlc_config.yaml")
         video_name = Path((model.VideoRecording.File & key).fetch1("file_path")).stem
-        h5file = str(list(output_dir.glob(f"{video_name}*h5"))[0])
+        h5file = next(output_dir.glob(f"{video_name}*h5"))
         output_path = h5file.replace(".h5", f"_{subject_id}.nwb")  # DLC2NWB convention
 
         if Path(output_path).exists():
