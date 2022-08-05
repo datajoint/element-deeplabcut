@@ -270,7 +270,7 @@ class Model(dj.Manual):
     config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
     model_prefix=''      : varchar(32)
-    model_description='' : varchar(1000)
+    model_description='' : varchar(2000)
     -> [nullable] train.TrainingParamSet
     """
     # project_path is the only item required downstream in the pose schema
