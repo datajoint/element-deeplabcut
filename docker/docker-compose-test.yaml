@@ -1,51 +1,63 @@
+# .env file. Careful that vscode black does not add spaces around '='
+#   COMPOSE_PROJECT_NAME='dlc'
+#   TEST_DATA_DIR=<local dir for from_top_tracking>
+#   GITHUB_USERNAME=datajoint
+#   INSTALL_OPTION=local-all, local-dlc, or git
+#   TEST_CMD="pytest" # pytest --dj-{verbose,teardown} False  # options
+#                     # to do nothing, set as "True"
 # export COMPOSE_DOCKER_CLI_BUILD=0 # some machines need for smooth --build
-# .env file: TEST_DATA_DIR=<local parent directory of workflow_dlc_data{1,2}>
-# docker-compose -f ./docker/docker-compose-test.yaml up --build
-# docker exec -it workflow-deeplabcut_workflow_1 /bin/bash
-# docker-compose -f ./docker/docker-compose-test.yaml down
+# docker compose --env-file ./docker/.env -f ./docker/docker-compose-test.yaml up --build --force-recreate --detached
+# docker exec -it workflow-deeplabcut /bin/bash
+# docker compose -f ./docker/docker-compose-test.yaml down --volumes
 
 version: "2.4"
-x-net: &net
-  networks:
-      - main
+
 services:
   db:
-    <<: *net
+    networks:
+      deeplabcut:
     image: datajoint/mysql:5.7
-    container_name: workflow-deeplabcut-test-db
     environment:
-      - MYSQL_ROOT_PASSWORD=simple
+      MYSQL_ROOT_PASSWORD: simple
+    container_name: workflow-deeplabcut-db
+
   workflow:
-    <<: *net
+    networks:
+      deeplabcut:
     build:
       context: ../../
       dockerfile: ./workflow-deeplabcut/docker/Dockerfile.test
-    env_file: .env
-    image: workflow-deeplabcut-test:0.1.0
-    container_name: workflow-deeplabcut-test
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+    image: workflow-deeplabcut:0.1.1
+    container_name: workflow-deeplabcut
     environment:
       - DJ_HOST=db
       - DJ_USER=root
       - DJ_PASS=simple
-      - TEST_DATA_DIR=/main/test_data/workflow_dlc_data1/,/main/test_data/workflow_dlc_data2/
+      - DLC_ROOT_DATA_DIR=/main/test_data/
       - DATABASE_PREFIX=test_
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - INSTALL_OPTION=${INSTALL_OPTION}
+      - TEST_CMD=${TEST_CMD}
     command:
       - bash
       - -c
       - |
-        echo "------ INTEGRATION TESTS ------"
-        pytest -sv --cov-report term-missing --cov=workflow_deeplabcut -p no:warnings tests/
+        eval ${TEST_CMD}
         tail -f /dev/null
     volumes:
-      - ${TEST_DATA_DIR}:/main/test_data
-      - ./apt_requirements.txt:/tmp/apt_requirements.txt
+      - ${TEST_DATA_DIR}:/main/test_data/
+      - ../../workflow-deeplabcut/docker/apt_requirements.txt:/tmp/apt_requirements.txt
       - ../../element-lab:/main/element-lab
       - ../../element-animal:/main/element-animal
       - ../../element-session:/main/element-session
       - ../../element-deeplabcut:/main/element-deeplabcut
-      - ..:/main/workflow-deeplabcut
+      - ../../workflow-deeplabcut:/main/workflow-deeplabcut
     depends_on:
       db:
         condition: service_healthy
+
 networks:
-  main:
+  deeplabcut:

@@ -40,9 +40,9 @@ session.activate(db_prefix + "session", linking_module=__name__)
 
 
 @lab.schema
-class Equipment(dj.Manual):
+class Device(dj.Lookup):
     definition = """
-    equipment             : varchar(32)
+    device             : varchar(32)
     ---
     modality              : varchar(64)
     description=null      : varchar(256)

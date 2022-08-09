@@ -1,6 +1,19 @@
 from workflow_deeplabcut.pipeline import train, model
+from contextlib import nullcontext
 import sys
 import os
+
+
+class QuietStdOut:
+    """If verbose set to false, used to quiet populate."""
+
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, "w")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout.close()
+        sys.stdout = self._original_stdout
 
 
 def run(verbose=True, display_progress=True, reserve_jobs=False, suppress_errors=False):
@@ -24,25 +37,10 @@ def run(verbose=True, display_progress=True, reserve_jobs=False, suppress_errors
         model.PoseEstimation(),
     ]
 
-    for table in tables:
-        if verbose:
+    with nullcontext() if verbose else QuietStdOut():
+        for table in tables:
             print(f"\n---- Populating {table.table_name} ----")
             table.populate(**populate_settings)
-        else:
-            with QuietStdOut():
-                table.populate(**populate_settings)
-
-
-class QuietStdOut:
-    """If verbose set to false, used to quiet populate."""
-
-    def __enter__(self):
-        self._original_stdout = sys.stdout
-        sys.stdout = open(os.devnull, "w")
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        sys.stdout.close()
-        sys.stdout = self._original_stdout
 
 
 if __name__ == "__main__":

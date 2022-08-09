@@ -1,4 +1,6 @@
 video_set_id,file_id,file_path
+0,1,from_top_tracking/labeled-data/train1/CollectedData_DJ.h5
+0,2,from_top_tracking/labeled-data/train2/CollectedData_DJ.h5
 1,1,openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.h5
 1,2,openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.csv
 1,3,openfield-Pranav-2018-10-30/labeled-data/m4s1/img0000.png

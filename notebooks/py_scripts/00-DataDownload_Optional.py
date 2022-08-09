@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.13.7
 #   kernelspec:
-#     display_name: venv-dlc
+#     display_name: Python 3.8.11 ('ele')
 #     language: python
-#     name: venv-dlc
+#     name: python3
 # ---
 
 # %% [markdown] tags=[]
@@ -20,84 +20,92 @@
 # ## Download example data
 
 # %% [markdown]
-# We've structured this tool around the example data available from the DLC. If you've already cloned the [main DLC repository](https://github.com/DeepLabCut/DeepLabCut), you already have this folder under `examples/openfield-Pranav-2018-10-30`.
-
-# %% [markdown]
-# [This link](https://downgit.github.io/#/home?url=https://github.com/DeepLabCut/DeepLabCut/tree/master/examples/openfield-Pranav-2018-10-30) via [DownGit](https://downgit.github.io/) will start the single-directory download
-# automatically as a zip. Unpack this zip and place it in a directory we'll refer to as your root.
-
-# %% [markdown]
-# ## Directory structure
-
-# %% [markdown]
-# After downloading, the directory will be organized as follows within your chosen root
-# directory.
+# These notebooks are built around data provided by DataJoint, including a well-trained model. For similar content using data from DeepLabCut, see [09-AlternateDataset](./09-AlternateDataset.ipynb).
 #
-# ```
-#  /your-root/openfield-Pranav-2018-10-30/
-#    - config.yaml
-#    - labeled-data
-#       - m4s1
-#           - CollectedData_Pranav.csv
-#           - CollectedData_Pranav.h5
-#           - img0000.png
-#           - img0001.png
-#           - img0002.png
-#           - img{...}.png
-#           - img0114.png
-#           - img0115.png
-#    - videos
-#        - m3v1mp4.mp4
-# ```
+# DataJoint provides various datasets via `djarchive`. To pip install...
 
-# %% [markdown]
-# For those unfamiliar with DLC...
-# - `config.yaml` contains all the key parameters of the project, including
-#    - file locations (currently empty)
-#    - body parts
-#    - cropping information
-# - `labeled-data` includes the frames coordinates for each body part in the training video
-# - `videos` includes the full training video for this example
-#
-# As part of the DeepLabCut demo setup process, you would run the following additional
-# command, as outlined in their
-# [demo notebook](https://github.com/DeepLabCut/DeepLabCut/blob/master/examples/JUPYTER/Demo_labeledexample_Openfield.ipynb).
-# These establishes the project path within the demo config file as well as the `training-datasets` directory, which DLC will use for model training
+# %% vscode={"languageId": "shellscript"}
+pip install git+https://github.com/datajoint/djarchive-client.git
 
 # %%
-your_root = "/fill/in/your/root/with\ escaped\ spaces"
-from deeplabcut.create_project.demo_data import load_demo_data
-
-load_demo_data(your_root + "/openfield-Pranav-2018-10-30/config.yaml")
+import os; import djarchive_client
+client = djarchive_client.client()
 
 # %% [markdown]
-# For your own data, we recommend using the DLC gui to intitialize your project and label the data.
+# We can browse available datasets:
+
+# %%
+list(client.datasets())
 
 # %% [markdown]
-# ## Make new video
+# Datasets have different versions available:
+
+# %%
+list(client.revisions())
 
 # %% [markdown]
-# Later, we'll use the first few seconds of the training video as a 'separate session' to model
-# the pose estimation feature of this pipeline. `ffmpeg` is a dependency of DeepLabCut
-# that can splice the training video for a demonstration purposes. The command below saves
-# the first 2 seconds of the training video as a copy.
+# We can make a directory for downloading:
+
+# %%
+os.makedirs('/tmp/test_data', exist_ok=True)
+
+# %% [markdown]
+# Then run download for a given set and the revision:
+
+# %%
+client.download('workflow-dlc-data',
+                target_directory='/tmp/test_data/', 
+                revision='v1')
+
+# %% [markdown]
+# ## Directory organization
 #
-# - `-n` do not overwrite
-# - `-hide_banner -loglevel error` less verbose output
-# - `-ss 0 -t 2` start at second 0, add 2 seconds
-# - `-i {vid_path}` input this video
-# - `-{v/a}codec copy` copy the video and audio codecs of the input
-# - `{vid_path}-copy.mp4` output file
-
-# %% tags=[]
-vid_path = your_root + "/openfield-Pranav-2018-10-30/videos/m3v1mp4"
-cmd = (
-    f"ffmpeg -n -hide_banner -loglevel error -ss 0 -t 2 -i {vid_path}.mp4 "
-    + f"-vcodec copy -acodec copy {vid_path}-copy.mp4"
-)
-import os
-
-os.system(cmd)
+# After downloading, the directory will be organized as follows:
 
 # %% [markdown]
+# ```
+# /tmp/test_data/from_top_tracking/
+# - config.yml
+# - dlc-models/iteration-0/from_top_trackingFeb23-trainset95shuffle1/
+#     - test/pose_cfg.yaml
+#     - train/
+#         - checkpoint
+#         - checkpoint_orig
+#         ─ learning_stats.csv
+#         ─ log.txt
+#         ─ pose_cfg.yaml
+#         ─ snapshot-10300.data-00000-of-00001
+#         ─ snapshot-10300.index
+#         ─ snapshot-10300.meta   # same for 103000
+# - labeled-data/
+#     - train1/
+#         - CollectedData_DJ.csv
+#         - CollectedData_DJ.h5
+#         - img00674.png          # and others
+#     - train2/                   # similar to above
+# - videos/
+#     - test.mp4
+#     - train1.mp4
+# ```
+
+# %% [markdown]
+# We will use this dataset as an example across this series of notebooks. If you use another dataset, change the path accordingly.
+#
+# - `config.yaml` contains key parameters of the project
+# - `labeled-data` includes pixel coordinates for each body part
+# - `videos` includes the full training and inference videos
+#
+# This workflow contains additional functions for setting up this demo data, including adding absolute paths to config files and shortening the inference video to speed up pose estimation.
+
+# %%
+from workflow_deeplabcut.load_demo_data import setup_bare_project, shorten_video
+
+setup_bare_project(project="/tmp/test_data/from_top_tracking", 
+                   net_type = "mobilenet_v2_1.0") # sets paths
+shorten_video("/tmp/test_data/from_top_tracking/videos/test.mp4",
+              output_path=None,first_n_sec=2) # makes test-2s.mp4
+
+# %% [markdown]
+# For your own data, we recommend using the DLC gui to intitialize your project and label the data. 
+#
 # In the next notebook, [01-Configure](./01-Configure.ipynb), we'll set up the DataJoint config file with a pointer to your root data directory.
