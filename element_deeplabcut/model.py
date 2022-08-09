@@ -270,7 +270,7 @@ class Model(dj.Manual):
     config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
     model_prefix=''      : varchar(32)
-    model_description='' : varchar(2000)
+    model_description='' : varchar(300)
     -> [nullable] train.TrainingParamSet
     """
     # project_path is the only item required downstream in the pose schema
@@ -329,7 +329,6 @@ class Model(dj.Manual):
         # ---- Get and resolve project path ----
         project_path = find_full_path(
             get_dlc_root_data_dir(), dlc_config.get("project_path", project_path)
-
         )
         dlc_config["project_path"] = str(project_path)  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
@@ -348,7 +347,6 @@ class Model(dj.Manual):
         # ---- Get scorer name ----
         # "or 'f'" below covers case where config returns None. str_to_bool handles else
         scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
-
 
         dlc_scorer = GetScorerName(
             cfg=dlc_config,
