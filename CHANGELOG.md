@@ -3,7 +3,7 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
 ## [0.2.0] - Unreleased
-
++ Relocate module imports to the top of the files
 + Add - Call reusable CICD
 + Update - Remove direct dependency (`element-interface`) for PyPI release.
 + Update - Docstring PEP257 compliance #24 

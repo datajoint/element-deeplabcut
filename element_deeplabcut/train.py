@@ -12,7 +12,15 @@ import yaml
 import os
 from pathlib import Path
 from element_interface.utils import find_full_path, dict_to_uuid
+from deeplabcut import train_network
+from .readers import dlc_reader
 
+try:
+    from deeplabcut.utils.auxiliaryfunctions import get_model_folder
+except ImportError:
+    from deeplabcut.utils.auxiliaryfunctions import (
+        GetModelFolder as get_model_folder,
+    )
 
 schema = dj.schema()
 _linking_module = None
@@ -209,15 +217,6 @@ class ModelTraining(dj.Computed):
         project_path, model_prefix = (TrainingTask & key).fetch1(
             "project_path", "model_prefix"
         )
-        from deeplabcut import train_network
-        from .readers import dlc_reader
-
-        try:
-            from deeplabcut.utils.auxiliaryfunctions import get_model_folder
-        except ImportError:
-            from deeplabcut.utils.auxiliaryfunctions import (
-                GetModelFolder as get_model_folder,
-            )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
