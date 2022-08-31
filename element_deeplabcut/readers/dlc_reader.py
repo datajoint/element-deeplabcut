@@ -160,7 +160,7 @@ def read_yaml(fullpath, filename="*"):
 
     # Take the DJ-saved if there. If not, return list of available
     yml_paths = list(Path(fullpath).glob("dj_dlc_config.yaml")) or sorted(
-        list(Path(fullpath).glob("{filename}.y*ml"))
+        list(Path(fullpath).glob(f"{filename}.y*ml"))
     )
 
     assert (  # If more than 1 and not DJ-saved,

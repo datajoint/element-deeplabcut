@@ -10,6 +10,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Update - Explicit handling of KeyboardInterrupt #26
 + Update - Streamline insert_new_params #27
 + Change - Rename datajoint-saved config to `dj_dlc_config.yaml`
++ Fix - Missing f for formatted string in read_yaml
 
 ## [0.1.1] - 2022-06-10
 ### Fixed
