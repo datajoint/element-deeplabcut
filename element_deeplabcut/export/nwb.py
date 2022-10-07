@@ -32,9 +32,9 @@ def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
 
     Parameters
     ----------
-    keys:
-    use_element_session - Optional. If True, call NWB export from Element Session
-    session_kwargs - Optional. Additional keyword arguements for Element Session export
+    keys: One or more keys from model.PoseEstimation
+    use_element_session: Optional. If True, call NWB export from Element Session
+    session_kwargs: Optional. Additional keyword arguments for Element Session export
 
     Returns output path of saved file
     """
