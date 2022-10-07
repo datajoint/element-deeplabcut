@@ -10,6 +10,8 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Update - Explicit handling of KeyboardInterrupt #26
 + Update - Streamline insert_new_params #27
 + Change - Rename datajoint-saved config to `dj_dlc_config.yaml`
++ Add - NWB export
++ Add - mkdocs deployment with workflow API docs
 
 ## [0.1.1] - 2022-06-10
 ### Fixed
