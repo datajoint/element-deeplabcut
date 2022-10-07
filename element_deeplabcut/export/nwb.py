@@ -32,7 +32,7 @@ def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
 
     Parameters
     ----------
-    Keys - one or more keys from model.PoseEstimation
+    keys:
     use_element_session - Optional. If True, call NWB export from Element Session
     session_kwargs - Optional. Additional keyword arguements for Element Session export
 
