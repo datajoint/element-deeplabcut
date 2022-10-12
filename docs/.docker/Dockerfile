@@ -5,6 +5,7 @@ COPY --chown=anaconda:anaconda ./docs/.docker/apk_requirements.txt ${APK_REQUIRE
 COPY --chown=anaconda:anaconda ./docs/.docker/pip_requirements.txt ${PIP_REQUIREMENTS}
 RUN \
     /entrypoint.sh echo "Dependencies installed" && \
+    rm ${APK_REQUIREMENTS} ${PIP_REQUIREMENTS} && \
     git config --global user.name "GitHub Action" && \
     git config --global user.email "action@github.com"&& \
     git config --global pull.rebase false && \
