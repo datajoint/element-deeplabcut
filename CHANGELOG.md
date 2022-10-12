@@ -2,7 +2,7 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2022-10-10
 + Update - Remove direct dependency (`element-interface`) for PyPI release.
 + Update - Docstring PEP257 compliance #24 
 + Update - Explicit handling of KeyboardInterrupt #26
@@ -31,6 +31,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Add - Drafts from a collection of precursor pipelines, including [DataJoint_Demo_DeepLabCut](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
-[0.1.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.0
+[0.2.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.0
+[0.1.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.1
 [0.1.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.0
 [0.0.0a]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.0.0a
