@@ -13,11 +13,12 @@ def ingest_subjects(
     skip_duplicates=True,
     verbose=True,
 ):
-    """
-    Inserts data from ./user_data/subject.csv into corresponding subject schema tables
+    """Inserts ./user_data/subject.csv data into corresponding subject schema tables
 
-    :param subject_csv_path:     relative path of subject csv
-    :param skip_duplicates=True: datajoint insert function param
+    Args:
+        subject_csv_path (str): relative path of subject csv
+        skip_duplicates (bool): Default True. Passed to DataJoint insert
+        verbose (bool): Display number of entries inserted when ingesting
     """
     csvs = [subject_csv_path]
     tables = [subject.Subject()]
@@ -27,8 +28,12 @@ def ingest_subjects(
 def ingest_sessions(
     session_csv_path="./user_data/sessions.csv", skip_duplicates=True, verbose=True
 ):
-    """
-    Ingests to session schema from ./user_data/sessions.csv
+    """Ingests to session schema from ./user_data/sessions.csv
+
+    Args:
+        session_csv_path (str): relative path of session csv
+        skip_duplicates (bool): Default True. Passed to DataJoint insert
+        verbose (bool): Default True. Display number of entries inserted when ingesting
     """
     csvs = [session_csv_path, session_csv_path, session_csv_path]
     tables = [session.Session(), session.SessionDirectory(), session.SessionNote()]
@@ -37,7 +42,13 @@ def ingest_sessions(
 
 
 def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=True):
-    """Use provided path to load TrainingParamSet with relative path to config.yaml"""
+    """Use provided path to load TrainingParamSet with relative path to config.yaml
+
+    Args:
+        config_params_csv_path (str): relative path of csv with config parameters
+        skip_duplicates (bool):  Default True. Passed to DataJoint insert
+        verbose (bool): Default True. Display number of entries inserted when ingesting
+    """
     if verbose:
         previous_length = len(train.TrainingParamSet.fetch())
     with open(config_params_csv_path, newline="") as f:
@@ -73,7 +84,14 @@ def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=Tr
 
 
 def ingest_train_vids(train_video_csv_path, verbose=False, **kwargs):
-    """Use provided CSV to insert into train.VideoSet and train.VideoSet.File"""
+    """Use provided CSV to insert into train.VideoSet and train.VideoSet.File
+
+    Args:
+        train_video_csv_path (str): relative path of csv with training video info
+        skip_duplicates (bool): Default True. Passed to DataJoint insert
+        verbose (bool): Default False. Display number of entries inserted when ingesting
+        **kwards: Optional. Unused dict of keyword arguments.
+    """
     csvs = [train_video_csv_path, train_video_csv_path]
     tables = [train.VideoSet(), train.VideoSet.File()]
     # With current CSV organization, must skip vids, as primary key is duplicated
@@ -81,14 +99,26 @@ def ingest_train_vids(train_video_csv_path, verbose=False, **kwargs):
 
 
 def ingest_model_vids(model_video_csv_path, skip_duplicates=True, verbose=False):
-    """Use provided CSV to insert into model.VideoRecording and VideoRecording.File"""
+    """Use provided CSV to insert into model.VideoRecording and VideoRecording.File
+
+    Args:
+        model_video_csv_path (str): relative path of csv with model video info
+        skip_duplicates (bool): Default True. Passed to DataJoint insert
+        verbose (bool): Default False. Display number of entries inserted when ingesting
+    """
     csvs = [model_video_csv_path, model_video_csv_path]
     tables = [model.VideoRecording(), model.VideoRecording.File()]
     ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates, verbose=verbose)
 
 
 def ingest_model(model_model_csv_path, skip_duplicates=True, verbose=False):
-    """Use provided CSV to insert into model.Model table"""
+    """Use provided CSV to insert into model.Model table
+
+    Args:
+        model_model_csv_path (str): relative path of csv with DLC Model info
+        skip_duplicates (bool): Default True. Passed to DataJoint insert
+        verbose (bool): Default False. Display number of entries inserted when ingesting
+    """
     # NOTE: not included in ingest_dlc_items because not yet included in notebooks
 
     with open(model_model_csv_path, newline="") as f:
@@ -123,12 +153,14 @@ def ingest_dlc_items(
     skip_duplicates=False,
     verbose=True,
 ):
-    """
-    Ingests to DLC schema from CSVs
+    """Ingests to DLC schema from CSVs
 
-    :param config_params_csv_path: csv path for model training config and parameters
-    :param train_video_csv_path: csv path for list of training videosets
-    :param model_csv_path: csv path for list of modeling videos for pose estimation
+    Args:
+        config_params_csv_path (str): Optional. Csv path for model training config and
+            parameters
+        train_video_csv_path (str): Optional. Csv path for list of training videosets
+        model_csv_path (str): Optional. Csv path for list of modeling videos for pose
+            estimation
     """
     ingest_train_params(
         config_params_csv_path=config_params_csv_path,

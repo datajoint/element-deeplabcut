@@ -6,8 +6,12 @@ from pathlib import Path
 import os
 
 
-def download_djarchive_dlc_data(target_directory="/tmp/test_data/"):
-    """Download DLC demo data from djarchive"""
+def download_djarchive_dlc_data(target_directory: str = "/tmp/test_data/"):
+    """Download DLC demo data from djarchive. Approx .3 GB
+
+    Args:
+        target_directory (str, optional): Where to store the downloaded data.
+    """
     import djarchive_client
 
     client = djarchive_client.client()
@@ -18,17 +22,18 @@ def download_djarchive_dlc_data(target_directory="/tmp/test_data/"):
     )
 
 
-def update_pose_cfg(project="from_top_tracking", net_type=None, update_snapshot=0):
+def update_pose_cfg(
+    project: str = "from_top_tracking", net_type: str = None, update_snapshot: int = 0
+):
     """Updates weight paths to absolute. If update_snapshot, changes weights to snap #
 
-    Parameters
-    ---------
-    project: Optional, default from 'from_top_tracking'.
-             Poject name/folder in dlc_root_data_dir
-    net_type: Optional. Project net (e.g., resnet50).
-              If project is 'from_top_tracking', 'mobilenet_v2_1.0'
-    update_snapshot: Optional, default 0 = no. If -1, highest integer value available.
-                     If integer, look for that snapshot.
+    Args:
+    project (str, optional): Default from 'from_top_tracking'. Poject name/folder in
+        dlc_root_data_dir
+    net_type (str, optional): Project net weights (e.g., resnet50)
+        If project is 'from_top_tracking', 'mobilenet_v2_1.0'
+    update_snapshot (int, optional): Default 0 = no. If -1, highest integer value
+        available. If integer, look for that snapshot.
     """
     project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")
     if project == "from_top_tracking":
@@ -80,14 +85,13 @@ def update_pose_cfg(project="from_top_tracking", net_type=None, update_snapshot=
     return augmenter_type
 
 
-def setup_bare_project(project="from_top_tracking", net_type=None):
+def setup_bare_project(project: str = "from_top_tracking", net_type: str = None):
     """Adds absolute paths to config files and generates training-datasets folder
 
-    Parameters
-    ----------
-    project: Optional, default 'from_top_tracking'. DLC project folder
-    net_type: Optional. Project net (e.g., resnet50) passed to creat_training_dataset
-              if project is default, 'mobilenet_v2_1.0'
+    Args:
+        project (str, optional): Default 'from_top_tracking'. DLC project folder
+        net_type (str, optional): Project net (e.g., resnet50) passed to
+                        creat_training_dataset. If 'from_top', 'mobilenet_v2_1.0'
     """
     from deeplabcut import create_training_dataset
 
@@ -125,18 +129,19 @@ def setup_bare_project(project="from_top_tracking", net_type=None):
 
 
 def shorten_video(
-    vid_path="from_top_tracking/videos/test.mp4",
-    output_path=None,
-    first_n_sec=2,
+    vid_path: str = "from_top_tracking/videos/test.mp4",
+    output_path: str = None,
+    first_n_sec: int = 2,
 ):
     """Save the first 2 seconds of a video relative to dlc root dir.
 
-    Parameters
-    ----------
-    vid_path: Default "videos/test_full.mp4". Relative to get_dlc_root_data_dir
-    output_path: Destination relative to vid_path root. If none, adds '-Ns' to filename
-                 Where N in first_n_sec
-    first_n_sec: Default 2. Number of seconds to extract from beginning of video
+    Args:
+        vid_path (str, optional): Default "from_top_tracking/videos/test_full.mp4". Path
+            relative to get_dlc_root_data_dir() root directory
+        output_path (str, optional): Destination relative to vid_path root. If none,
+            adds '-Ns' to filename, where N in first_n_sec
+        first_n_sec (int, optional): Default 2. # of seconds to extract from beginning
+            of video
     """
 
     if os.path.isabs(vid_path) and Path(vid_path).exists():
@@ -163,6 +168,14 @@ def shorten_video(
 def revert_checkpoint_file(
     project="from_top_tracking", original_checkpoint="checkpoint_orig"
 ):
+    """Delete existing checkpoint file and replace with original_checkpoint
+
+    Args:
+        project (str, optional): DLC project name. Defaults to "from_top_tracking".
+        original_checkpoint (str, optional): Original checkpoint file ot use in the
+            revert, in the same directory as the checkpoint file. Defaults to
+            "checkpoint_orig".
+    """
     import shutil
 
     project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")

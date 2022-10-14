@@ -2,7 +2,8 @@ import datajoint as dj
 from collections import abc
 
 
-def get_dlc_root_data_dir():
+def get_dlc_root_data_dir() -> list:
+    """Returns a list of root directories for Element DeepLabCut"""
     dlc_root_dirs = dj.config.get("custom", {}).get("dlc_root_data_dir")
     if not dlc_root_dirs:
         return None
@@ -13,7 +14,7 @@ def get_dlc_root_data_dir():
 
 
 def get_dlc_processed_data_dir() -> str:
-    """Returns session_dir relative to custom 'dlc_output_dir' root"""
+    """Returns an output directory relative to custom 'dlc_output_dir' root"""
     from pathlib import Path
 
     dlc_output_dir = dj.config.get("custom", {}).get("dlc_output_dir")
