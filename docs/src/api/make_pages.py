@@ -1,4 +1,9 @@
-"""Generate the api pages and navigation."""
+"""Generate the api pages and navigation.
+
+NOTE: Works best when following the Google style guide
+https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings
+"""
 
 import mkdocs_gen_files
 from pathlib import Path
@@ -6,11 +11,12 @@ import os
 import subprocess
 
 package = os.getenv("PACKAGE")
+
 element = package.split("_", 1)[1]
 if not Path(f"workflow_{element}").is_dir():
     try:
         subprocess.run(
-            f"git clone https://github.com/datajoint/workflow-{element}.git /main/delete".split(
+            f"git clone https://github.com/cbroz1/workflow-{element}.git /main/delete".split(
                 " "
             ),
             check=True,

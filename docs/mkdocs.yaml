@@ -27,6 +27,7 @@ theme:
   favicon: assets/images/project-logo-color.png
   features:
     - toc.integrate
+    - content.code.annotate
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: datajoint
@@ -67,6 +68,13 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  
 extra:
   generator: false # Disable watermark
   version:

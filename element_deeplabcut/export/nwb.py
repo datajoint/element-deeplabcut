@@ -30,13 +30,13 @@ def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
     already exists, returns output path without making changes to the file.
     NOTE: does not support multianimal exports
 
-    Parameters
-    ----------
-    keys: One or more keys from model.PoseEstimation
-    use_element_session: Optional. If True, call NWB export from Element Session
-    session_kwargs: Optional. Additional keyword arguments for Element Session export
+    Args:
+        keys: One or more keys from model.PoseEstimation
+        use_element_session: Optional. If True, call NWB export from Element Session
+        session_kwargs: Optional. Additional keyword args for Element Session export
 
-    Returns output path of saved file
+    Returns:
+        Output path of saved file
     """
     if not isinstance(keys, abc.Sequence):  # Ensure list for following loop
         keys = [keys]
