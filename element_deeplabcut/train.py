@@ -149,14 +149,13 @@ class TrainingParamSet(dj.Lookup):
         """
         Insert a new set of training parameters into dlc.TrainingParamSet.
 
-        Parameters
-        ----------
-        paramset_desc (str): Description of parameter set to be inserted
-        params (dict): Dictionary including all settings to specify model training.
-                       Must include shuffle & trainingsetindex b/c not in config.yaml.
-                       project_path and video_sets will be overwritten by config.yaml.
-                       Note that trainingsetindex is 0-indexed
-        paramset_idx (int): optional, integer to represent parameters.
+        Args:
+            paramset_desc (str): Description of parameter set to be inserted
+            params (dict): Dictionary including all settings to specify model training.
+                        Must include shuffle & trainingsetindex b/c not in config.yaml.
+                        project_path and video_sets will be overwritten by config.yaml.
+                        Note that trainingsetindex is 0-indexed
+            paramset_idx (int): optional, integer to represent parameters.
         """
 
         for required_param in cls.required_parameters:

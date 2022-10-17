@@ -14,6 +14,8 @@ logger = logging.getLogger("datajoint")
 
 
 class PoseEstimation:
+    """Class for handling DLC pose estimation files."""
+
     def __init__(
         self,
         dlc_dir=None,
@@ -103,6 +105,7 @@ class PoseEstimation:
 
     @property
     def pkl(self):
+        """Pickle file contents"""
         if self._pkl is None:
             with open(self.pkl_path, "rb") as f:
                 self._pkl = pickle.load(f)
@@ -110,6 +113,7 @@ class PoseEstimation:
 
     @property  # DLC aux_func has a read_config option, but it rewrites the proj path
     def yml(self):
+        """json-structured config.yaml file contents"""
         if self._yml is None:
             with open(self.yml_path, "rb") as f:
                 self._yml = yaml.safe_load(f)
@@ -117,26 +121,31 @@ class PoseEstimation:
 
     @property
     def rawdata(self):
+        """Raw data from h5 file"""
         if self._rawdata is None:
             self._rawdata = pd.read_hdf(self.h5_path)
         return self._rawdata
 
     @property
     def data(self):
+        """Data from the h5 file, restructured as a dict"""
         if self._data is None:
             self._data = self.reformat_rawdata()
         return self._data
 
     @property
     def df(self):
+        """Data as dataframe"""
         top_level = self.rawdata.columns.levels[0][0]
         return self.rawdata.get(top_level)
 
     @property
     def body_parts(self):
+        """Set of body parts present in data file"""
         return self.df.columns.levels[0]
 
     def reformat_rawdata(self):
+        """Transform raw h5 data into dict"""
         error_message = (
             f"Total frames from .h5 file ({len(self.rawdata)}) differs "
             + f'from .pickle ({self.pkl["nframes"]})'
@@ -156,12 +165,12 @@ class PoseEstimation:
 def read_yaml(fullpath, filename="*"):
     """Return contents of yml in fullpath. If available, defer to DJ-saved version
 
-    Parameters
-    ----------
-    fullpath: String or pathlib path. Directory with yaml files
-    filename: String. Filename, no extension. Permits wildcards.
+    Args:
+        fullpath: String or pathlib path. Directory with yaml files
+        filename: String. Filename, no extension. Permits wildcards.
 
-    Returns filepath and contents as dict
+    Returns:
+        filepath and contents as dict
     """
     from deeplabcut.utils.auxiliaryfunctions import read_config
 
@@ -180,16 +189,16 @@ def read_yaml(fullpath, filename="*"):
 def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
     """Save config_dict to output_path as filename.yaml. By default, preserves original.
 
-    Parameters
-    ----------
-    output_dir: where to save yaml file
-    config_dict: dict of config params or element-deeplabcut model.Model dict
-    filename: Optional, default 'dj_dlc_config' or preserve original 'config'
-              Set to 'config' to overwrite original file.
-              If extension is included, removed and replaced with "yaml".
-    mkdir (bool): Optional, True. Make new directory if output_dir not exist
+    Args:
+        output_dir: where to save yaml file
+        config_dict: dict of config params or element-deeplabcut model.Model dict
+        filename: Optional, default 'dj_dlc_config' or preserve original 'config'
+                Set to 'config' to overwrite original file.
+                If extension is included, removed and replaced with "yaml".
+        mkdir (bool): Optional, True. Make new directory if output_dir not exist
 
-    Returns: path of saved file as string - due to DLC func preference for strings
+    Returns:
+        path of saved file as string - due to DLC func preference for strings
     """
     from deeplabcut.utils.auxiliaryfunctions import write_config
 
@@ -228,13 +237,12 @@ def do_pose_estimation(
     videos in the video_set. NOTE: Config-specificed cropping not supported when adding
     to config in this manner.
 
-    Parameters
-    ----------
-    video_filepaths: list of videos to analyze
-    dlc_model: element-deeplabcut dlc.Model dict
-    project_path: path to project config.yml
-    output_dir: where to save output
-    OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters
+    Args:
+        video_filepaths: list of videos to analyze
+        dlc_model: element-deeplabcut dlc.Model dict
+        project_path: path to project config.yml
+        output_dir: where to save output
+        OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters
     """
     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 

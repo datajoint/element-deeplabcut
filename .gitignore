@@ -38,7 +38,6 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
-docker-compose.y*ml
 
 # C extension, Translations
 *.so
@@ -85,3 +84,4 @@ dj_local_c*.json
 temp*
 temp/*
 *nwb
+workflow_deeplabcut/

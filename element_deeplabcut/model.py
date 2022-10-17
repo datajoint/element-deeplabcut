@@ -28,17 +28,15 @@ def activate(
 ):
     """Activate this schema.
 
-    Parameters
-    ----------
-    schema_name (str): schema name on the database server
-    create_schema (bool): when True (default), create schema in the database if it
-                          does not yet exist.
-    create_tables (str): when True (default), create schema tabkes in the database if
-                         they do not yet exist.
-    linking_module (str): a module (or name) containing the required dependencies.
+    Args:
+        schema_name (str): schema name on the database server
+        create_schema (bool): when True (default), create schema in the database if it
+                            does not yet exist.
+        create_tables (str): when True (default), create schema tabkes in the database
+                             if they do not yet exist.
+        linking_module (str): a module (or name) containing the required dependencies.
 
-    Dependencies
-    ------------
+    Dependencies:
     Upstream tables:
         Session: A parent table to VideoRecording, identifying a recording session.
         Equipment: A parent table to VideoRecording, identifying a recording device.
@@ -192,10 +190,9 @@ class BodyPart(dj.Lookup):
     def extract_new_body_parts(cls, dlc_config: dict, verbose=True):
         """Returns list of body parts present in dlc config, but not BodyPart table.
 
-        Parameters
-        ----------
-        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
-        verbose (bool): Default True. Print both existing and new items to console.
+        Args:
+            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            verbose (bool): Default True. Print both existing and new items to console.
         """
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -221,11 +218,10 @@ class BodyPart(dj.Lookup):
     ):
         """Insert all body parts from a config file.
 
-        Parameters
-        ----------
-        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
-        descriptions (list): Optional. List of strings describing new body parts.
-        prompt (bool): Optional, default True. Promp for confirmation before insert.
+        Args:
+            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            descriptions (list): Optional. List of strings describing new body parts.
+            prompt (bool): Optional, default True. Promp for confirmation before insert.
         """
 
         # handle dlc_config being a yaml file
@@ -301,18 +297,17 @@ class Model(dj.Manual):
     ):
         """Insert new model into the dlc.Model table.
 
-        Parameters
-        ----------
-        model_name (str): User-friendly name for this model.
-        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
-        shuffle (int): Shuffled or not as 1 or 0.
-        trainingsetindex (int): Index of training fraction list in config.yaml.
-        model_description (str): Optional. Description of this model.
-        model_prefix (str): Optional. Filename prefix used across DLC project
-        body_part_descriptions (list): Optional. List of descriptions for BodyParts.
-        paramset_idx (int): Optional. Index from the TrainingParamSet table
-        prompt (bool): Optional.
-        params (dict): Optional. If dlc_config is path, dict of override items
+        Args:
+            model_name (str): User-friendly name for this model.
+            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            shuffle (int): Shuffled or not as 1 or 0.
+            trainingsetindex (int): Index of training fraction list in config.yaml.
+            model_description (str): Optional. Description of this model.
+            model_prefix (str): Optional. Filename prefix used across DLC project
+            body_part_descriptions (list): Optional. List of descriptions for BodyParts.
+            paramset_idx (int): Optional. Index from the TrainingParamSet table
+            prompt (bool): Optional. Prompt the user with all info before inserting.
+            params (dict): Optional. If dlc_config is path, dict of override items
         """
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
@@ -483,14 +478,13 @@ class PoseEstimationTask(dj.Manual):
     def infer_output_dir(cls, key, relative=False, mkdir=False):
         """Return the expected pose_estimation_output_dir.
 
-        With spaces in model name are replaced with hyphens.
+        Spaces in model name are replaced with hyphens.
         Based on convention: / video_dir / Device_{}_Recording_{}_Model_{}
 
-        Parameters
-        ----------
-        key: DataJoint key specifying a pairing of VideoRecording and Model.
-        relative (bool): Report directory relative to get_dlc_processed_data_dir().
-        mkdir (bool): Default False. Make directory if it doesn't exist.
+        Args:
+            key: DataJoint key specifying a pairing of VideoRecording and Model.
+            relative (bool): Report directory relative to get_dlc_processed_data_dir().
+            mkdir (bool): Default False. Make directory if it doesn't exist.
         """
         video_filepath = find_full_path(
             get_dlc_root_data_dir(),
@@ -533,15 +527,14 @@ class PoseEstimationTask(dj.Manual):
 
         Based on the convention / video_dir / device_{}_recording_{}_model_{}
 
-        Parameters
-        ----------
-        key: DataJoint key specifying a pairing of VideoRecording and Model.
-        task_mode (bool): Default 'trigger' computation. Or 'load' existing results.
-        params (dict): Optional. Parameters passed to DLC's analyze_videos:
-            videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
-            dynamic, robust_nframes, allow_growth, use_shelve
-        relative (bool): Report directory relative to get_dlc_processed_data_dir().
-        mkdir (bool): Default False. Make directory if it doesn't exist.
+        Args:
+            key: DataJoint key specifying a pairing of VideoRecording and Model.
+            task_mode (bool): Default 'trigger' computation. Or 'load' existing results.
+            params (dict): Optional. Parameters passed to DLC's analyze_videos:
+                videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
+                dynamic, robust_nframes, allow_growth, use_shelve
+            relative (bool): Report directory relative to get_dlc_processed_data_dir().
+            mkdir (bool): Default False. Make directory if it doesn't exist.
         """
         output_dir = cls.infer_output_dir(key, relative=relative, mkdir=mkdir)
 
@@ -629,16 +622,14 @@ class PoseEstimation(dj.Computed):
     def get_trajectory(cls, key, body_parts="all"):
         """Returns a pandas dataframe of coordinates of the specified body_part(s)
 
-        Parameters
-        ----------
-        key: A DataJoint query specifying one PoseEstimation entry. body_parts:
-        Optional. Body parts as a list. If "all", all joints
+        Args:
+            key: A DataJoint query specifying one PoseEstimation entry.
+            body_parts: Optional. Body parts as a list. If "all", all joints
 
-        Returns
-        -------
-        df: multi index pandas dataframe with DLC scorer names, body_parts
-            and x/y coordinates of each joint name for a camera_id, similar to output of
-            DLC dataframe. If 2D, z is set of zeros
+        Returns:
+            df: multi index pandas dataframe with DLC scorer names, body_parts
+                and x/y coordinates of each joint name for a camera_id, similar to
+                 output of DLC dataframe. If 2D, z is set of zeros
         """
         model_name = key["model_name"]
 
