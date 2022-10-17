@@ -28,12 +28,12 @@ def update_pose_cfg(
     """Updates weight paths to absolute. If update_snapshot, changes weights to snap #
 
     Args:
-    project (str, optional): Default from 'from_top_tracking'. Poject name/folder in
-        dlc_root_data_dir
-    net_type (str, optional): Project net weights (e.g., resnet50)
-        If project is 'from_top_tracking', 'mobilenet_v2_1.0'
-    update_snapshot (int, optional): Default 0 = no. If -1, highest integer value
-        available. If integer, look for that snapshot.
+        project (str, optional): Default from 'from_top_tracking'. Poject name/folder in
+            dlc_root_data_dir
+        net_type (str, optional): Project net weights (e.g., resnet50)
+            If project is 'from_top_tracking', 'mobilenet_v2_1.0'
+        update_snapshot (int, optional): Default 0 = no. If -1, highest integer value
+            available. If integer, look for that snapshot.
     """
     project_path = find_full_path(get_dlc_root_data_dir(), f"{project}/")
     if project == "from_top_tracking":

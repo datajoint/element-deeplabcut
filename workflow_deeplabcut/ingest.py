@@ -83,14 +83,13 @@ def ingest_train_params(config_params_csv_path, skip_duplicates=True, verbose=Tr
         )
 
 
-def ingest_train_vids(train_video_csv_path, verbose=False, **kwargs):
+def ingest_train_vids(train_video_csv_path: str, verbose: bool = False, **kwargs: dict):
     """Use provided CSV to insert into train.VideoSet and train.VideoSet.File
 
     Args:
         train_video_csv_path (str): relative path of csv with training video info
-        skip_duplicates (bool): Default True. Passed to DataJoint insert
         verbose (bool): Default False. Display number of entries inserted when ingesting
-        **kwards: Optional. Unused dict of keyword arguments.
+        **kwargs (dict): Optional. Unused dict of keyword arguments.
     """
     csvs = [train_video_csv_path, train_video_csv_path]
     tables = [train.VideoSet(), train.VideoSet.File()]
@@ -98,7 +97,9 @@ def ingest_train_vids(train_video_csv_path, verbose=False, **kwargs):
     ingest_csv_to_table(csvs, tables, skip_duplicates=True, verbose=verbose)
 
 
-def ingest_model_vids(model_video_csv_path, skip_duplicates=True, verbose=False):
+def ingest_model_vids(
+    model_video_csv_path: str, skip_duplicates: bool = True, verbose: bool = False
+):
     """Use provided CSV to insert into model.VideoRecording and VideoRecording.File
 
     Args:
@@ -111,7 +112,9 @@ def ingest_model_vids(model_video_csv_path, skip_duplicates=True, verbose=False)
     ingest_csv_to_table(csvs, tables, skip_duplicates=skip_duplicates, verbose=verbose)
 
 
-def ingest_model(model_model_csv_path, skip_duplicates=True, verbose=False):
+def ingest_model(
+    model_model_csv_path: str, skip_duplicates: bool = True, verbose: bool = False
+):
     """Use provided CSV to insert into model.Model table
 
     Args:
@@ -147,11 +150,11 @@ def ingest_model(model_model_csv_path, skip_duplicates=True, verbose=False):
 
 
 def ingest_dlc_items(
-    config_params_csv_path="./user_data/config_params.csv",
-    train_video_csv_path="./user_data/train_videosets.csv",
-    model_video_csv_path="./user_data/model_videos.csv",
-    skip_duplicates=False,
-    verbose=True,
+    config_params_csv_path: str = "./user_data/config_params.csv",
+    train_video_csv_path: str = "./user_data/train_videosets.csv",
+    model_video_csv_path: str = "./user_data/model_videos.csv",
+    skip_duplicates: bool = False,
+    verbose: bool = True,
 ):
     """Ingests to DLC schema from CSVs
 
@@ -159,8 +162,8 @@ def ingest_dlc_items(
         config_params_csv_path (str): Optional. Csv path for model training config and
             parameters
         train_video_csv_path (str): Optional. Csv path for list of training videosets
-        model_csv_path (str): Optional. Csv path for list of modeling videos for pose
-            estimation
+        model_video_csv_path (str): Optional. Csv path for list of modeling videos for
+            pose estimation
     """
     ingest_train_params(
         config_params_csv_path=config_params_csv_path,
