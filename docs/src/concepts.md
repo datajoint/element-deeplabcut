@@ -1,16 +1,33 @@
-# Element DeepLabCut
+# Concepts
 
-## Pose Estimation
+## Pose Estimation in Neurophysiology
+<!-- Info from previous BACKGROUND doc -->
 
-This Element features a schema for pose estimation via ***DeepLabCut***, which is a
-software tool for markerless pose estimation. DeepLabCut and others use image
-recognition machine learning models to generate animal position estimates. Unlike
-traditional motion capture techniques, this is achievable with consumer grade video
-equipment. The Element itself is composed of two sets of tables, or schema: `train`,
-which manages model training, and `model`, which mangages models and launches pose
-estimation. `model` can be used without the `train` schema. For more information on 
-Pose Estimation software and the development of the Element, see the 
-[background page](https://elements.datajoint.org/description/deeplabcut/). 
+Previous pose estimation methods required reflective markers placed on a subject, as
+well as multiple expensive high-frame-rate infrared cameras to triangulate position
+within a limited field. Recent advancements in machine learning have facilitated
+dramatic advancements in capturing pose data with a video camera alone. In particular,
+DeepLabCut (DLC) facilitates the use of pre-trained machine learning models for 2- and
+3-D non-invasive markerless pose estimation. 
+
+While some alternative tools are either species-specific (e.g.,
+[DeepFly3D](https://github.com/NeLy-EPFL/DeepFly3D)) or uniquely 2D (e.g.,
+[DeepPoseKit](https://github.com/jgraving/DeepPoseKit)), DLC highlights a diversity of
+use-cases via a [Model Zoo](http://www.mackenziemathislab.org/dlc-modelzoo). Even
+compared to tools with similar functionality (e.g.,
+[SLEAP](https://github.com/murthylab/sleap) and
+[dannce](https://github.com/spoonsso/dannce)), DLC has more users, as measured by either
+GitHub forks or more citations (1600 vs. 900). DLC's trajectory toward an industry
+standard is attributable to [continued
+funding](http://www.mackenziemathislab.org/deeplabcutblog/2020/11/18/czidlc), [extensive
+documentation](https://deeplabcut.github.io/DeepLabCut/docs/intro.html) and both
+creator- and peer-support. Other comperable tools include
+[mmpose](https://github.com/open-mmlab/mmpose),
+[idtracker.ai]([idtracker.ai](https://idtrackerai.readthedocs.io/en/latest/)),
+[TREBA](https://github.com/neuroethology/TREBA),
+[B-KinD](https://github.com/neuroethology/BKinD),
+[VAME](https://github.com/LINCellularNeuroscience/VAME), and
+[MARS](https://github.com/neuroethology/MARS).
 
 ## Table Architecture
 
@@ -54,19 +71,47 @@ Element.
     
     + ***PoseEstimation***: Results of pose estimation using a given model. 
 
-## Citation
+## Key Partnerships
 
-+ If your work uses DataJoint and DataJoint Elements, please cite the respective Research Resource Identifiers (RRIDs) and manuscripts.
+Mackenzie Mathis (Swiss Federal Institute of Technology Lausanne) is both a lead
+developer of DLC and a key advisor on DataJoint open source development as a member of
+the [Scientific Steering Committee](datajoint.com/docs/elements/management/governance).
 
-+ DataJoint for Python or MATLAB
-    + Yatsenko D, Reimer J, Ecker AS, Walker EY, Sinz F, Berens P, Hoenselaar A, Cotton RJ, Siapas AS, Tolias AS. DataJoint: managing big scientific data using MATLAB or Python. bioRxiv. 2015 Jan 1:031658. doi: https://doi.org/10.1101/031658
+DataJoint is also partnered with a number of groups who use DLC as part of broader
+workflows. In these collaborations, members of the DataJoint team have interviewed
+researchers to understand their needs in experiment workflow, pipeline design, and
+interfaces.
 
-    + DataJoint ([RRID:SCR_014543](https://scicrunch.org/resolver/SCR_014543)) - DataJoint for `<Select Python or MATLAB>` (version `<Enter version number>`)
+These teams include:
 
-+ DataJoint Elements
-    + Yatsenko D, Nguyen T, Shen S, Gunalan K, Turner CA, Guzman R, Sasaki M, Sitonic D, Reimer J, Walker EY, Tolias AS. DataJoint Elements: Data Workflows for Neurophysiology. bioRxiv. 2021 Jan 1. doi: https://doi.org/10.1101/2021.03.30.437358
+- Moser Group (Norwegian University of Science and Technology) - see [pipeline
+  design](https://moser-pipelines.readthedocs.io/en/latest/imaging/dlc.html)
 
-    + DataJoint Elements ([RRID:SCR_021894](https://scicrunch.org/resolver/SCR_021894)) - Element DeepLabCut (version `<Enter version number>`)
+- Mesoscale Activity Project (Janelia Research Campus/Baylor College of Medicine/New
+  York University)
+
+- Hui-Chen Lu Lab (Indiana University)
+
+- Tobias Rose Lab (University of Bonn)
+
+- James Cotton Lab (Northwestern University)
+
+## Pipeline Development
+
+Development of the Element began with an [open source
+repository](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) shared by the
+Mathis team. We further identified common needs across our respective partnerships to
+offer the following features for single-camera 2D models:
+
+- Training data and parameter management
+- Launching model training and automatic model evaluation
+- Model metadata management
+- Launching inference video analysis and capturing pose estimation output
+
+The workflow handles training data as file sets stored within DLC's project directory.
+Parameters of the configuration file are captured and preserved. Model evaluation
+permits direct model comparison, and, when combined with upstream Elements, Element
+DeepLabCut can be used to generate pose estimation information for each session.
 
 ## Limitations
 
@@ -74,7 +119,3 @@ This Element currently supports single-animal, single-camera 2D models, and does
 support multi-animal or multi-camera models. This Element does not offer any features
 for labeling training data. Users should to use native DeepLabCut tools for
 intitializing a project and labeling training data.
-
-+ See the [Element DeepLabCut documentation](https://elements.datajoint.org/description/deeplabcut/) for the background information and development timeline.
-
-+ For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.

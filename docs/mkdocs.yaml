@@ -4,16 +4,36 @@ site_name: Element DeepLabCut
 repo_url: https://github.com/datajoint/element-deeplabcut
 repo_name: datajoint/element-deeplabcut
 nav:
-  - Element DeepLabCut: getting_started.md
-  - Getting Started: getting_started.md
+  - Element DeepLabCut: index.md
   - Concepts: concepts.md
   - Tutorials: tutorials.md
   - About:
     - Changelog: about/changelog.md
   - API: api/ # defer to gen-files + literate-nav
 
-# ---------------------------- STANDARD -----------------------------
+# --------------------- NOTES TO CONTRIBUTORS -----------------------
+# 1. The above `nav` establishes the site structure. This should be
+#    more-or-less the same across Elements.
+# 2. Follow the google styleguide for best results with docstrings
+#    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+# 3. To render the site for dev, use the following shell command
+#    ```console 
+#    MODE="LIVE" PACKAGE=element_{ELEMENT} \
+#    UPSTREAM_REPO=https://github.com/datajoint/element-{ELEMENT}.git \
+#    HOST_UID=$(id -u) docker compose -f docs/docker-compose.yaml up --build
+#    ```
+#    The Errors and Warnings mkdocs provides during the build are helpful
+#    for seeing where you may have broken links or docstring issues.
+# 4. To render your fork of the workflow repo prior to PRs, change the
+#    URL in ./docs/src/api/make_pages.py#L19
+# 5. Instead of using bash/shell comment blocks, use `console`
+# 6. Linking to headings requires [link](./relative-doc#sub-heading) format
+#    with (a) hypens instead of spaces, (b) all lowercase
+# 7. For redirect options, see 'redirects' below.
+# 8. Hard wrapping makes it easier to see changes in GitHub reviews. To
+#    get a keyboard shortcut for hard wrapping, see VSCode Rewrap extension.
 
+# ---------------------------- STANDARD -----------------------------
 edit_uri: ./edit/main/docs/src
 docs_dir: ./src
 theme:
@@ -41,9 +61,9 @@ theme:
         name: Switch to light mode
 plugins:
   - search
-  - redirects:
-      redirect_maps:
-        "index.md": "getting_started.md"
+  # - redirects: # OPTIONAL REDIRECTS
+  #     redirect_maps:
+  #       "index.md": "getting_started.md"
   - mkdocstrings:
       default_handler: python
   - gen-files:

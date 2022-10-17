@@ -13,6 +13,7 @@ import importlib
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from typing import Optional
 from datetime import datetime
 from deeplabcut import evaluate_network
 from element_interface.utils import find_full_path, find_root_directory
@@ -24,12 +25,16 @@ _linking_module = None
 
 
 def activate(
-    model_schema_name, *, create_schema=True, create_tables=True, linking_module=None
+    model_schema_name: str,
+    *,
+    create_schema: bool = True,
+    create_tables: bool = True,
+    linking_module: bool = None,
 ):
     """Activate this schema.
 
     Args:
-        schema_name (str): schema name on the database server
+        model_schema_name (str): schema name on the database server
         create_schema (bool): when True (default), create schema in the database if it
                             does not yet exist.
         create_tables (str): when True (default), create schema tabkes in the database
@@ -92,7 +97,7 @@ def get_dlc_root_data_dir() -> list:
     return root_directories
 
 
-def get_dlc_processed_data_dir() -> str:
+def get_dlc_processed_data_dir() -> Optional[str]:
     """Pulls relevant func from parent namespace. Defaults to DLC's project /videos/.
 
     Method in parent namespace should provide a string to a directory where DLC output
@@ -187,7 +192,7 @@ class BodyPart(dj.Lookup):
     """
 
     @classmethod
-    def extract_new_body_parts(cls, dlc_config: dict, verbose=True):
+    def extract_new_body_parts(cls, dlc_config: dict, verbose: bool = True):
         """Returns list of body parts present in dlc config, but not BodyPart table.
 
         Args:
@@ -304,7 +309,6 @@ class Model(dj.Manual):
             trainingsetindex (int): Index of training fraction list in config.yaml.
             model_description (str): Optional. Description of this model.
             model_prefix (str): Optional. Filename prefix used across DLC project
-            body_part_descriptions (list): Optional. List of descriptions for BodyParts.
             paramset_idx (int): Optional. Index from the TrainingParamSet table
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
@@ -475,7 +479,7 @@ class PoseEstimationTask(dj.Manual):
     """
 
     @classmethod
-    def infer_output_dir(cls, key, relative=False, mkdir=False):
+    def infer_output_dir(cls, key: dict, relative: bool = False, mkdir: bool = False):
         """Return the expected pose_estimation_output_dir.
 
         Spaces in model name are replaced with hyphens.
@@ -516,12 +520,12 @@ class PoseEstimationTask(dj.Manual):
     @classmethod
     def insert_estimation_task(
         cls,
-        key,
-        task_mode="trigger",
+        key: dict,
+        task_mode: str = "trigger",
         params: dict = None,
-        relative=True,
-        mkdir=True,
-        skip_duplicates=False,
+        relative: bool = True,
+        mkdir: bool = True,
+        skip_duplicates: bool = False,
     ):
         """Insert PoseEstimationTask in inferred output dir.
 
@@ -619,12 +623,12 @@ class PoseEstimation(dj.Computed):
         self.BodyPartPosition.insert(body_parts)
 
     @classmethod
-    def get_trajectory(cls, key, body_parts="all"):
+    def get_trajectory(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
         """Returns a pandas dataframe of coordinates of the specified body_part(s)
 
         Args:
-            key: A DataJoint query specifying one PoseEstimation entry.
-            body_parts: Optional. Body parts as a list. If "all", all joints
+            key (dict): A DataJoint query specifying one PoseEstimation entry.
+            body_parts (list, optional): Body parts as a list. If "all", all joints
 
         Returns:
             df: multi index pandas dataframe with DLC scorer names, body_parts
@@ -635,7 +639,7 @@ class PoseEstimation(dj.Computed):
 
         if body_parts == "all":
             body_parts = (cls.BodyPartPosition & key).fetch("body_part")
-        else:
+        elif not isinstance(body_parts, list):
             body_parts = list(body_parts)
 
         df = None
