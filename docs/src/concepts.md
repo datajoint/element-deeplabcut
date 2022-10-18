@@ -120,7 +120,10 @@ method for turning DeepLabCut pose estimation data into standard Neurodata Witho
 Borders (NWB) files. This makes it easy to share files with collaborators and publish
 results on [DANDI Archive](https://dandiarchive.org/). [NWB](https://www.nwb.org/), as
 an organization, is dedicated to standardizing data formats and maximizing
-interoperability across tools for neurophysiology. 
+interoperability across tools for neurophysiology. For more information on uploading
+NWB files to DANDI within the DataJoint Elements ecosystem, visit our documentation
+for the DANDI upload feature of 
+[Element Interface](datajoint.com/docs/elements/element-interface/).
 
 Pose data, however, is not yet specified in NWB Core and is instead an 
 [extension of NWB](https://training.incf.org/lesson/how-build-and-share-extensions-nwb),
