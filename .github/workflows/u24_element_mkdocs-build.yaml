@@ -16,8 +16,7 @@ on:
 jobs:
   publish-docs:
     if: |
-      github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags')
+      github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       DOCKER_CLIENT_TIMEOUT: "120"
