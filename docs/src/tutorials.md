@@ -22,7 +22,9 @@ itself.
 
 Each of the 
 [notebooks](https://github.com/datajoint/workflow-deeplabcut/tree/main/notebooks) in 
-the workflow steps through ways to interact with the Element itself. 
+the workflow steps through ways to interact with the Element itself. To try out Elements
+notebooks in an online Jupyter environment with access to example data, visit 
+[CodeBook](https://codebook.datajoint.io/). (DeepLabCut notebooks coming soon!)
 
 - [00-DataDownload](https://github.com/datajoint/workflow-deeplabcut/blob/main/notebooks/00-DataDownload_Optional.ipynb) 
    highlights how to use DataJoint tools to download a sample model for trying out the Element.
