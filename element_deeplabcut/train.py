@@ -27,21 +27,23 @@ _linking_module = None
 
 
 def activate(
-    train_schema_name, *, create_schema=True, create_tables=True, linking_module=None
+    train_schema_name: str,
+    *,
+    create_schema: bool = True,
+    create_tables: bool = True,
+    linking_module: str = None
 ):
     """Activate this schema.
 
-    Parameters
-    ----------
-    schema_name (str): schema name on the database server
-    create_schema (bool): when True (default), create schema in the database if it
-                          does not yet exist.
-    create_tables (str): when True (default), create schema tabkes in the database if
-                         they do not yet exist.
-    linking_module (str): a module (or name) containing the required dependencies.
+    Args:
+        train_schema_name (str): schema name on the database server
+        create_schema (bool): when True (default), create schema in the database if it
+                            does not yet exist.
+        create_tables (str): when True (default), create schema tabkes in the database if
+                            they do not yet exist.
+        linking_module (str): a module (or name) containing the required dependencies.
 
-    Dependencies
-    ------------
+    Dependencies:
     Functions:
         get_dlc_root_data_dir(): Returns absolute path for root data director(y/ies)
                                  with all behavioral recordings, as (list of) string(s).
@@ -112,13 +114,20 @@ def get_dlc_processed_data_dir() -> str:
 
 @schema
 class VideoSet(dj.Manual):
-    definition = """
+    """Collection of videos included in a given training set.
+
+    Refer to the `definition` attribute for the table design."""
+
+    definition = """ # Set of vids in training set
     video_set_id: int
     """
 
     class File(dj.Part):
-        definition = """
-        # Paths of training files (e.g., labeled pngs, CSV or video)
+        """File IDs and paths in a given VideoSet
+
+        Refer to the `definition` attribute for the table design."""
+
+        definition = """ # Paths of training files (e.g., labeled pngs, CSV or video)
         -> master
         file_id: int
         ---
@@ -128,6 +137,10 @@ class VideoSet(dj.Manual):
 
 @schema
 class TrainingParamSet(dj.Lookup):
+    """Parameters used to train a model
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """
     # Parameters to specify a DLC model training instance
     # For DLC ≤ v2.0, include scorer_lecacy = True in params
@@ -189,6 +202,10 @@ class TrainingParamSet(dj.Lookup):
 
 @schema
 class TrainingTask(dj.Manual):
+    """Staging table for pairing videosets and training parameter sets
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """      # Specification for a DLC model training instance
     -> VideoSet           # labeled video(s) for training
     -> TrainingParamSet
@@ -201,6 +218,10 @@ class TrainingTask(dj.Manual):
 
 @schema
 class ModelTraining(dj.Computed):
+    """Automated Model training information.
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """
     -> TrainingTask
     ---

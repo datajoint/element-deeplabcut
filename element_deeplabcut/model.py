@@ -115,6 +115,8 @@ def get_dlc_processed_data_dir() -> Optional[str]:
 
 @schema
 class VideoRecording(dj.Manual):
+    """Set of video recordings for DLC inferences."""
+
     definition = """
     -> Session
     recording_id: int
@@ -123,6 +125,11 @@ class VideoRecording(dj.Manual):
     """
 
     class File(dj.Part):
+        """File IDs and paths associated with a given recording_id
+
+        Refer to the `definition` attribute for the table design.
+        """
+
         definition = """
         -> master
         file_id: int
@@ -133,6 +140,10 @@ class VideoRecording(dj.Manual):
 
 @schema
 class RecordingInfo(dj.Imported):
+    """Automated table with video file metadata.
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """
     -> VideoRecording
     ---
@@ -185,6 +196,10 @@ class RecordingInfo(dj.Imported):
 
 @schema
 class BodyPart(dj.Lookup):
+    """Body parts tracked by DeepLabCut models
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """
     body_part                : varchar(32)
     ---
@@ -260,6 +275,15 @@ class BodyPart(dj.Lookup):
 
 @schema
 class Model(dj.Manual):
+    """DeepLabCut Models applied to generate pose estimations.
+
+    Refer to the `definition` attribute for the table design.
+
+    Note:
+        Models are uniquely identified by the union of task, date, iteration, shuffle,
+        snapshotindex, and trainingsetindex.
+    """
+
     definition = """
     model_name           : varchar(64)  # User-friendly model name
     ---
@@ -280,6 +304,8 @@ class Model(dj.Manual):
     # project_path is the only item required downstream in the pose schema
 
     class BodyPart(dj.Part):
+        """Body parts associated with a given model"""
+
         definition = """
         -> master
         -> BodyPart
@@ -402,6 +428,11 @@ class Model(dj.Manual):
 
 @schema
 class ModelEvaluation(dj.Computed):
+    """Performance characteristics model calculated by `deeplabcut.evaluate_network`
+
+    Refer to the `definition` attribute for the table design.
+    """
+
     definition = """
     -> Model
     ---
@@ -468,6 +499,10 @@ class ModelEvaluation(dj.Computed):
 
 @schema
 class PoseEstimationTask(dj.Manual):
+    """Staging table for pairing of video recording and model before inference.
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
     -> Model                                    # Must specify a DLC project_path
@@ -555,6 +590,10 @@ class PoseEstimationTask(dj.Manual):
 
 @schema
 class PoseEstimation(dj.Computed):
+    """Results of pose estimation.
+
+    Refer to the `definition` attribute for the table design."""
+
     definition = """
     -> PoseEstimationTask
     ---
@@ -562,6 +601,8 @@ class PoseEstimation(dj.Computed):
     """
 
     class BodyPartPosition(dj.Part):
+        """Position of individual body parts by frame index"""
+
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
         -> Model.BodyPart
