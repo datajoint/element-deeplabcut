@@ -16,7 +16,7 @@ element = package.split("_", 1)[1]
 if not Path(f"workflow_{element}").is_dir():
     try:
         subprocess.run(
-            f"git clone https://github.com/datajoint/workflow-{element.replace('_','-')}.git /main/delete".split(
+            f"git clone https://github.com/cbroz1/workflow-{element.replace('_','-')}.git /main/delete".split(
                 " "
             ),
             check=True,
