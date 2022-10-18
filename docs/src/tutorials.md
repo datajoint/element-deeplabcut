@@ -2,12 +2,19 @@
 
 ## Installation
 
-Installation of the Element requires an integrated development environment and database.  Instructions to setup each of the components can be found on the [User Instructions](datajoint.com/docs/elements/user-instructions) page.  These instructions use the example [workflow for Element DeepLabcut](https://github.com/datajoint/workflow-deeplabcut), which can be modified for a user's specific experimental requirements.```
+Installation of the Element requires an integrated development environment and database.
+Instructions to setup each of the components can be found on the 
+[User Instructions](datajoint.com/docs/elements/user-instructions) page.  These 
+instructions
+use the example 
+[workflow for Element DeepLabcut](https://github.com/datajoint/workflow-deeplabcut), 
+which can be modified for a user's specific experimental requirements.
 
 ## YouTube
 
-Our [YouTube tutorial](https://www.youtube.com/watch?v=8FDjTuQ52gQ) gives an overview 
-of the workflow directory as well as core concepts related to DeepLabCut itself.
+Our [Element DeepLabCut tutorial](https://www.youtube.com/watch?v=8FDjTuQ52gQ) gives an 
+overview  of the workflow directory as well as core concepts related to DeepLabCut 
+itself.
 
 [![YouTube tutorial](https://img.youtube.com/vi/8FDjTuQ52gQ/0.jpg)](https://www.youtube.com/watch?v=8FDjTuQ52gQ)
 
@@ -15,7 +22,7 @@ of the workflow directory as well as core concepts related to DeepLabCut itself.
 
 Each of the 
 [notebooks](https://github.com/datajoint/workflow-deeplabcut/tree/main/notebooks) in 
-the workflow steps through ways to interact with the Element itself.
+the workflow steps through ways to interact with the Element itself. 
 
 - [00-DataDownload](https://github.com/datajoint/workflow-deeplabcut/blob/main/notebooks/00-DataDownload_Optional.ipynb) 
    highlights how to use DataJoint tools to download a sample model for trying out the Element.

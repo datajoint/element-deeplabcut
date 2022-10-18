@@ -113,6 +113,20 @@ Parameters of the configuration file are captured and preserved. Model evaluatio
 permits direct model comparison, and, when combined with upstream Elements, Element
 DeepLabCut can be used to generate pose estimation information for each session.
 
+## Data Export and Publishing
+
+DeepLabCut's official [export package](https://github.com/DeepLabCut/DLC2NWB/) is best
+method for turning DeepLabCut pose estimation data into standard Neurodata Without
+Borders (NWB) files. This makes it easy to share files with collaborators and publish
+results on [DANDI Archive](https://dandiarchive.org/). [NWB](https://www.nwb.org/), as
+an organization, is dedicated to standardizing data formats and maximizing
+interoperability across tools for neurophysiology. 
+
+Pose data, however, is not yet specified in NWB Core and is instead an 
+[extension of NWB](https://training.incf.org/lesson/how-build-and-share-extensions-nwb),
+via [`ndx-pose`](https://github.com/rly/ndx-pose). Future versions of the NWB standard
+might adopt this exension in it's current form or make modifications. 
+
 ## Limitations
 
 This Element currently supports single-animal, single-camera 2D models, and does not yet
