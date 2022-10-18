@@ -1,4 +1,4 @@
-name: u24_element_mkdocs-build # TESTING
+name: u24_element_mkdocs-build
 on:
   push:
     branches:
@@ -12,7 +12,6 @@ on:
       - '**' # every branch
       - '!gh-pages' # exclude gh-pages branch
       - '!stage*' # exclude branches beginning with stage
-  workflow_dispatch: # CLICK BUTTON - REMOVE BEFORE MERGE
 jobs:
   publish-docs:
     if: |
