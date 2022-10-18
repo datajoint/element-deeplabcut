@@ -16,6 +16,8 @@ nav:
 #    more-or-less the same across Elements.
 # 2. Follow the google styleguide for best results with docstrings
 #    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+#    This includes adding typing suggestions to functions
+#    https://docs.python.org/3/library/typing.html
 # 3. To render the site for dev, use the following shell command
 #    ```console 
 #    MODE="LIVE" PACKAGE=element_{ELEMENT} \
