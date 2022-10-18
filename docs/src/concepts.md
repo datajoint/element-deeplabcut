@@ -73,7 +73,7 @@ Element.
 
 ## Key Partnerships
 
-Mackenzie Mathis (Swiss Federal Institute of Technology Lausanne) is both a lead
+[Mackenzie Mathis](http://www.mackenziemathislab.org/) (Swiss Federal Institute of Technology Lausanne) is both a lead
 developer of DLC and a key advisor on DataJoint open source development as a member of
 the [Scientific Steering Committee](datajoint.com/docs/elements/management/governance).
 
