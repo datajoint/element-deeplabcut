@@ -12,9 +12,8 @@ which can be modified for a user's specific experimental requirements.  This exa
 ## Steps to run the Element
 ## Videos
 
-Our [Element DeepLabCut tutorial](https://www.youtube.com/watch?v=8FDjTuQ52gQ) gives an 
-overview  of the workflow directory as well as core concepts related to DeepLabCut 
-itself.
+The [Element DeepLabCut tutorial](https://www.youtube.com/watch?v=8FDjTuQ52gQ) gives an 
+overview of the workflow files as well as core concepts related to DeepLabCut.
 
 [![YouTube tutorial](https://img.youtube.com/vi/8FDjTuQ52gQ/0.jpg)](https://www.youtube.com/watch?v=8FDjTuQ52gQ)
 
