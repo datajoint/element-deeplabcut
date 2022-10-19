@@ -7,10 +7,10 @@ Instructions to setup each of the components can be found on the
 [User Instructions](datajoint.com/docs/elements/user-instructions) page.  These 
 instructions
 use the example 
-[workflow for Element DeepLabcut](https://github.com/datajoint/workflow-deeplabcut), 
-which can be modified for a user's specific experimental requirements.
-
-## YouTube
+[workflow for Element DeepLabCut](https://github.com/datajoint/workflow-deeplabcut), 
+which can be modified for a user's specific experimental requirements.  This example workflow uses four Elements (Lab, Animal, Session, and DeepLabCut) to construct a complete pipeline, and is able to ingest experimental metadata and run model training and inference.
+## Steps to run the Element
+## Videos
 
 Our [Element DeepLabCut tutorial](https://www.youtube.com/watch?v=8FDjTuQ52gQ) gives an 
 overview  of the workflow directory as well as core concepts related to DeepLabCut 
