@@ -1,17 +1,8 @@
 name: u24_element_mkdocs-build
 on:
   push:
-    branches:
-      - '**' # every branch
-      - '!gh-pages' # exclude gh-pages branch
-      - '!stage*' # exclude branches beginning with stage
-    tags:
-      - '\d+\.\d+\.\d+' # only semver tags
-  pull_request:
-    branches:
-      - '**' # every branch
-      - '!gh-pages' # exclude gh-pages branch
-      - '!stage*' # exclude branches beginning with stage
+    # tags:
+    #   - \d+\.\d+\.\d+
 jobs:
   publish-docs:
     if: |
@@ -28,7 +19,6 @@ jobs:
           ELEMENT_UNDERSCORES=${ELEMENT_HYPHENS//-/_}
           export MODE=BUILD
           export PACKAGE=${ELEMENT_UNDERSCORES}
-          export UPSTREAM_REPO=https://github.com/${GITHUB_REPOSITORY}.git
+          export UPSTREAM_REPO=https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           export HOST_UID=$(id -u)
           docker compose -f docs/docker-compose.yaml up --exit-code-from docs --build
-          git push origin gh-pages

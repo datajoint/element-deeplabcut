@@ -4,6 +4,7 @@ WORKDIR /main
 COPY --chown=anaconda:anaconda ./docs/.docker/apk_requirements.txt ${APK_REQUIREMENTS}
 COPY --chown=anaconda:anaconda ./docs/.docker/pip_requirements.txt ${PIP_REQUIREMENTS}
 RUN \
+    umask u+rwx,g+rwx,o-rwx && \
     /entrypoint.sh echo "Dependencies installed" && \
     rm ${APK_REQUIREMENTS} ${PIP_REQUIREMENTS} && \
     git config --global user.name "GitHub Action" && \

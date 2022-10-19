@@ -85,3 +85,6 @@ temp*
 temp/*
 *nwb
 workflow_deeplabcut/
+
+# docs
+/docs/site
