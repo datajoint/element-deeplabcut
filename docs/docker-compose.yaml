@@ -32,7 +32,7 @@ services:
             echo "INFO::Delete gh-pages branch"
             git branch -D gh-pages || true
             echo "INFO::Fetch upstream gh-pages"
-            git fetch $${UPSTREAM_REPO} gh-pages:gh-pages || git switch --orphan gh-pages && git commit --allow-empty -m "init commit"
+            git fetch $${UPSTREAM_REPO} gh-pages:gh-pages && git switch gh-pages || git switch --orphan gh-pages && git commit --allow-empty -m "init commit"
             echo "INFO::mike"
             mike deploy --config-file ./docs/mkdocs.yaml -u $$(grep -oE '\d+\.\d+' /main/$${PACKAGE}/version.py) latest
             mike set-default --config-file ./docs/mkdocs.yaml latest
