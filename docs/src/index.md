@@ -3,25 +3,27 @@
 ## Pose Estimation
 <!-- Info from previous element README -->
 
-This Element features a schema for pose estimation via 
-[***DeepLabCut***](https://www.deeplabcut.org/), which is a
-software tool for markerless pose estimation. DeepLabCut uses image
-recognition machine learning models to generate animal position estimates. Unlike
-traditional motion capture techniques, this is achievable with consumer grade video
-equipment. 
+DataJoint Element for markerless pose estimation with
+[DeepLabCut](https://www.deeplabcut.org/).  DataJoint Elements collectively standardize
+and automate data collection and analysis for neuroscience experiments.  Each Element is
+a modular pipeline for data storage and processing with corresponding database
+tables that can be combined with other Elements to assemble a fully functional pipeline.
 
-The Element itself is composed of two sets of tables, or schema: `train`,
-which manages model training, and `model`, which mangages models and launches pose
-estimation. `model` can be used without the `train` schema. For more information on 
-Pose Estimation software and the development of the Element, see the 
-[concepts page](./concepts.md). 
+Element DeepLabCut runs DeepLabCut which uses image
+recognition machine learning models to generate animal position estimates from consumer grade video equipment.  The Element is composed of two schemas for storing data and running analysis:
+- `train` - Manages model training
+- `model` - Manages models and launches pose
+estimation
+
+Visit the [Concepts page](./concepts.md) for more information on 
+pose estimation and Element DeepLabCut.  To get started with building your data pipeline visit the [Tutorials page](./tutorials.md).
 
 <!-- TODO: simplified diagram -->
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
 
 ## Citation
 
-If your work DataJoint Elements, please cite the following manuscript and Research
+If your work uses DataJoint Elements, please cite the following manuscript and Research
 Resource Identifier (RRID).
 
 + Yatsenko D, Nguyen T, Shen S, Gunalan K, Turner CA, Guzman R, Sasaki M, Sitonic D,
