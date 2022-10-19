@@ -17,7 +17,7 @@ jobs:
         run: |
           ELEMENT_HYPHENS=${GITHUB_REPOSITORY##*/}
           ELEMENT_UNDERSCORES=${ELEMENT_HYPHENS//-/_}
-          export MODE=BUILD
+          export MODE=PUSH
           export PACKAGE=${ELEMENT_UNDERSCORES}
           export UPSTREAM_REPO=https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           export HOST_UID=$(id -u)
