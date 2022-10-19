@@ -7,7 +7,7 @@ Previous pose estimation methods required reflective markers placed on a subject
 well as multiple expensive high-frame-rate infrared cameras to triangulate position
 within a limited field. Recent advancements in machine learning have facilitated
 dramatic advancements in capturing pose data with a video camera alone. In particular,
-DeepLabCut (DLC) facilitates the use of pre-trained machine learning models for 2- and
+[DeepLabCut](http://deeplabcut.org/) (DLC) facilitates the use of pre-trained machine learning models for 2-D and
 3-D non-invasive markerless pose estimation. 
 
 While some alternative tools are either species-specific (e.g.,
@@ -29,12 +29,9 @@ creator- and peer-support. Other comperable tools include
 [VAME](https://github.com/LINCellularNeuroscience/VAME), and
 [MARS](https://github.com/neuroethology/MARS).
 
-## Table Architecture
+## Element Architecture
 
-Each of the DataJoint Elements are a set of tables for common neuroinformatics
-modalities to organize, preprocess, and analyze data. Each node in the following diagram
-is either a table in the Element itself or a table that would be connected to the
-Element.
+Each node in the following diagram represents the analysis code in the Element DeepLabCut and corresponding table in the database.
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
 
@@ -56,7 +53,7 @@ Element.
     
     + ***ModelTraining***: A record of training iterations launched by ***TrainingTask***.
 
-- `model` schema: Tables related to DeepLabCut models and pose estimation.
+- `model` schema: Tables related to DeepLabCut models and pose estimation. The `model` can be used without the `train` schema.
     
     + ***VideoRecording***: Video(s) from one recording session, for pose estimation.
     
@@ -130,9 +127,9 @@ Pose data, however, is not yet specified in NWB Core and is instead an
 via [`ndx-pose`](https://github.com/rly/ndx-pose). Future versions of the NWB standard
 might adopt this exension in it's current form or make modifications. 
 
-## Limitations
+## Roadmap
 
-This Element currently supports single-animal, single-camera 2D models, and does not yet
-support multi-animal or multi-camera models. This Element does not offer any features
-for labeling training data. Users should to use native DeepLabCut tools for
-intitializing a project and labeling training data.
+Further development of this Element is community driven.  Upon user requests and based on guidance from the Scientific Steering Group we will add the following features to this Element:
+
+- Support for multi-animal or multi-camera models
+- Tools to label training data
