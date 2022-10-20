@@ -5,19 +5,51 @@
 Installation of the Element requires an integrated development environment and database.
 Instructions to setup each of the components can be found on the 
 [User Instructions](datajoint.com/docs/elements/user-instructions) page.  These 
-instructions
-use the example 
+instructions use the example 
 [workflow for Element DeepLabCut](https://github.com/datajoint/workflow-deeplabcut), 
-which can be modified for a user's specific experimental requirements.  This example workflow uses four Elements (Lab, Animal, Session, and DeepLabCut) to construct a complete pipeline, and is able to ingest experimental metadata and run model training and inference.
+which can be modified for a user's specific experimental requirements.  This example
+workflow uses four Elements (Lab, Animal, Session, and DeepLabCut) to construct a
+complete pipeline, and is able to ingest experimental metadata and run model training
+and inference.
+
+The [DeepLabCut (DLC) website](https://deeplabcut.github.io/DeepLabCut/README.html) has a 
+rich library of resources for downloading the software and understanding its various 
+features. This includes getting started with their software (see 
+[links below](#steps-to-run-the-element)). 
+
 ## Steps to run the Element
-## Videos
+
+The Element assumes you:
+
+1. Have 
+   [download and installed DLC](https://deeplabcut.github.io/DeepLabCut/docs/installation.html).
+2. Have a DLC project folder on your machine. You can declare a project either
+   from the 
+   [DLC GUI](https://deeplabcut.github.io/DeepLabCut/docs/PROJECT_GUI.html#video-demos-how-to-launch-and-run-the-project-manager-gui)
+   or via a
+   [terminal](https://deeplabcut.github.io/DeepLabCut/docs/standardDeepLabCut_UserGuide.html#deeplabcut-in-the-terminal).
+3. Have labeled data in your DLC project folder. Again, this can be done via
+   [the GUI](https://youtu.be/JDsa8R5J0nQ?t=94)
+   or a
+   [terminal](https://deeplabcut.github.io/DeepLabCut/docs/standardDeepLabCut_UserGuide.html#deeplabcut-in-the-terminal).
+
+With these steps in place, you can then use the materials below to start training
+and pose estimation inferences. Training starts by configuring parameters in the
+`train` schema, and launching training in the `ModelTraining` table. When you're happy
+with the state of a model, you can insert it into the `Model` table, and pair it with 
+videos to trigger pose estimation inferences via the `PoseEstimationTask` table
+in the `model` schema. See [Element Architecture](./concepts/#element-architecture)
+for a full list of table functions.
+
+### Videos
 
 The [Element DeepLabCut tutorial](https://www.youtube.com/watch?v=8FDjTuQ52gQ) gives an 
-overview of the workflow files as well as core concepts related to DeepLabCut.
+overview of the workflow files and notebooks as well as core concepts related to 
+DeepLabCut.
 
 [![YouTube tutorial](https://img.youtube.com/vi/8FDjTuQ52gQ/0.jpg)](https://www.youtube.com/watch?v=8FDjTuQ52gQ)
 
-## Notebooks
+### Notebooks
 
 Each of the 
 [notebooks](https://github.com/datajoint/workflow-deeplabcut/tree/main/notebooks) in 

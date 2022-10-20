@@ -1,6 +1,6 @@
 # ---------------------- PROJECT SPECIFIC ---------------------------
 
-site_name: Element DeepLabCut
+site_name: DataJoint Documentation
 repo_url: https://github.com/datajoint/element-deeplabcut
 repo_name: datajoint/element-deeplabcut
 nav:
@@ -34,6 +34,14 @@ nav:
 # 7. For redirect options, see 'redirects' below.
 # 8. Hard wrapping makes it easier to see changes in GitHub reviews. To
 #    get a keyboard shortcut for hard wrapping, see VSCode Rewrap extension.
+#    Be careful not to add line breaks in [multiword links](example.com)
+# 9. The mkdocs google analytics extension requires an environment variable
+#    GOOGLE_ANALYTICS_KEY, also available in LastPass. CICD with this is WIP
+# 10.To deploy this site on your fork, 
+#    (a) declare a branch called gh-pages
+#    (b) go to the your fork > settings > pages 
+#    (c) direct pages to render from the gh-pages branch at root
+#    (d) push a tag to your fork with the format test*.*.*
 
 # ---------------------------- STANDARD -----------------------------
 edit_uri: ./edit/main/docs/src
@@ -99,6 +107,22 @@ markdown_extensions:
   
 extra:
   generator: false # Disable watermark
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback!
   version:
     provider: mike
   social:

@@ -3,12 +3,29 @@
 ## Pose Estimation in Neurophysiology
 <!-- Info from previous BACKGROUND doc -->
 
+Neurophysiology is concerned not only with the inner workings of the brain, but the
+relationship between neural firings and environmental stimuli, natural behavior, or
+inferred cognitive states. One approach is to present a stationary subject with planned
+stimuli. More naturalistic paradigms permit spontaneous behavior, and add some mechanism
+measure subject responses. Through pose estimation, we capture the richness of a
+subject's natural behavior, which can then be paired with neuronal recordings.
+
 Previous pose estimation methods required reflective markers placed on a subject, as
 well as multiple expensive high-frame-rate infrared cameras to triangulate position
 within a limited field. Recent advancements in machine learning have facilitated
 dramatic advancements in capturing pose data with a video camera alone. In particular,
-[DeepLabCut](http://deeplabcut.org/) (DLC) facilitates the use of pre-trained machine learning models for 2-D and
+[DeepLabCut](http://deeplabcut.org/) (DLC) facilitates the use of pre-trained machine 
+learning models for 2-D and
 3-D non-invasive markerless pose estimation. 
+
+By training a model, DLC takes a machine learning process in its current state
+and refining it to specialize in the video data collected in our experiment. This 
+process works best when the camera has a consistent field of view across sessions, and
+when generating pose estimation inferences on consistent data sets (e.g., subjects with 
+similar characteristics). DLC saves models at various checkpoints and recommends
+training for approximately 200,000 iterations. When DLC generates pose estimation 
+inferences, this model is applied to novel videos, generating predictions of where the
+same set of training points would be in this new situation.
 
 While some alternative tools are either species-specific (e.g.,
 [DeepFly3D](https://github.com/NeLy-EPFL/DeepFly3D)) or uniquely 2D (e.g.,
