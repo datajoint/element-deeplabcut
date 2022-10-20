@@ -1,4 +1,4 @@
-# Element DeepLabCut
+# Element DeepLabCut for Pose Estimation
 
 DataJoint Element for markerless pose estimation with
 [DeepLabCut](https://www.deeplabcut.org/).  DataJoint Elements collectively standardize
