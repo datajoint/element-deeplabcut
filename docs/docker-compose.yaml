@@ -14,6 +14,7 @@ services:
       - PACKAGE
       - UPSTREAM_REPO
       - MODE
+      - GOOGLE_ANALYTICS_KEY # ALSO THIS?
     volumes:
       - ../docs:/main/docs
       - ../${PACKAGE}:/main/${PACKAGE}
