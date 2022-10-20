@@ -1,5 +1,4 @@
 # Element DeepLabCut
-<!-- Info from previous element README -->
 
 DataJoint Element for markerless pose estimation with
 [DeepLabCut](https://www.deeplabcut.org/).  DataJoint Elements collectively standardize
@@ -17,5 +16,4 @@ estimation
 Visit the [Concepts page](./concepts.md) for more information on 
 pose estimation and Element DeepLabCut.  To get started with building your data pipeline visit the [Tutorials page](./tutorials.md).
 
-<!-- TODO: simplified diagram -->
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)

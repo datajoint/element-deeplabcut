@@ -1,7 +1,6 @@
 # Concepts
 
 ## Pose Estimation in Neurophysiology
-<!-- Info from previous BACKGROUND doc -->
 
 Neurophysiology is concerned not only with the inner workings of the brain, but the
 relationship between neural firings and environmental stimuli, natural behavior, or
@@ -48,42 +47,50 @@ creator- and peer-support. Other comperable tools include
 
 ## Element Architecture
 
-Each node in the following diagram represents the analysis code in the Element DeepLabCut and corresponding table in the database.
+Each node in the following diagram represents the analysis code in the workflow for Element DeepLabCut and corresponding table in the database.  Within the workflow, Element DeepLabCut connects to upstream Elements including Lab, Animal, and Session.
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
 
-- Upstream: 
+### `lab` schema
 
-    - Element DeepLabCut connects to a a ***Session*** table, which is modeled in our 
-    [workflow pipeline](https://github.com/datajoint/workflow-deeplabcut/blob/main/workflow_deeplabcut/pipeline.py). 
-    
-    - Although not requried, most choose to connect ***Session*** to a ***Subject** 
-    table for managing research subjects.
+| Table | Description |
+| --- | --- |
+| Device | Camera metadata |
 
-- `train` schema: Tables related to model training. Optional.
-    
-    + ***VideoSet***: The set of files corresponding to a training dataset.
-    
-    + ***TrainingParamSet***: A collection of model training parameters, represented by an index.
-    
-    + ***TrainingTask***: A set of tasks specifying model training methods.
-    
-    + ***ModelTraining***: A record of training iterations launched by ***TrainingTask***.
+### `subject` schema
+- Although not required, most choose to connect the `Session` table to a `Subject` table.
 
-- `model` schema: Tables related to DeepLabCut models and pose estimation. The `model` can be used without the `train` schema.
-    
-    + ***VideoRecording***: Video(s) from one recording session, for pose estimation.
-    
-    + ***BodyPart***: Unique body parts (a.k.a. joints) and descriptions thereof.
-    
-    + ***Model***: A central table for storing unique models.
-    
-    + ***ModelEvaluation***: Evaluation results for each model.
-    
-    + ***PoseEstimationTask***: A series of pose estimation tasks to be completed. 
-        Pairings of video recordings with models to be use for pose estimation.
-    
-    + ***PoseEstimation***: Results of pose estimation using a given model. 
+| Table | Description |
+| --- | --- |
+| Subject | Basic information of the research subject |
+
+### `session` schema
+
+| Table | Description |
+| --- | --- |
+| Session | Unique experimental session identifier |
+
+### `train` schema
+- Tables related to model training. Optional.
+
+| Table | Description |
+| --- | --- |
+| VideoSet | Set of files corresponding to a training dataset. |
+| TrainingParamSet | A collection of model training parameters, represented by an index. |
+| TrainingTask | A set of tasks specifying model training methods. |
+| ModelTraining | A record of training iterations launched by `TrainingTask`. |
+
+### `model` schema
+- Tables related to DeepLabCut models and pose estimation. The `model` can be used without the `train` schema.
+
+| Table | Description |
+| --- | --- |
+| VideoRecording | Video(s) from one recording session, for pose estimation. |
+| BodyPart | Unique body parts (a.k.a. joints) and descriptions thereof. |
+| Model | A central table for storing unique models. |
+| ModelEvaluation | Evaluation results for each model. |
+| PoseEstimationTask | A series of pose estimation tasks to be completed. Pairings of video recordings with models to be use for pose estimation. |
+| PoseEstimation | Results of pose estimation using a given model. |
 
 ## Key Partnerships
 
@@ -110,7 +117,7 @@ These teams include:
 
 - James Cotton Lab (Northwestern University)
 
-## Pipeline Development
+## Element Development
 
 Development of the Element began with an [open source
 repository](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) shared by the
