@@ -45,6 +45,31 @@ creator- and peer-support. Other comperable tools include
 [VAME](https://github.com/LINCellularNeuroscience/VAME), and
 [MARS](https://github.com/neuroethology/MARS).
 
+## Key Partnerships
+
+[Mackenzie Mathis](http://www.mackenziemathislab.org/) (Swiss Federal Institute of Technology Lausanne) is both a lead
+developer of DLC and a key advisor on DataJoint open source development as a member of
+the [Scientific Steering Committee](datajoint.com/docs/elements/management/governance).
+
+DataJoint is also partnered with a number of groups who use DLC as part of broader
+workflows. In these collaborations, members of the DataJoint team have interviewed
+researchers to understand their needs in experiment workflow, pipeline design, and
+interfaces.
+
+These teams include:
+
+- Moser Group (Norwegian University of Science and Technology) - see [pipeline
+  design](https://moser-pipelines.readthedocs.io/en/latest/imaging/dlc.html)
+
+- Mesoscale Activity Project (Janelia Research Campus/Baylor College of Medicine/New
+  York University)
+
+- Hui-Chen Lu Lab (Indiana University)
+
+- Tobias Rose Lab (University of Bonn)
+
+- James Cotton Lab (Northwestern University)
+
 ## Element Architecture
 
 Each node in the following diagram represents the analysis code in the workflow for Element DeepLabCut and corresponding table in the database.  Within the workflow, Element DeepLabCut connects to upstream Elements including Lab, Animal, and Session.
@@ -92,30 +117,7 @@ Each node in the following diagram represents the analysis code in the workflow 
 | PoseEstimationTask | A series of pose estimation tasks to be completed. Pairings of video recordings with models to be use for pose estimation. |
 | PoseEstimation | Results of pose estimation using a given model. |
 
-## Key Partnerships
 
-[Mackenzie Mathis](http://www.mackenziemathislab.org/) (Swiss Federal Institute of Technology Lausanne) is both a lead
-developer of DLC and a key advisor on DataJoint open source development as a member of
-the [Scientific Steering Committee](datajoint.com/docs/elements/management/governance).
-
-DataJoint is also partnered with a number of groups who use DLC as part of broader
-workflows. In these collaborations, members of the DataJoint team have interviewed
-researchers to understand their needs in experiment workflow, pipeline design, and
-interfaces.
-
-These teams include:
-
-- Moser Group (Norwegian University of Science and Technology) - see [pipeline
-  design](https://moser-pipelines.readthedocs.io/en/latest/imaging/dlc.html)
-
-- Mesoscale Activity Project (Janelia Research Campus/Baylor College of Medicine/New
-  York University)
-
-- Hui-Chen Lu Lab (Indiana University)
-
-- Tobias Rose Lab (University of Bonn)
-
-- James Cotton Lab (Northwestern University)
 
 ## Element Development
 
