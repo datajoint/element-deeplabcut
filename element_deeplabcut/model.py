@@ -115,7 +115,9 @@ def get_dlc_processed_data_dir() -> Optional[str]:
 
 @schema
 class VideoRecording(dj.Manual):
-    """Set of video recordings for DLC inferences."""
+    """Set of video recordings for DLC inferences.
+
+    Refer to the `definition` attribute for the table design."""
 
     definition = """
     -> Session
