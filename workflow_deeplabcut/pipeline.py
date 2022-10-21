@@ -47,6 +47,11 @@ class Device(dj.Lookup):
     The primary key is also used to generate inferred output directories when
     running pose estimation inference. Refer to the `definition` attribute
     for the table design.
+
+    Attributes:
+        device ( varchar(32) ): Device short name.
+        modality ( varchar(64) ): Modality for which this device is used.
+        description ( varchar(256) ): Optional. Description of device.
     """
 
     definition = """

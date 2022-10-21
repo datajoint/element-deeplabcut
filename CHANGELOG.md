@@ -4,7 +4,9 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## 0.1.1 - Unreleased
 - Added - Integration tests
-- Changes - Dataset for didactic notebooks
+- Added - Docstrings for mkdocs deployment
+- Changed - Dataset for didactic notebooks
+- Changed - Revert Equipment -> Device
 
 ## 0.1.0 - 2022-05-10
 - Added - Process.py script
