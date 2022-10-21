@@ -15,9 +15,8 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Add - mkdocs deployment with workflow API docs
 
 ## [0.1.1] - 2022-06-10
-### Fixed
-+ Replace lazy imports
-+ Project path in the model.Model
++ Fixed - Replace lazy imports
++ Fixed - Project path in the model.Model
 
 ## [0.1.0] - 2022-05-10
 

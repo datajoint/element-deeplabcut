@@ -2,7 +2,11 @@
 
 ## Pose Estimation in Neurophysiology
 
-Studying the inner workings of the brain requires understanding the relationship between neural activity and environmental stimuli, natural behavior, or inferred cognitive states. Pose estimation is a computer vision method to track the position, and thereby behavior, of the subject over the course of an experiment, which can then be paired with neuronal recordings to answer scientific questions about the brain.
+Studying the inner workings of the brain requires understanding the relationship between
+neural activity and environmental stimuli, natural behavior, or inferred cognitive
+states. Pose estimation is a computer vision method to track the position, and thereby
+behavior, of the subject over the course of an experiment, which can then be paired with
+neuronal recordings to answer scientific questions about the brain.
 
 Previous pose estimation methods required reflective markers placed on a subject, as
 well as multiple expensive high-frame-rate infrared cameras to triangulate position
@@ -12,14 +16,11 @@ dramatic advancements in capturing pose data with a video camera alone. In parti
 learning models for 2-D and
 3-D non-invasive markerless pose estimation. 
 
-By training a model, DLC takes a machine learning process in its current state
-and refining it to specialize in the video data collected in our experiment. This 
-process works best when the camera has a consistent field of view across sessions, and
-when generating pose estimation inferences on consistent data sets (e.g., subjects with 
-similar characteristics). DLC saves models at various checkpoints and recommends
-training for approximately 200,000 iterations. When DLC generates pose estimation 
-inferences, this model is applied to novel videos, generating predictions of where the
-same set of training points would be in this new situation.
+DeepLabCut offers the ability to continue training an exisiting object detection model 
+to further specialize in videos in the training data set. In other words, researchers
+can take a well-known generalizable machine learning model and apply it to their 
+experimental setup, making it relatively easy to produce pose estimation inferences 
+for subsequent experimental sessions.
 
 While some alternative tools are either species-specific (e.g.,
 [DeepFly3D](https://github.com/NeLy-EPFL/DeepFly3D)) or uniquely 2D (e.g.,
@@ -65,9 +66,26 @@ These teams include:
 
 - James Cotton Lab (Northwestern University)
 
+## Element Features
+
+Development of the Element began with an [open source
+repository](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) shared by the
+Mathis team. We further identified common needs across our respective partnerships to
+offer the following features for single-camera 2D models:
+
+- Manage training data and configuration parameters
+- Launch model training
+- Evaluate models automatically and directly compare models
+- Manage model metadata
+- Launch inference video analysis 
+- Capture pose estimation output for each session
+
 ## Element Architecture
 
-Each node in the following diagram represents the analysis code in the workflow and the corresponding tables in the database.  Within the workflow, Element DeepLabCut connects to upstream Elements including Lab, Animal, and Session.  For more detailed documentation on each table, see the API docs for the respective schemas.
+Each node in the following diagram represents the analysis code in the workflow and the
+corresponding tables in the database.  Within the workflow, Element DeepLabCut connects
+to upstream Elements including Lab, Animal, and Session.  For more detailed
+documentation on each table, see the API docs for the respective schemas.
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
 
@@ -112,19 +130,6 @@ Each node in the following diagram represents the analysis code in the workflow 
 | PoseEstimationTask | A series of pose estimation tasks to be completed. Pairings of video recordings with models to be use for pose estimation. |
 | PoseEstimation | Results of pose estimation using a given model. |
 
-## Element Features
-
-Development of the Element began with an [open source
-repository](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) shared by the
-Mathis team. We further identified common needs across our respective partnerships to
-offer the following features for single-camera 2D models:
-
-- Manage training data and configuration parameters
-- Launch model training
-- Evaluate models automatically and directly compare models
-- Manage model metadata
-- Launch inference video analysis 
-- Capture pose estimation output for each session
 
 ## Data Export and Publishing
 
@@ -135,6 +140,10 @@ Element DeepLabCut includes an export function that saves the outputs as a Neuro
 For more details on the export function, see the [Tutorials page](/tutorials).
 
 Once NWB files are generated they can be readily shared with collaborators and published on [DANDI Archive](https://dandiarchive.org/).  The DataJoint Elements ecosystem includes a function to upload the NWB files to DANDI (see [Element Interface](datajoint.com/docs/elements/element-interface/)).
+
+```python
+dlc_session_to_nwb(pose_key, use_element_session, session_kwargs)
+```
 
 ## Roadmap
 

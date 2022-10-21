@@ -39,8 +39,8 @@ def activate(
         train_schema_name (str): schema name on the database server
         create_schema (bool): when True (default), create schema in the database if it
                             does not yet exist.
-        create_tables (str): when True (default), create schema tabkes in the database if
-                            they do not yet exist.
+        create_tables (str): when True (default), create schema tabkes in the database
+                             if they do not yet exist.
         linking_module (str): a module (or name) containing the required dependencies.
 
     Dependencies:
@@ -116,7 +116,8 @@ def get_dlc_processed_data_dir() -> str:
 class VideoSet(dj.Manual):
     """Collection of videos included in a given training set.
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        video_set_id (int): Unique ID for collection of videos."""
 
     definition = """ # Set of vids in training set
     video_set_id: int
@@ -125,7 +126,9 @@ class VideoSet(dj.Manual):
     class File(dj.Part):
         """File IDs and paths in a given VideoSet
 
-        Refer to the `definition` attribute for the table design."""
+        Attributes:
+            VideoSet (foreign key): VideoSet key.
+            file_path ( varchar(255) ): Path to file on disk relative to root."""
 
         definition = """ # Paths of training files (e.g., labeled pngs, CSV or video)
         -> master
@@ -139,7 +142,12 @@ class VideoSet(dj.Manual):
 class TrainingParamSet(dj.Lookup):
     """Parameters used to train a model
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        paramset_idx (smallint): Index uniqely identifying paramset.
+        paramset_desc ( varchar(128) ): Description of paramset.
+        param_set_hash (uuid): Hash identifying this paramset.
+        params (longblob): Dictionary of all applicable parameters.
+        Note: param_set_hash must be unique."""
 
     definition = """
     # Parameters to specify a DLC model training instance
@@ -204,7 +212,14 @@ class TrainingParamSet(dj.Lookup):
 class TrainingTask(dj.Manual):
     """Staging table for pairing videosets and training parameter sets
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        VideoSet (foreign key): VideoSet Key.
+        TrainingParamSet (foreign key): TrainingParamSet key.
+        training_id (int): Unique ID for training task.
+        model_prefix ( varchar(32) ): Optional. Prefix for model files.
+        project_path ( varchar(255) ): Optional. DLC's project_path in config relative
+                                       to get_dlc_root_data_dir
+    """
 
     definition = """      # Specification for a DLC model training instance
     -> VideoSet           # labeled video(s) for training
@@ -220,7 +235,10 @@ class TrainingTask(dj.Manual):
 class ModelTraining(dj.Computed):
     """Automated Model training information.
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        TrainingTask (foreign key): TrainingTask key.
+        latest_snapshot (int unsigned): Latest exact snapshot index (i.e., never -1).
+        config_template (longblob): Stored full config file."""
 
     definition = """
     -> TrainingTask
