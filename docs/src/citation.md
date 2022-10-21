@@ -1,6 +1,6 @@
 # Citation
 
-If your work uses Element DeepLabCut, please cite the following manuscript and Research
+If your work uses this Element, please cite the following manuscript and Research
 Resource Identifier (RRID).
 
 + Yatsenko D, Nguyen T, Shen S, Gunalan K, Turner CA, Guzman R, Sasaki M, Sitonic D,

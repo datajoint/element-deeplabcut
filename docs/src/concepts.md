@@ -2,12 +2,7 @@
 
 ## Pose Estimation in Neurophysiology
 
-Neurophysiology is concerned not only with the inner workings of the brain, but the
-relationship between neural firings and environmental stimuli, natural behavior, or
-inferred cognitive states. One approach is to present a stationary subject with planned
-stimuli. More naturalistic paradigms permit spontaneous behavior, and add some mechanism
-measure subject responses. Through pose estimation, we capture the richness of a
-subject's natural behavior, which can then be paired with neuronal recordings.
+Studying the inner workings of the brain requires understanding the relationship between neural activity and environmental stimuli, natural behavior, or inferred cognitive states. Pose estimation is a computer vision method to track the position, and thereby behavior, of the subject over the course of an experiment, which can then be paired with neuronal recordings to answer scientific questions about the brain.
 
 Previous pose estimation methods required reflective markers placed on a subject, as
 well as multiple expensive high-frame-rate infrared cameras to triangulate position
@@ -37,7 +32,7 @@ GitHub forks or more citations (1600 vs. 900). DLC's trajectory toward an indust
 standard is attributable to [continued
 funding](http://www.mackenziemathislab.org/deeplabcutblog/2020/11/18/czidlc), [extensive
 documentation](https://deeplabcut.github.io/DeepLabCut/docs/intro.html) and both
-creator- and peer-support. Other comperable tools include
+creator- and peer-support. Other comparable tools include
 [mmpose](https://github.com/open-mmlab/mmpose),
 [idtracker.ai]([idtracker.ai](https://idtrackerai.readthedocs.io/en/latest/)),
 [TREBA](https://github.com/neuroethology/TREBA),
@@ -53,7 +48,7 @@ the [Scientific Steering Committee](datajoint.com/docs/elements/management/gover
 
 DataJoint is also partnered with a number of groups who use DLC as part of broader
 workflows. In these collaborations, members of the DataJoint team have interviewed
-researchers to understand their needs in experiment workflow, pipeline design, and
+the scientists to understand their needs in experimental setup, pipeline design, and
 interfaces.
 
 These teams include:
@@ -72,31 +67,31 @@ These teams include:
 
 ## Element Architecture
 
-Each node in the following diagram represents the analysis code in the workflow for Element DeepLabCut and corresponding table in the database.  Within the workflow, Element DeepLabCut connects to upstream Elements including Lab, Animal, and Session.
+Each node in the following diagram represents the analysis code in the workflow and the corresponding tables in the database.  Within the workflow, Element DeepLabCut connects to upstream Elements including Lab, Animal, and Session.  For more detailed documentation on each table, see the API docs for the respective schemas.
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
 
-### `lab` schema
+### `lab` schema ([API docs](https://datajoint.com/docs/workflow-deeplabcut/api/workflow_deeplabcut/pipeline/#workflow_deeplabcut.pipeline.Device))
 
 | Table | Description |
 | --- | --- |
 | Device | Camera metadata |
 
-### `subject` schema
+### `subject` schema ([API docs](https://datajoint.com/docs/element-animal/api/element_animal/subject))
 - Although not required, most choose to connect the `Session` table to a `Subject` table.
 
 | Table | Description |
 | --- | --- |
 | Subject | Basic information of the research subject |
 
-### `session` schema
+### `session` schema ([API docs](https://datajoint.com/docs/element-session/api/element_session/session_with_datetime))
 
 | Table | Description |
 | --- | --- |
 | Session | Unique experimental session identifier |
 
-### `train` schema
-- Tables related to model training. Optional.
+### `train` schema ([API docs](/api/element_deeplabcut/train))
+- Optional tables related to model training.
 
 | Table | Description |
 | --- | --- |
@@ -105,8 +100,8 @@ Each node in the following diagram represents the analysis code in the workflow 
 | TrainingTask | A set of tasks specifying model training methods. |
 | ModelTraining | A record of training iterations launched by `TrainingTask`. |
 
-### `model` schema
-- Tables related to DeepLabCut models and pose estimation. The `model` can be used without the `train` schema.
+### `model` schema ([API](/api/element_deeplabcut/model))
+- Tables related to DeepLabCut models and pose estimation. The `model` schema can be used without the `train` schema.
 
 | Table | Description |
 | --- | --- |
@@ -117,41 +112,29 @@ Each node in the following diagram represents the analysis code in the workflow 
 | PoseEstimationTask | A series of pose estimation tasks to be completed. Pairings of video recordings with models to be use for pose estimation. |
 | PoseEstimation | Results of pose estimation using a given model. |
 
-
-
-## Element Development
+## Element Features
 
 Development of the Element began with an [open source
 repository](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) shared by the
 Mathis team. We further identified common needs across our respective partnerships to
 offer the following features for single-camera 2D models:
 
-- Training data and parameter management
-- Launching model training and automatic model evaluation
-- Model metadata management
-- Launching inference video analysis and capturing pose estimation output
-
-The workflow handles training data as file sets stored within DLC's project directory.
-Parameters of the configuration file are captured and preserved. Model evaluation
-permits direct model comparison, and, when combined with upstream Elements, Element
-DeepLabCut can be used to generate pose estimation information for each session.
+- Manage training data and configuration parameters
+- Launch model training
+- Evaluate models automatically and directly compare models
+- Manage model metadata
+- Launch inference video analysis 
+- Capture pose estimation output for each session
 
 ## Data Export and Publishing
 
-DeepLabCut's official [export package](https://github.com/DeepLabCut/DLC2NWB/) is best
-method for turning DeepLabCut pose estimation data into standard Neurodata Without
-Borders (NWB) files. This makes it easy to share files with collaborators and publish
-results on [DANDI Archive](https://dandiarchive.org/). [NWB](https://www.nwb.org/), as
-an organization, is dedicated to standardizing data formats and maximizing
-interoperability across tools for neurophysiology. For more information on uploading
-NWB files to DANDI within the DataJoint Elements ecosystem, visit our documentation
-for the DANDI upload feature of 
-[Element Interface](datajoint.com/docs/elements/element-interface/).
+Element DeepLabCut includes an export function that saves the outputs as a Neurodata Without Borders (NWB) file.  By running a single command, the data from an experimental session is saved to a NWB file.
 
-Pose data, however, is not yet specified in NWB Core and is instead an 
-[extension of NWB](https://training.incf.org/lesson/how-build-and-share-extensions-nwb),
-via [`ndx-pose`](https://github.com/rly/ndx-pose). Future versions of the NWB standard
-might adopt this exension in it's current form or make modifications. 
+
+
+For more details on the export function, see the [Tutorials page](/tutorials).
+
+Once NWB files are generated they can be readily shared with collaborators and published on [DANDI Archive](https://dandiarchive.org/).  The DataJoint Elements ecosystem includes a function to upload the NWB files to DANDI (see [Element Interface](datajoint.com/docs/elements/element-interface/)).
 
 ## Roadmap
 
