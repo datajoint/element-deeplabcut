@@ -31,7 +31,7 @@ nav:
 # Files
 # 01. Add a soft link to your changelog with the following
 #     ```console
-#     ln -s ../../../CHANGELOG.md ./docs/src/changelog.md
+#     ln -s ../../CHANGELOG.md ./docs/src/changelog.md
 #     ```
 #
 # Site rendering

@@ -89,26 +89,26 @@ documentation on each table, see the API docs for the respective schemas.
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
 
-### `lab` schema ([API docs](./api/workflow_deeplabcut/pipeline/#workflow_deeplabcut.pipeline.Device))
+### `lab` schema ([API docs](../api/workflow_deeplabcut/pipeline/#workflow_deeplabcut.pipeline.Device))
 
 | Table | Description |
 | --- | --- |
 | Device | Camera metadata |
 
-### `subject` schema ([API docs](../element-animal/api/element_animal/subject))
+### `subject` schema ([API docs](../../element-animal/api/element_animal/subject))
 - Although not required, most choose to connect the `Session` table to a `Subject` table.
 
 | Table | Description |
 | --- | --- |
 | Subject | Basic information of the research subject |
 
-### `session` schema ([API docs](../element-session/api/element_session/session_with_datetime))
+### `session` schema ([API docs](../../element-session/api/element_session/session_with_datetime))
 
 | Table | Description |
 | --- | --- |
 | Session | Unique experimental session identifier |
 
-### `train` schema ([API docs](./api/element_deeplabcut/train))
+### `train` schema ([API docs](../api/element_deeplabcut/train))
 - Optional tables related to model training.
 
 | Table | Description |
@@ -118,7 +118,7 @@ documentation on each table, see the API docs for the respective schemas.
 | TrainingTask | A set of tasks specifying model training methods. |
 | ModelTraining | A record of training iterations launched by `TrainingTask`. |
 
-### `model` schema ([API](./api/element_deeplabcut/model))
+### `model` schema ([API](../api/element_deeplabcut/model))
 - Tables related to DeepLabCut models and pose estimation. The `model` schema can be used without the `train` schema.
 
 | Table | Description |
