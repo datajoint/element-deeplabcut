@@ -95,14 +95,14 @@ documentation on each table, see the API docs for the respective schemas.
 | --- | --- |
 | Device | Camera metadata |
 
-### `subject` schema ([API docs](../../element-animal/api/element_animal/subject))
+### `subject` schema ([API docs](https://datajoint.com/docs/elements/element-animal/api/element_animal/subject))
 - Although not required, most choose to connect the `Session` table to a `Subject` table.
 
 | Table | Description |
 | --- | --- |
 | Subject | Basic information of the research subject |
 
-### `session` schema ([API docs](../../element-session/api/element_session/session_with_datetime))
+### `session` schema ([API docs](https://datajoint.com/docs/elements/element-session/api/element_session/session_with_datetime))
 
 | Table | Description |
 | --- | --- |
