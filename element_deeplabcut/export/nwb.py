@@ -21,7 +21,9 @@ except ImportError:
 logger = logging.getLogger("datajoint")
 
 
-def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
+def dlc_session_to_nwb(
+    keys: list, use_element_session: bool = True, session_kwargs: dict = None
+) -> str:
     """Using keys from PoseEstimation table, save DLC's h5 output to NWB.
 
     Calls DLC2NWB to export NWB file using current h5 on disk. If use_element_session,
@@ -30,13 +32,13 @@ def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
     already exists, returns output path without making changes to the file.
     NOTE: does not support multianimal exports
 
-    Parameters
-    ----------
-    keys: One or more keys from model.PoseEstimation
-    use_element_session: Optional. If True, call NWB export from Element Session
-    session_kwargs: Optional. Additional keyword arguments for Element Session export
+    Args:
+        keys: One or more keys from model.PoseEstimation
+        use_element_session: Optional. If True, call NWB export from Element Session
+        session_kwargs: Optional. Additional keyword args for Element Session export
 
-    Returns output path of saved file
+    Returns:
+        Output path of saved file
     """
     if not isinstance(keys, abc.Sequence):  # Ensure list for following loop
         keys = [keys]

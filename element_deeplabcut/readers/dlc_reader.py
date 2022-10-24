@@ -14,13 +14,15 @@ logger = logging.getLogger("datajoint")
 
 
 class PoseEstimation:
+    """Class for handling DLC pose estimation files."""
+
     def __init__(
         self,
-        dlc_dir=None,
-        pkl_path=None,
-        h5_path=None,
-        yml_path=None,
-        filename_prefix="",
+        dlc_dir: str = None,
+        pkl_path: str = None,
+        h5_path: str = None,
+        yml_path: str = None,
+        filename_prefix: str = "",
     ):
         if dlc_dir is None:
             assert pkl_path and h5_path and yml_path, (
@@ -103,6 +105,7 @@ class PoseEstimation:
 
     @property
     def pkl(self):
+        """Pickle file contents"""
         if self._pkl is None:
             with open(self.pkl_path, "rb") as f:
                 self._pkl = pickle.load(f)
@@ -110,6 +113,7 @@ class PoseEstimation:
 
     @property  # DLC aux_func has a read_config option, but it rewrites the proj path
     def yml(self):
+        """json-structured config.yaml file contents"""
         if self._yml is None:
             with open(self.yml_path, "rb") as f:
                 self._yml = yaml.safe_load(f)
@@ -117,26 +121,31 @@ class PoseEstimation:
 
     @property
     def rawdata(self):
+        """Raw data from h5 file"""
         if self._rawdata is None:
             self._rawdata = pd.read_hdf(self.h5_path)
         return self._rawdata
 
     @property
     def data(self):
+        """Data from the h5 file, restructured as a dict"""
         if self._data is None:
             self._data = self.reformat_rawdata()
         return self._data
 
     @property
     def df(self):
+        """Data as dataframe"""
         top_level = self.rawdata.columns.levels[0][0]
         return self.rawdata.get(top_level)
 
     @property
     def body_parts(self):
+        """Set of body parts present in data file"""
         return self.df.columns.levels[0]
 
     def reformat_rawdata(self):
+        """Transform raw h5 data into dict"""
         error_message = (
             f"Total frames from .h5 file ({len(self.rawdata)}) differs "
             + f'from .pickle ({self.pkl["nframes"]})'
@@ -153,15 +162,15 @@ class PoseEstimation:
         return body_parts_position
 
 
-def read_yaml(fullpath, filename="*"):
+def read_yaml(fullpath: str, filename: str = "*") -> tuple:
     """Return contents of yml in fullpath. If available, defer to DJ-saved version
 
-    Parameters
-    ----------
-    fullpath: String or pathlib path. Directory with yaml files
-    filename: String. Filename, no extension. Permits wildcards.
+    Args:
+        fullpath (str): String or pathlib path. Directory with yaml files
+        filename (str, optional): Filename, no extension. Permits wildcards.
 
-    Returns filepath and contents as dict
+    Returns:
+        Tuple of (a) filepath as pathlib.PosixPath and (b) file contents as dict
     """
     from deeplabcut.utils.auxiliaryfunctions import read_config
 
@@ -177,19 +186,24 @@ def read_yaml(fullpath, filename="*"):
     return yml_paths[0], read_config(yml_paths[0])
 
 
-def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
+def save_yaml(
+    output_dir: str,
+    config_dict: dict,
+    filename: str = "dj_dlc_config",
+    mkdir: bool = True,
+) -> str:
     """Save config_dict to output_path as filename.yaml. By default, preserves original.
 
-    Parameters
-    ----------
-    output_dir: where to save yaml file
-    config_dict: dict of config params or element-deeplabcut model.Model dict
-    filename: Optional, default 'dj_dlc_config' or preserve original 'config'
-              Set to 'config' to overwrite original file.
-              If extension is included, removed and replaced with "yaml".
-    mkdir (bool): Optional, True. Make new directory if output_dir not exist
+    Args:
+        output_dir (str): where to save yaml file
+        config_dict (str): dict of config params or element-deeplabcut model.Model dict
+        filename (str, optional): default 'dj_dlc_config' or preserve original 'config'
+            Set to 'config' to overwrite original file.
+            If extension is included, removed and replaced with "yaml".
+        mkdir (bool): Optional, True. Make new directory if output_dir not exist
 
-    Returns: path of saved file as string - due to DLC func preference for strings
+    Returns:
+        path of saved file as string - due to DLC func preference for strings
     """
     from deeplabcut.utils.auxiliaryfunctions import write_config
 
@@ -206,10 +220,10 @@ def save_yaml(output_dir, config_dict, filename="dj_dlc_config", mkdir=True):
 
 
 def do_pose_estimation(
-    video_filepaths,
-    dlc_model,
-    project_path,
-    output_dir,
+    video_filepaths: list,
+    dlc_model: dict,
+    project_path: str,
+    output_dir: str,
     videotype="",
     gputouse=None,
     save_as_csv=False,
@@ -220,7 +234,6 @@ def do_pose_estimation(
     robust_nframes=False,
     allow_growth=False,
     use_shelve=False,
-    modelprefix="",  # need from paramset
 ):
     """Launch DLC's analyze_videos within element-deeplabcut.
 
@@ -228,13 +241,59 @@ def do_pose_estimation(
     videos in the video_set. NOTE: Config-specificed cropping not supported when adding
     to config in this manner.
 
-    Parameters
-    ----------
-    video_filepaths: list of videos to analyze
-    dlc_model: element-deeplabcut dlc.Model dict
-    project_path: path to project config.yml
-    output_dir: where to save output
-    OTHERS: Optional, set with defaults. See deeplabcut.analyze_videos parameters
+    Args:
+        video_filepaths (list): list of videos to analyze
+        dlc_model (dict): element-deeplabcut dlc.Model
+        project_path (str): path to project config.yml
+        output_dir (str): where to save output
+            # BELOW FROM DLC'S DOCSTRING
+
+        videotype (str, optional, default=""):
+            Checks for the extension of the video in case the input to the video is a
+            directory. Only videos with this extension are analyzed. If unspecified,
+            videos with common extensions ('avi', 'mp4', 'mov', 'mpeg', 'mkv') are kept.
+        gputouse (int or None, optional, default=None):
+            Indicates the GPU to use (see number in ``nvidia-smi``). If none, ``None``.
+            See: https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries
+        save_as_csv (bool, optional, default=False):
+            Saves the predictions in a .csv file.
+        batchsize (int or None, optional, default=None):
+            Change batch size for inference; if given overwrites ``pose_cfg.yaml``
+        cropping (list or None, optional, default=None):
+            List of cropping coordinates as [x1, x2, y1, y2].
+            Note that the same cropping parameters will then be used for all videos.
+            If different video crops are desired, run ``analyze_videos`` on individual
+            videos with the corresponding cropping coordinates.
+        TFGPUinference (bool, optional, default=True):
+            Perform inference on GPU with TensorFlow code. Introduced in "Pretraining
+            boosts out-of-domain robustness for pose estimation" by Alexander Mathis,
+            Mert Yüksekgönül, Byron Rogers, Matthias Bethge, Mackenzie W. Mathis.
+            Source https://arxiv.org/abs/1909.11229
+        dynamic (tuple(bool, float, int) triple (state, detectiontreshold, margin)):
+            If the state is true, then dynamic cropping will be performed. That means
+            that if an object is detected (i.e. any body part > detectiontreshold),
+            then object boundaries are computed according to the smallest/largest x
+            position and smallest/largest y position of all body parts. This  window is
+            expanded by the margin and from then on only the posture within this crop
+            is analyzed (until the object is lost, i.e. <detectiontreshold). The
+            current position is utilized for updating the crop window for the next
+            frame (this is why the margin is important and should be set large enough
+            given the movement of the animal).
+        robust_nframes (bool, optional, default=False):
+            Evaluate a video's number of frames in a robust manner.
+            This option is slower (as the whole video is read frame-by-frame),
+            but does not rely on metadata, hence its robustness against file corruption.
+        allow_growth (bool, optional, default=False.):
+            For some smaller GPUs the memory issues happen. If ``True``, the memory
+            allocator does not pre-allocate the entire specified GPU memory region,
+            instead starting small and growing as needed.
+            See issue: https://forum.image.sc/t/how-to-stop-running-out-of-vram/30551/2
+        use_shelve (bool, optional, default=False):
+            By default, data are dumped in a pickle file at the end of the video
+            analysis. Otherwise, data are written to disk on the fly using a "shelf";
+            i.e., a pickle-based, persistent, database-like object by default,
+            resulting in constant memory footprint.
+
     """
     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
