@@ -9,9 +9,10 @@ tables that can be combined with other Elements to assemble a fully functional p
 Element DeepLabCut runs DeepLabCut which uses image recognition machine learning models
 to generate animal position estimates from consumer grade video equipment.  The Element
 is composed of two schemas for storing data and running analysis:
+
 - `train` - Manages model training
-- `model` - Manages models and launches pose
-estimation
+  
+- `model` - Manages models and launches pose estimation
 
 Visit the [Concepts page](./concepts.md) for more information on 
 pose estimation and Element DeepLabCut.  To get started with building your data pipeline visit the [Tutorials page](./tutorials.md).

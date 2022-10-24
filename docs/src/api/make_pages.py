@@ -16,7 +16,7 @@ element = package.split("_", 1)[1]
 if not Path(f"workflow_{element}").is_dir():
     try:
         subprocess.run(
-            f"git clone https://github.com/cbroz1/workflow-{element.replace('_','-')}.git /main/delete".split(
+            f"git clone https://github.com/datajoint/workflow-{element.replace('_','-')}.git /main/delete".split(
                 " "
             ),
             check=True,
@@ -31,6 +31,8 @@ nav = mkdocs_gen_files.Nav()
 for path in sorted(Path(package).glob("**/*.py")) + sorted(
     Path(f"workflow_{element}").glob("**/*.py")
 ):
+    if path.stem == "__init__":
+        continue
     with mkdocs_gen_files.open(f"api/{path.with_suffix('')}.md", "w") as f:
         module_path = ".".join(
             [p for p in path.with_suffix("").parts if p != "__init__"]

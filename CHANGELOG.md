@@ -2,6 +2,9 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.1] - 2022-10-23
++ Update - Docstrings for mkdocs deployment
+
 ## [0.2.0] - 2022-10-10
 + Update - Remove direct dependency (`element-interface`) for PyPI release.
 + Update - Docstring PEP257 compliance #24 
@@ -15,9 +18,8 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Add - mkdocs deployment with workflow API docs
 
 ## [0.1.1] - 2022-06-10
-### Fixed
-+ Replace lazy imports
-+ Project path in the model.Model
++ Fixed - Replace lazy imports
++ Fixed - Project path in the model.Model
 
 ## [0.1.0] - 2022-05-10
 

@@ -117,7 +117,12 @@ def get_dlc_processed_data_dir() -> Optional[str]:
 class VideoRecording(dj.Manual):
     """Set of video recordings for DLC inferences.
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        Session (foreign key): Session primary key.
+        Equipment (foreign key): Equipment primary key, used for default output
+                                 directory path information.
+        recording_id (int): Unique recording ID.
+        recording_start_time (datetime): Recording start time."""
 
     definition = """
     -> Session
@@ -129,7 +134,9 @@ class VideoRecording(dj.Manual):
     class File(dj.Part):
         """File IDs and paths associated with a given recording_id
 
-        Refer to the `definition` attribute for the table design.
+        Attributes:
+            VideoRecording (foreign key): Video recording primary key.
+            file_path ( varchar(255) ): file path of video, relative to root data dir.
         """
 
         definition = """
@@ -144,7 +151,14 @@ class VideoRecording(dj.Manual):
 class RecordingInfo(dj.Imported):
     """Automated table with video file metadata.
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        VideoRecording (foreign key): Video recording key.
+        px_height (smallint): Height in pixels.
+        px_width (smallint): Width in pixels.
+        nframes (smallint): Number of frames.
+        fps (int): Optional. Frames per second, Hz.
+        recording_datetime (datetime): Optional. Datetime for the start of recording.
+        recording_duration (float): video duration (s) from nframes / fps."""
 
     definition = """
     -> VideoRecording
@@ -200,7 +214,9 @@ class RecordingInfo(dj.Imported):
 class BodyPart(dj.Lookup):
     """Body parts tracked by DeepLabCut models
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        Model (foreign key): Model name.
+        BodyPart (foreign key): Body part short name."""
 
     definition = """
     body_part                : varchar(32)
@@ -279,7 +295,20 @@ class BodyPart(dj.Lookup):
 class Model(dj.Manual):
     """DeepLabCut Models applied to generate pose estimations.
 
-    Refer to the `definition` attribute for the table design.
+    Attributes:
+        model_name ( varchar(64) ): User-friendly model name.
+        task ( varchar(32) ): Task in the config yaml.
+        date ( varchar(16) ): Date in the config yaml.
+        iteration (int): Iteration/version of this model.
+        snapshotindex (int): Which snapshot for prediction (if -1, latest).
+        shuffle (int): Which shuffle of the training dataset.
+        trainingsetindex (int): Which training set fraction to generate model.
+        scorer ( varchar(64) ): Scorer/network name - DLC's GetScorerName().
+        config_template (longblob): Dictionary of the config for analyze_videos().
+        project_path ( varchar(255) ): DLC's project_path in config relative to root.
+        model_prefix ( varchar(32) ): Optional. Prefix for model files.
+        model_description ( varchar(1000) ): Optional. User-entered description.
+        TrainingParamSet (foreign key): Optional. Training parameters primary key.
 
     Note:
         Models are uniquely identified by the union of task, date, iteration, shuffle,
@@ -306,7 +335,11 @@ class Model(dj.Manual):
     # project_path is the only item required downstream in the pose schema
 
     class BodyPart(dj.Part):
-        """Body parts associated with a given model"""
+        """Body parts associated with a given model
+
+        Attributes:
+            body_part ( varchar(32) ): Short name. Also called joint.
+            body_part_description ( varchar(1000) ): Optional. Longer description."""
 
         definition = """
         -> master
@@ -432,8 +465,14 @@ class Model(dj.Manual):
 class ModelEvaluation(dj.Computed):
     """Performance characteristics model calculated by `deeplabcut.evaluate_network`
 
-    Refer to the `definition` attribute for the table design.
-    """
+    Attributes:
+        Model (foreign key): Model name.
+        train_iterations (int): Training iterations.
+        train_error (float): Optional. Train error (px).
+        test_error (float): Optional. Test error (px).
+        p_cutoff (float): Optional. p-cutoff used.
+        train_error_p (float): Optional. Train error with p-cutoff.
+        test_error_p (float): Optional. Test error with p-cutoff."""
 
     definition = """
     -> Model
@@ -503,7 +542,14 @@ class ModelEvaluation(dj.Computed):
 class PoseEstimationTask(dj.Manual):
     """Staging table for pairing of video recording and model before inference.
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        VideoRecording (foreign key): Video recording key.
+        Model (foreign key): Model name.
+        task_mode (load or trigger): Optional. Default load. Or trigger computation.
+        pose_estimation_output_dir ( varchar(255) ): Optional. Output dir relative to
+                                                     get_dlc_root_data_dir.
+        pose_estimation_params (longblob): Optional. Params for DLC's analyze_videos
+                                           params, if not default."""
 
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
@@ -594,7 +640,10 @@ class PoseEstimationTask(dj.Manual):
 class PoseEstimation(dj.Computed):
     """Results of pose estimation.
 
-    Refer to the `definition` attribute for the table design."""
+    Attributes:
+        PoseEstimationTask (foreign key): Pose Estimation Task key.
+        post_estimation_time (datetime): time of generation of this set of DLC results.
+    """
 
     definition = """
     -> PoseEstimationTask
@@ -603,7 +652,16 @@ class PoseEstimation(dj.Computed):
     """
 
     class BodyPartPosition(dj.Part):
-        """Position of individual body parts by frame index"""
+        """Position of individual body parts by frame index
+
+        Attributes:
+            PoseEstimation (foreign key): Pose Estimation key.
+            Model.BodyPart (foreign key): Body Part key.
+            frame_index (longblob): Frame index in model.
+            x_pos (longblob): X position.
+            y_pos (longblob): Y position.
+            z_pos (longblob): Optional. Z position.
+            likelihood (longblob): Model confidence."""
 
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
@@ -705,7 +763,14 @@ class PoseEstimation(dj.Computed):
 
 
 def str_to_bool(value) -> bool:
-    """Return whether the provided string represents true. Otherwise false."""
+    """Return whether the provided string represents true. Otherwise false.
+
+    Args:
+        value (any): Any input
+
+    Returns:
+        bool (bool): True if value in ("y", "yes", "t", "true", "on", "1")
+    """
     # Due to distutils equivalent depreciation in 3.10
     # Adopted from github.com/PostHog/posthog/blob/master/posthog/utils.py
     if not value:
