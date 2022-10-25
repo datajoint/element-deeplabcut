@@ -1,6 +1,7 @@
 # ---------------------- PROJECT SPECIFIC ---------------------------
 
 site_name: DataJoint Documentation
+site_url: http://localhost/docs/element/element-deeplabcut
 repo_url: https://github.com/datajoint/element-deeplabcut
 repo_name: datajoint/element-deeplabcut
 nav:
@@ -162,3 +163,6 @@ extra:
       link: https://www.youtube.com/channel/UCdeCuFOTCXlVMRzh6Wk-lGg
 extra_css:
   - assets/stylesheets/extra.css
+
+extra_javascript:
+  - https://js-na1.hs-scripts.com/23133402.js  # HubSpot chatbot
