@@ -39,7 +39,7 @@ def activate(
         train_schema_name (str): schema name on the database server
         create_schema (bool): when True (default), create schema in the database if it
                             does not yet exist.
-        create_tables (str): when True (default), create schema tabkes in the database
+        create_tables (str): when True (default), create schema tables in the database
                              if they do not yet exist.
         linking_module (str): a module (or name) containing the required dependencies.
 
