@@ -1,7 +1,7 @@
 # ---------------------- PROJECT SPECIFIC ---------------------------
 
 site_name: DataJoint Documentation
-site_url: http://localhost/docs/element/element-deeplabcut
+site_url: http://localhost/docs/elements/element-deeplabcut
 repo_url: https://github.com/datajoint/element-deeplabcut
 repo_name: datajoint/element-deeplabcut
 nav:
