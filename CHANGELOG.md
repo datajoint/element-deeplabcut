@@ -19,3 +19,5 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 - Added - Draft integration tests
 - Added - Add example data download instructions
 - Added - Added Notebooks to demonstrate use
+
+[0.1.1]: https://github.com/datajoint/workflow-deeplabcut/releases/tag/0.1.1
