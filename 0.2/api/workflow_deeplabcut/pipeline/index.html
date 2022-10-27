@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="http://localhost/docs/element/element-deeplabcut/0.2/api/workflow_deeplabcut/pipeline/">
+        <link rel="canonical" href="http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/pipeline/">
       
       <link rel="icon" href="../../../assets/images/project-logo-color.png">
       <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
@@ -663,8 +663,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#workflow_deeplabcut.pipeline.get_dlc_root_data_dir" class="md-nav__link">
+    get_dlc_root_data_dir()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#workflow_deeplabcut.pipeline.get_dlc_processed_data_dir" class="md-nav__link">
     get_dlc_processed_data_dir()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow_deeplabcut.pipeline.Device" class="md-nav__link">
+    Device
   </a>
   
 </li>
@@ -767,6 +781,48 @@
 
 
 
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="workflow_deeplabcut.pipeline.get_dlc_root_data_dir" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_dlc_root_data_dir</span><span class="p">()</span></code>
+
+<a href="#workflow_deeplabcut.pipeline.get_dlc_root_data_dir" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns a list of root directories for Element DeepLabCut</p>
+
+      <details class="quote">
+        <summary>Source code in <code>workflow_deeplabcut/paths.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_root_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a list of root directories for Element DeepLabCut&quot;&quot;&quot;</span>
+    <span class="n">dlc_root_dirs</span> <span class="o">=</span> <span class="n">dj</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dlc_root_data_dir&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dlc_root_dirs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dlc_root_dirs</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">dlc_root_dirs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">dlc_root_dirs</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+
 
 
 <div class="doc doc-object doc-function">
@@ -781,20 +837,20 @@
 
   <div class="doc doc-contents ">
   
-      <p>Returns session_dir relative to custom 'dlc_output_dir' root</p>
+      <p>Returns an output directory relative to custom 'dlc_output_dir' root</p>
 
       <details class="quote">
         <summary>Source code in <code>workflow_deeplabcut/paths.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
-<span class="normal">16</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
-<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_processed_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Returns session_dir relative to custom &#39;dlc_output_dir&#39; root&quot;&quot;&quot;</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_processed_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns an output directory relative to custom &#39;dlc_output_dir&#39; root&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
     <span class="n">dlc_output_dir</span> <span class="o">=</span> <span class="n">dj</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dlc_output_dir&quot;</span><span class="p">)</span>
@@ -807,6 +863,137 @@
   </div>
 
 </div>
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="workflow_deeplabcut.pipeline.Device" class="doc doc-heading">
+        <code>Device</code>
+
+
+<a href="#workflow_deeplabcut.pipeline.Device" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Lookup">Lookup</span></code></p>
+
+  
+      <p>Table for managing lab equipment.</p>
+<p>In Element DeepLabCut, this table is referenced by <code>model.VideoRecording</code>.
+The primary key is also used to generate inferred output directories when
+running pose estimation inference. Refer to the <code>definition</code> attribute
+for the table design.</p>
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>device</code></td>
+          <td>
+                <code> varchar(32) </code>
+          </td>
+          <td><p>Device short name.</p></td>
+        </tr>
+        <tr>
+          <td><code>modality</code></td>
+          <td>
+                <code> varchar(64) </code>
+          </td>
+          <td><p>Modality for which this device is used.</p></td>
+        </tr>
+        <tr>
+          <td><code>description</code></td>
+          <td>
+                <code> varchar(256) </code>
+          </td>
+          <td><p>Optional. Description of device.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        <details class="quote">
+          <summary>Source code in <code>workflow_deeplabcut/pipeline.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@lab</span><span class="o">.</span><span class="n">schema</span>
+<span class="k">class</span> <span class="nc">Device</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Lookup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Table for managing lab equipment.</span>
+
+<span class="sd">    In Element DeepLabCut, this table is referenced by `model.VideoRecording`.</span>
+<span class="sd">    The primary key is also used to generate inferred output directories when</span>
+<span class="sd">    running pose estimation inference. Refer to the `definition` attribute</span>
+<span class="sd">    for the table design.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        device ( varchar(32) ): Device short name.</span>
+<span class="sd">        modality ( varchar(64) ): Modality for which this device is used.</span>
+<span class="sd">        description ( varchar(256) ): Optional. Description of device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">definition</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    device             : varchar(32)</span>
+<span class="s2">    ---</span>
+<span class="s2">    modality           : varchar(64)</span>
+<span class="s2">    description=null   : varchar(256)</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;Camera1&quot;</span><span class="p">,</span> <span class="s2">&quot;Pose Estimation&quot;</span><span class="p">,</span> <span class="s2">&quot;Panasonic HC-V380K&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;Camera2&quot;</span><span class="p">,</span> <span class="s2">&quot;Pose Estimation&quot;</span><span class="p">,</span> <span class="s2">&quot;Panasonic HC-V770K&quot;</span><span class="p">],</span>
+    <span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
 
 
 

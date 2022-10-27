@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="http://localhost/docs/element/element-deeplabcut/0.2/api/workflow_deeplabcut/process/">
+        <link rel="canonical" href="http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/process/">
       
       <link rel="icon" href="../../../assets/images/project-logo-color.png">
       <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
@@ -774,7 +774,6 @@
 
 
 
-
 <div class="doc doc-object doc-class">
 
 
@@ -789,7 +788,7 @@
   <div class="doc doc-contents ">
 
   
-      <p>If verbose set to false, used to quiet populate.</p>
+      <p>Context for suppressing standard output</p>
 
 
         <details class="quote">
@@ -804,7 +803,7 @@
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">QuietStdOut</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;If verbose set to false, used to quiet populate.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Context for suppressing standard output&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_original_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
@@ -824,17 +823,15 @@
 
 
 
-
-
-
-
-
-
   </div>
 
   </div>
 
 </div>
+
+
+
+
 
 
 <div class="doc doc-object doc-function">
@@ -849,11 +846,63 @@
 
   <div class="doc doc-contents ">
   
-      <p>Run all <code>make</code> methods from element-deeplabcut
-:param verbose: when True (default), display table names before populating
-:param display_progress: when True (default) Show progress bar
-:param reserve_jobs: when True, reserves job to populate in asynchronous fashion
-:param suppress_errors:  when True, do not terminate execution.</p>
+      <p>Run all <code>make</code> methods from element-deeplabcut</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Print which table is in being populated. Default True.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>display_progress</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>tqdm progress bar. Defaults to True.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>reserve_jobs</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Reserves job to populate in asynchronous fashion.
+Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>suppress_errors</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Suppress errors that would halt execution.
+Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>workflow_deeplabcut/process.py</code></summary>
@@ -881,13 +930,29 @@
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">display_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reserve_jobs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">display_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">reserve_jobs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">suppress_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run all `make` methods from element-deeplabcut</span>
-<span class="sd">    :param verbose: when True (default), display table names before populating</span>
-<span class="sd">    :param display_progress: when True (default) Show progress bar</span>
-<span class="sd">    :param reserve_jobs: when True, reserves job to populate in asynchronous fashion</span>
-<span class="sd">    :param suppress_errors:  when True, do not terminate execution.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        verbose (bool, optional): Print which table is in being populated. Default True.</span>
+<span class="sd">        display_progress (bool, optional): tqdm progress bar. Defaults to True.</span>
+<span class="sd">        reserve_jobs (bool, optional): Reserves job to populate in asynchronous fashion.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        suppress_errors (bool, optional): Suppress errors that would halt execution.</span>
+<span class="sd">            Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">populate_settings</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;display_progress&quot;</span><span class="p">:</span> <span class="n">display_progress</span><span class="p">,</span>
@@ -911,6 +976,7 @@
   </div>
 
 </div>
+
 
 
 

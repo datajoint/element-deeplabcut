@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="http://localhost/docs/element/element-deeplabcut/0.2/api/workflow_deeplabcut/ingest/">
+        <link rel="canonical" href="http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/ingest/">
       
       <link rel="icon" href="../../../assets/images/project-logo-color.png">
       <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
@@ -621,22 +621,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.ingest.ingest_dlc_items" class="md-nav__link">
-    ingest_dlc_items()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.ingest.ingest_model" class="md-nav__link">
-    ingest_model()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.ingest.ingest_model_vids" class="md-nav__link">
-    ingest_model_vids()
+  <a href="#workflow_deeplabcut.ingest.ingest_subjects" class="md-nav__link">
+    ingest_subjects()
   </a>
   
 </li>
@@ -644,13 +630,6 @@
         <li class="md-nav__item">
   <a href="#workflow_deeplabcut.ingest.ingest_sessions" class="md-nav__link">
     ingest_sessions()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.ingest.ingest_subjects" class="md-nav__link">
-    ingest_subjects()
   </a>
   
 </li>
@@ -665,6 +644,27 @@
         <li class="md-nav__item">
   <a href="#workflow_deeplabcut.ingest.ingest_train_vids" class="md-nav__link">
     ingest_train_vids()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow_deeplabcut.ingest.ingest_model_vids" class="md-nav__link">
+    ingest_model_vids()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow_deeplabcut.ingest.ingest_model" class="md-nav__link">
+    ingest_model()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow_deeplabcut.ingest.ingest_dlc_items" class="md-nav__link">
+    ingest_dlc_items()
   </a>
   
 </li>
@@ -809,237 +809,6 @@
 
 
 
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.ingest.ingest_dlc_items" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ingest_dlc_items</span><span class="p">(</span><span class="n">config_params_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/config_params.csv&#39;</span><span class="p">,</span> <span class="n">train_video_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/train_videosets.csv&#39;</span><span class="p">,</span> <span class="n">model_video_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/model_videos.csv&#39;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
-
-<a href="#workflow_deeplabcut.ingest.ingest_dlc_items" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Ingests to DLC schema from CSVs</p>
-<p>:param config_params_csv_path: csv path for model training config and parameters
-:param train_video_csv_path: csv path for list of training videosets
-:param model_csv_path: csv path for list of modeling videos for pose estimation</p>
-
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_dlc_items</span><span class="p">(</span>
-    <span class="n">config_params_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/config_params.csv&quot;</span><span class="p">,</span>
-    <span class="n">train_video_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/train_videosets.csv&quot;</span><span class="p">,</span>
-    <span class="n">model_video_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/model_videos.csv&quot;</span><span class="p">,</span>
-    <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ingests to DLC schema from CSVs</span>
-
-<span class="sd">    :param config_params_csv_path: csv path for model training config and parameters</span>
-<span class="sd">    :param train_video_csv_path: csv path for list of training videosets</span>
-<span class="sd">    :param model_csv_path: csv path for list of modeling videos for pose estimation</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ingest_train_params</span><span class="p">(</span>
-        <span class="n">config_params_csv_path</span><span class="o">=</span><span class="n">config_params_csv_path</span><span class="p">,</span>
-        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">ingest_train_vids</span><span class="p">(</span>
-        <span class="n">train_video_csv_path</span><span class="o">=</span><span class="n">train_video_csv_path</span><span class="p">,</span>
-        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">ingest_model_vids</span><span class="p">(</span>
-        <span class="n">model_video_csv_path</span><span class="o">=</span><span class="n">model_video_csv_path</span><span class="p">,</span>
-        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.ingest.ingest_model" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ingest_model</span><span class="p">(</span><span class="n">model_model_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
-
-<a href="#workflow_deeplabcut.ingest.ingest_model" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Use provided CSV to insert into model.Model table</p>
-
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_model</span><span class="p">(</span><span class="n">model_model_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.Model table&quot;&quot;&quot;</span>
-    <span class="c1"># NOTE: not included in ingest_dlc_items because not yet included in notebooks</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_model_csv_path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">prev_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">())</span>
-
-    <span class="k">for</span> <span class="n">model_row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>  <span class="c1"># replace relative path with full path</span>
-        <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;dlc_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span>
-            <span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">model_row</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;config_relative_path&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;dlc_config&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">parent</span>
-        <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">str_to_bool</span><span class="p">(</span><span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">])</span>
-        <span class="n">model_name</span> <span class="o">=</span> <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">skip_duplicates</span> <span class="ow">and</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;model_name&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping model, name already exists: </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">continue</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">insert_new_model</span><span class="p">(</span><span class="o">**</span><span class="n">model_row</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">insert_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">())</span> <span class="o">-</span> <span class="n">prev_len</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">---- Inserting </span><span class="si">{</span><span class="n">insert_len</span><span class="si">}</span><span class="s2"> entry(s) into model ----&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.ingest.ingest_model_vids" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ingest_model_vids</span><span class="p">(</span><span class="n">model_video_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
-
-<a href="#workflow_deeplabcut.ingest.ingest_model_vids" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Use provided CSV to insert into model.VideoRecording and VideoRecording.File</p>
-
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_model_vids</span><span class="p">(</span><span class="n">model_video_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.VideoRecording and VideoRecording.File&quot;&quot;&quot;</span>
-    <span class="n">csvs</span> <span class="o">=</span> <span class="p">[</span><span class="n">model_video_csv_path</span><span class="p">,</span> <span class="n">model_video_csv_path</span><span class="p">]</span>
-    <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">VideoRecording</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span><span class="p">()]</span>
-    <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.ingest.ingest_sessions" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">ingest_sessions</span><span class="p">(</span><span class="n">session_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/sessions.csv&#39;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
-
-<a href="#workflow_deeplabcut.ingest.ingest_sessions" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Ingests to session schema from ./user_data/sessions.csv</p>
-
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_sessions</span><span class="p">(</span>
-    <span class="n">session_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/sessions.csv&quot;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ingests to session schema from ./user_data/sessions.csv</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">csvs</span> <span class="o">=</span> <span class="p">[</span><span class="n">session_csv_path</span><span class="p">,</span> <span class="n">session_csv_path</span><span class="p">,</span> <span class="n">session_csv_path</span><span class="p">]</span>
-    <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(),</span> <span class="n">session</span><span class="o">.</span><span class="n">SessionDirectory</span><span class="p">(),</span> <span class="n">session</span><span class="o">.</span><span class="n">SessionNote</span><span class="p">()]</span>
-
-    <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
 <div class="doc doc-object doc-function">
 
 
@@ -1052,9 +821,51 @@
 
   <div class="doc doc-contents ">
   
-      <p>Inserts data from ./user_data/subject.csv into corresponding subject schema tables</p>
-<p>:param subject_csv_path:     relative path of subject csv
-:param skip_duplicates=True: datajoint insert function param</p>
+      <p>Inserts ./user_data/subject.csv data into corresponding subject schema tables</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>subject_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>relative path of subject csv</p></td>
+          <td>
+                <code>&#39;./user_data/subjects.csv&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>skip_duplicates</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Display number of entries inserted when ingesting</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
       <details class="quote">
         <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
@@ -1071,16 +882,18 @@
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_subjects</span><span class="p">(</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_subjects</span><span class="p">(</span>
     <span class="n">subject_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/subjects.csv&quot;</span><span class="p">,</span>
     <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Inserts data from ./user_data/subject.csv into corresponding subject schema tables</span>
+    <span class="sd">&quot;&quot;&quot;Inserts ./user_data/subject.csv data into corresponding subject schema tables</span>
 
-<span class="sd">    :param subject_csv_path:     relative path of subject csv</span>
-<span class="sd">    :param skip_duplicates=True: datajoint insert function param</span>
+<span class="sd">    Args:</span>
+<span class="sd">        subject_csv_path (str): relative path of subject csv</span>
+<span class="sd">        skip_duplicates (bool): Default True. Passed to DataJoint insert</span>
+<span class="sd">        verbose (bool): Display number of entries inserted when ingesting</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">csvs</span> <span class="o">=</span> <span class="p">[</span><span class="n">subject_csv_path</span><span class="p">]</span>
     <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">subject</span><span class="o">.</span><span class="n">Subject</span><span class="p">()]</span>
@@ -1090,6 +903,109 @@
   </div>
 
 </div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="workflow_deeplabcut.ingest.ingest_sessions" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ingest_sessions</span><span class="p">(</span><span class="n">session_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/sessions.csv&#39;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+<a href="#workflow_deeplabcut.ingest.ingest_sessions" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Ingests to session schema from ./user_data/sessions.csv</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>session_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>relative path of session csv</p></td>
+          <td>
+                <code>&#39;./user_data/sessions.csv&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>skip_duplicates</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Display number of entries inserted when ingesting</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_sessions</span><span class="p">(</span>
+    <span class="n">session_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/sessions.csv&quot;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ingests to session schema from ./user_data/sessions.csv</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        session_csv_path (str): relative path of session csv</span>
+<span class="sd">        skip_duplicates (bool): Default True. Passed to DataJoint insert</span>
+<span class="sd">        verbose (bool): Default True. Display number of entries inserted when ingesting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">csvs</span> <span class="o">=</span> <span class="p">[</span><span class="n">session_csv_path</span><span class="p">,</span> <span class="n">session_csv_path</span><span class="p">,</span> <span class="n">session_csv_path</span><span class="p">]</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(),</span> <span class="n">session</span><span class="o">.</span><span class="n">SessionDirectory</span><span class="p">(),</span> <span class="n">session</span><span class="o">.</span><span class="n">SessionNote</span><span class="p">()]</span>
+
+    <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+
+
 
 <div class="doc doc-object doc-function">
 
@@ -1105,14 +1021,53 @@
   
       <p>Use provided path to load TrainingParamSet with relative path to config.yaml</p>
 
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>config_params_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>relative path of csv with config parameters</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>skip_duplicates</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Display number of entries inserted when ingesting</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
@@ -1140,8 +1095,25 @@
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
-<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_train_params</span><span class="p">(</span><span class="n">config_params_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided path to load TrainingParamSet with relative path to config.yaml&quot;&quot;&quot;</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_train_params</span><span class="p">(</span><span class="n">config_params_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use provided path to load TrainingParamSet with relative path to config.yaml</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_params_csv_path (str): relative path of csv with config parameters</span>
+<span class="sd">        skip_duplicates (bool):  Default True. Passed to DataJoint insert</span>
+<span class="sd">        verbose (bool): Default True. Display number of entries inserted when ingesting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="n">previous_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">TrainingParamSet</span><span class="o">.</span><span class="n">fetch</span><span class="p">())</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_params_csv_path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -1180,6 +1152,11 @@
 
 </div>
 
+
+
+
+
+
 <div class="doc doc-object doc-function">
 
 
@@ -1194,15 +1171,71 @@
   
       <p>Use provided CSV to insert into train.VideoSet and train.VideoSet.File</p>
 
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>train_video_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>relative path of csv with training video info</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default False. Display number of entries inserted when ingesting</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>**kwargs</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>Optional. Unused dict of keyword arguments.</p></td>
+          <td>
+                <code>{}</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
       <details class="quote">
         <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_train_vids</span><span class="p">(</span><span class="n">train_video_csv_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into train.VideoSet and train.VideoSet.File&quot;&quot;&quot;</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_train_vids</span><span class="p">(</span><span class="n">train_video_csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into train.VideoSet and train.VideoSet.File</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_video_csv_path (str): relative path of csv with training video info</span>
+<span class="sd">        verbose (bool): Default False. Display number of entries inserted when ingesting</span>
+<span class="sd">        **kwargs (dict): Optional. Unused dict of keyword arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">csvs</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_video_csv_path</span><span class="p">,</span> <span class="n">train_video_csv_path</span><span class="p">]</span>
     <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">train</span><span class="o">.</span><span class="n">VideoSet</span><span class="p">(),</span> <span class="n">train</span><span class="o">.</span><span class="n">VideoSet</span><span class="o">.</span><span class="n">File</span><span class="p">()]</span>
     <span class="c1"># With current CSV organization, must skip vids, as primary key is duplicated</span>
@@ -1212,6 +1245,377 @@
   </div>
 
 </div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="workflow_deeplabcut.ingest.ingest_model_vids" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ingest_model_vids</span><span class="p">(</span><span class="n">model_video_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+<a href="#workflow_deeplabcut.ingest.ingest_model_vids" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Use provided CSV to insert into model.VideoRecording and VideoRecording.File</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>model_video_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>relative path of csv with model video info</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>skip_duplicates</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default False. Display number of entries inserted when ingesting</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_model_vids</span><span class="p">(</span>
+    <span class="n">model_video_csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.VideoRecording and VideoRecording.File</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_video_csv_path (str): relative path of csv with model video info</span>
+<span class="sd">        skip_duplicates (bool): Default True. Passed to DataJoint insert</span>
+<span class="sd">        verbose (bool): Default False. Display number of entries inserted when ingesting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">csvs</span> <span class="o">=</span> <span class="p">[</span><span class="n">model_video_csv_path</span><span class="p">,</span> <span class="n">model_video_csv_path</span><span class="p">]</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">VideoRecording</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span><span class="p">()]</span>
+    <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="workflow_deeplabcut.ingest.ingest_model" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ingest_model</span><span class="p">(</span><span class="n">model_model_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+<a href="#workflow_deeplabcut.ingest.ingest_model" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Use provided CSV to insert into model.Model table</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>model_model_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>relative path of csv with DLC Model info</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>skip_duplicates</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>verbose</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default False. Display number of entries inserted when ingesting</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_model</span><span class="p">(</span>
+    <span class="n">model_model_csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.Model table</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_model_csv_path (str): relative path of csv with DLC Model info</span>
+<span class="sd">        skip_duplicates (bool): Default True. Passed to DataJoint insert</span>
+<span class="sd">        verbose (bool): Default False. Display number of entries inserted when ingesting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># NOTE: not included in ingest_dlc_items because not yet included in notebooks</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_model_csv_path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">prev_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">model_row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>  <span class="c1"># replace relative path with full path</span>
+        <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;dlc_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span>
+            <span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">model_row</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;config_relative_path&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;dlc_config&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">str_to_bool</span><span class="p">(</span><span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">])</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="n">model_row</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">skip_duplicates</span> <span class="ow">and</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;model_name&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping model, name already exists: </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">insert_new_model</span><span class="p">(</span><span class="o">**</span><span class="n">model_row</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">insert_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">())</span> <span class="o">-</span> <span class="n">prev_len</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">---- Inserting </span><span class="si">{</span><span class="n">insert_len</span><span class="si">}</span><span class="s2"> entry(s) into model ----&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="workflow_deeplabcut.ingest.ingest_dlc_items" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ingest_dlc_items</span><span class="p">(</span><span class="n">config_params_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/config_params.csv&#39;</span><span class="p">,</span> <span class="n">train_video_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/train_videosets.csv&#39;</span><span class="p">,</span> <span class="n">model_video_csv_path</span><span class="o">=</span><span class="s1">&#39;./user_data/model_videos.csv&#39;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+<a href="#workflow_deeplabcut.ingest.ingest_dlc_items" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Ingests to DLC schema from CSVs</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>config_params_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Optional. Csv path for model training config and
+parameters</p></td>
+          <td>
+                <code>&#39;./user_data/config_params.csv&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>train_video_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Optional. Csv path for list of training videosets</p></td>
+          <td>
+                <code>&#39;./user_data/train_videosets.csv&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>model_video_csv_path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Optional. Csv path for list of modeling videos for
+pose estimation</p></td>
+          <td>
+                <code>&#39;./user_data/model_videos.csv&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_dlc_items</span><span class="p">(</span>
+    <span class="n">config_params_csv_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./user_data/config_params.csv&quot;</span><span class="p">,</span>
+    <span class="n">train_video_csv_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./user_data/train_videosets.csv&quot;</span><span class="p">,</span>
+    <span class="n">model_video_csv_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./user_data/model_videos.csv&quot;</span><span class="p">,</span>
+    <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ingests to DLC schema from CSVs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_params_csv_path (str): Optional. Csv path for model training config and</span>
+<span class="sd">            parameters</span>
+<span class="sd">        train_video_csv_path (str): Optional. Csv path for list of training videosets</span>
+<span class="sd">        model_video_csv_path (str): Optional. Csv path for list of modeling videos for</span>
+<span class="sd">            pose estimation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingest_train_params</span><span class="p">(</span>
+        <span class="n">config_params_csv_path</span><span class="o">=</span><span class="n">config_params_csv_path</span><span class="p">,</span>
+        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ingest_train_vids</span><span class="p">(</span>
+        <span class="n">train_video_csv_path</span><span class="o">=</span><span class="n">train_video_csv_path</span><span class="p">,</span>
+        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ingest_model_vids</span><span class="p">(</span>
+        <span class="n">model_video_csv_path</span><span class="o">=</span><span class="n">model_video_csv_path</span><span class="p">,</span>
+        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
 
 
 
