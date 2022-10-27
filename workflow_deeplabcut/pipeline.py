@@ -41,7 +41,7 @@ session.activate(db_prefix + "session", linking_module=__name__)
 
 @lab.schema
 class Device(dj.Lookup):
-    """Table for managing lab equiment.
+    """Table for managing lab equipment.
 
     In Element DeepLabCut, this table is referenced by `model.VideoRecording`.
     The primary key is also used to generate inferred output directories when
