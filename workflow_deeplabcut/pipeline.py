@@ -41,11 +41,24 @@ session.activate(db_prefix + "session", linking_module=__name__)
 
 @lab.schema
 class Device(dj.Lookup):
+    """Table for managing lab equiment.
+
+    In Element DeepLabCut, this table is referenced by `model.VideoRecording`.
+    The primary key is also used to generate inferred output directories when
+    running pose estimation inference. Refer to the `definition` attribute
+    for the table design.
+
+    Attributes:
+        device ( varchar(32) ): Device short name.
+        modality ( varchar(64) ): Modality for which this device is used.
+        description ( varchar(256) ): Optional. Description of device.
+    """
+
     definition = """
     device             : varchar(32)
     ---
-    modality              : varchar(64)
-    description=null      : varchar(256)
+    modality           : varchar(64)
+    description=null   : varchar(256)
     """
     contents = [
         ["Camera1", "Pose Estimation", "Panasonic HC-V380K"],

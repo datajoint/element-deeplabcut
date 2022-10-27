@@ -5,7 +5,7 @@ import os
 
 
 class QuietStdOut:
-    """If verbose set to false, used to quiet populate."""
+    """Context for suppressing standard output"""
 
     def __enter__(self):
         self._original_stdout = sys.stdout
@@ -16,13 +16,21 @@ class QuietStdOut:
         sys.stdout = self._original_stdout
 
 
-def run(verbose=True, display_progress=True, reserve_jobs=False, suppress_errors=False):
+def run(
+    verbose: bool = True,
+    display_progress: bool = True,
+    reserve_jobs: bool = False,
+    suppress_errors: bool = False,
+):
     """Run all `make` methods from element-deeplabcut
-    :param verbose: when True (default), display table names before populating
-    :param display_progress: when True (default) Show progress bar
-    :param reserve_jobs: when True, reserves job to populate in asynchronous fashion
-    :param suppress_errors:  when True, do not terminate execution.
 
+    Args:
+        verbose (bool, optional): Print which table is in being populated. Default True.
+        display_progress (bool, optional): tqdm progress bar. Defaults to True.
+        reserve_jobs (bool, optional): Reserves job to populate in asynchronous fashion.
+            Defaults to False.
+        suppress_errors (bool, optional): Suppress errors that would halt execution.
+            Defaults to False.
     """
     populate_settings = {
         "display_progress": display_progress,

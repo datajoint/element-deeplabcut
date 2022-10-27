@@ -2,9 +2,11 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## 0.1.1 - Unreleased
+## [0.1.1] - 2022-10-27
 - Added - Integration tests
-- Changes - Dataset for didactic notebooks
+- Added - Docstrings for mkdocs deployment
+- Changed - Dataset for didactic notebooks
+- Changed - Revert Equipment -> Device
 
 ## 0.1.0 - 2022-05-10
 - Added - Process.py script
@@ -17,3 +19,5 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 - Added - Draft integration tests
 - Added - Add example data download instructions
 - Added - Added Notebooks to demonstrate use
+
+[0.1.1]: https://github.com/datajoint/workflow-deeplabcut/releases/tag/0.1.1
