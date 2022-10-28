@@ -8,4 +8,4 @@ Resource Identifier (RRID).
   Neurophysiology. bioRxiv. 2021 Jan 1. doi: https://doi.org/10.1101/2021.03.30.437358
 
 + DataJoint Elements ([RRID:SCR_021894](https://scicrunch.org/resolver/SCR_021894)) -
-  Element DeepLabCut (version `<Enter version number>`)
+  Element DeepLabCut (version {{ PATCH_VERSION }})

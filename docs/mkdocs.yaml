@@ -1,7 +1,7 @@
 # ---------------------- PROJECT SPECIFIC ---------------------------
 
 site_name: DataJoint Documentation
-site_url: http://localhost/docs/element/element-deeplabcut
+site_url: http://localhost/docs/elements/element-deeplabcut
 repo_url: https://github.com/datajoint/element-deeplabcut
 repo_name: datajoint/element-deeplabcut
 nav:
@@ -85,12 +85,19 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 plugins:
+  - markdownextradata: {}
   - search
   # - redirects: # OPTIONAL REDIRECTS
   #     redirect_maps:
   #       "index.md": "getting_started.md"
   - mkdocstrings:
       default_handler: python
+      handlers:
+        python:
+          options:
+            members_order: source      
+            group_by_category: false
+            line_length: 88
   - gen-files:
       scripts:
       - ./src/api/make_pages.py
@@ -121,6 +128,7 @@ markdown_extensions:
   - pymdownx.snippets
   
 extra:
+  PATCH_VERSION: !ENV PATCH_VERSION
   generator: false # Disable watermark
   analytics:
     provider: google
