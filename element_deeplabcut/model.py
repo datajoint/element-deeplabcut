@@ -82,7 +82,7 @@ def get_dlc_root_data_dir() -> list:
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
     root(s) may vary between data modalities and user machines. Returns a full path
-    string or list of strongs for possible root data directories.
+    string or list of strings for possible root data directories.
     """
     root_directories = _linking_module.get_dlc_root_data_dir()
     if isinstance(root_directories, (str, Path)):
@@ -486,7 +486,7 @@ class ModelEvaluation(dj.Computed):
     """
 
     def make(self, key):
-        """.populate() method will launch evaulation for each unique entry in Model."""
+        """.populate() method will launch evaluation for each unique entry in Model."""
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
         ).fetch1(
