@@ -259,7 +259,7 @@ class BodyPart(dj.Lookup):
         Args:
             dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
             descriptions (list): Optional. List of strings describing new body parts.
-            prompt (bool): Optional, default True. Promp for confirmation before insert.
+            prompt (bool): Optional, default True. Prompt for confirmation before insert.
         """
 
         # handle dlc_config being a yaml file
