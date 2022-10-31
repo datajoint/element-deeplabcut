@@ -21,7 +21,9 @@ except ImportError:
 logger = logging.getLogger("datajoint")
 
 
-def dlc_session_to_nwb(keys, use_element_session=True, session_kwargs=None):
+def dlc_session_to_nwb(
+    keys: list, use_element_session: bool = True, session_kwargs: dict = None
+) -> str:
     """Using keys from PoseEstimation table, save DLC's h5 output to NWB.
 
     Calls DLC2NWB to export NWB file using current h5 on disk. If use_element_session,
