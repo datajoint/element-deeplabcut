@@ -18,8 +18,6 @@ from deeplabcut import evaluate_network
 from element_interface.utils import find_full_path, find_root_directory
 from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder, GetScorerName
 from .readers import dlc_reader
-from . import dlc_report
-
 
 schema = dj.schema()
 _linking_module = None
@@ -68,8 +66,6 @@ def activate(
         create_tables=create_tables,
         add_objects=_linking_module.__dict__,
     )
-
-    dlc_report.activate(f"{model_schema_name}_report")
 
 
 # -------------- Functions required by element-deeplabcut ---------------
