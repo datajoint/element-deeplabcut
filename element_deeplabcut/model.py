@@ -155,7 +155,7 @@ class RecordingInfo(dj.Imported):
         VideoRecording (foreign key): Video recording key.
         px_height (smallint): Height in pixels.
         px_width (smallint): Width in pixels.
-        nframes (smallint): Number of frames.
+        nframes (int): Number of frames.
         fps (int): Optional. Frames per second, Hz.
         recording_datetime (datetime): Optional. Datetime for the start of recording.
         recording_duration (float): video duration (s) from nframes / fps."""
@@ -165,7 +165,7 @@ class RecordingInfo(dj.Imported):
     ---
     px_height                 : smallint  # height in pixels
     px_width                  : smallint  # width in pixels
-    nframes                   : smallint  # number of frames 
+    nframes                   : int  # number of frames 
     fps = NULL                : int       # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
     recording_duration        : float     # video duration (s) from nframes / fps
