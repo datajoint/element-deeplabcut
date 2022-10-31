@@ -1,3 +1,5 @@
+import inspect
+import importlib
 import numpy as np
 import datajoint as dj
 import plotly.graph_objects as go
@@ -8,14 +10,15 @@ schema = dj.Schema()
 
 
 def activate(schema_name, *, create_schema=True, create_tables=True):
-    """
-    activate(schema_name, *, create_schema=True, create_tables=True)
-        :param schema_name: schema name on the database server to activate the `dlc_report` schema
-        :param create_schema: when True (default), create schema in the database if it does not yet exist.
-        :param create_tables: when True (default), create tables in the database if they do not yet exist.
-    (The "activation" of this imaging_report module should be evoked by one of the imaging modules only)
-    """
+    """Activate this schema.
 
+    Args:
+        schema_name (str): schema name on the database server
+        create_schema (bool): when True (default), create schema in the database if it
+                            does not yet exist.
+        create_tables (bool): when True (default), create schema tables in the database
+                                if they do not yet exist.
+    """
     schema.activate(
         schema_name,
         create_schema=create_schema,
