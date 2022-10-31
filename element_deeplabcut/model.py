@@ -37,7 +37,7 @@ def activate(
         model_schema_name (str): schema name on the database server
         create_schema (bool): when True (default), create schema in the database if it
                             does not yet exist.
-        create_tables (str): when True (default), create schema tables in the database
+        create_tables (bool): when True (default), create schema tables in the database
                              if they do not yet exist.
         linking_module (str): a module (or name) containing the required dependencies.
 
@@ -59,7 +59,7 @@ def activate(
     ), "The argument 'dependency' must be a module's name or a module"
     assert hasattr(
         linking_module, "get_dlc_root_data_dir"
-    ), "The linking module must specify a lookup funtion for a root data directory"
+    ), "The linking module must specify a lookup function for a root data directory"
 
     global _linking_module
     _linking_module = linking_module
@@ -82,7 +82,7 @@ def get_dlc_root_data_dir() -> list:
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
     root(s) may vary between data modalities and user machines. Returns a full path
-    string or list of strongs for possible root data directories.
+    string or list of strings for possible root data directories.
     """
     root_directories = _linking_module.get_dlc_root_data_dir()
     if isinstance(root_directories, (str, Path)):
@@ -259,7 +259,7 @@ class BodyPart(dj.Lookup):
         Args:
             dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
             descriptions (list): Optional. List of strings describing new body parts.
-            prompt (bool): Optional, default True. Promp for confirmation before insert.
+            prompt (bool): Optional, default True. Prompt for confirmation before insert.
         """
 
         # handle dlc_config being a yaml file
@@ -486,7 +486,7 @@ class ModelEvaluation(dj.Computed):
     """
 
     def make(self, key):
-        """.populate() method will launch evaulation for each unique entry in Model."""
+        """.populate() method will launch evaluation for each unique entry in Model."""
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
         ).fetch1(
