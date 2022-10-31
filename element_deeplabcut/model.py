@@ -37,7 +37,7 @@ def activate(
         model_schema_name (str): schema name on the database server
         create_schema (bool): when True (default), create schema in the database if it
                             does not yet exist.
-        create_tables (str): when True (default), create schema tables in the database
+        create_tables (bool): when True (default), create schema tables in the database
                              if they do not yet exist.
         linking_module (str): a module (or name) containing the required dependencies.
 
@@ -59,7 +59,7 @@ def activate(
     ), "The argument 'dependency' must be a module's name or a module"
     assert hasattr(
         linking_module, "get_dlc_root_data_dir"
-    ), "The linking module must specify a lookup funtion for a root data directory"
+    ), "The linking module must specify a lookup function for a root data directory"
 
     global _linking_module
     _linking_module = linking_module
