@@ -28,6 +28,13 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
 
 @schema
 class PoseEstimationReport(dj.Computed):
+    """Computes and stores plotly figures from the body part position predictions.
+
+    Attributes:
+        PoseEstimation (foreign key): Pose estimation key.
+        position_trace (longblob): Plotly figure of predictions as a function time, in json string format.
+        trajectory (longblob): Plotly figure of predictions to show 2d trajectories."""
+
     definition = """
     -> model.PoseEstimation
     ---
