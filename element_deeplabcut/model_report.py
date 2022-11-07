@@ -33,8 +33,10 @@ class PoseEstimationReport(dj.Computed):
 
     Attributes:
         PoseEstimation (foreign key): Pose estimation key.
-        position_space (longblob): Plotly figure of predictions as a function time, in json string format.
-        position_time (longblob): Plotly figure of predictions to show 2d trajectories."""
+        position_space (longblob): Plotly figure of predictions as a function time, in
+            json string format.
+        position_time (longblob): Plotly figure of predictions to show 2d trajectories.
+    """
 
     definition = """
     -> model.PoseEstimation
