@@ -87,7 +87,7 @@ class PoseEstimationReport(dj.Computed):
         self.insert1(
             {
                 **key,
-                "position_trace": position_time_fig.to_json(),
-                "trajectory": position_space_fig.to_json(),
+                "position_time": position_time_fig.to_json(),
+                "position_space": position_space_fig.to_json(),
             }
         )

@@ -5,6 +5,17 @@ from ipywidgets import widgets as wg
 
 
 def main(model_report):
+    WIDTH = 1200
+    title_button = wg.Button(
+        description="Inferred Bodypart Positions",
+        button_style="info",
+        layout=wg.Layout(
+            height="auto", width="{WIDTH}px", grid_area="title_button", border="solid"
+        ),
+        style=wg.ButtonStyle(button_color="blue"),
+        disabled=True,
+    )
+
     poseestimation_dropdown = wg.Dropdown(
         options=model_report.PoseEstimationReport.fetch("KEY"),
         description="Result:",
@@ -21,15 +32,13 @@ def main(model_report):
 
     plot_button = wg.Button(
         description="Plot",
-        tooltip="Plot the trajectories and traces.",
+        tooltip="Plot inferred bodypart positions.",
         layout=wg.Layout(width="120px", grid_area="plot_button"),
     )
 
-    FIG_WIDTH = 1200
-
     FIG_LAYOUT = go.Layout(
         margin=dict(l=0, r=40, b=0, t=65, pad=0),
-        width=FIG_WIDTH / 2,
+        width=WIDTH / 2,
         height=600,
         transition={"duration": 0},
         paper_bgcolor="rgba(0,0,0,0)",
@@ -81,7 +90,7 @@ def main(model_report):
 
     fig2 = go.Figure(layout=FIG_LAYOUT)
     fig2.update_layout(
-        title={"text": "Position over Time"},
+        title={"text": "Position in Time"},
         xaxis={"title": "Time (s)"},
         yaxis={"title": "Position (px)"},
     )
@@ -90,26 +99,27 @@ def main(model_report):
     fig2_widget = go.FigureWidget(fig2)
 
     def response(change):
-        trajectories, traces = [
+        position_space, position_time = [
             from_json(x)
             for x in (
                 model_report.PoseEstimationReport & poseestimation_dropdown.value
-            ).fetch1("trajectory", "position_trace")
+            ).fetch1("position_space", "position_time")
         ]
 
         with fig1_widget.batch_update():
             fig1_widget.data = []
             fig2_widget.data = []
-            fig1_widget.add_traces(trajectories.data)
-            fig2_widget.add_traces(traces.data)
+            fig1_widget.add_traces(position_space.data)
+            fig2_widget.add_traces(position_time.data)
 
     plot_button.on_click(response)
 
     return wg.VBox(
         [
+            title_button,
             wg.HBox(
                 [poseestimation_dropdown, plot_button],
-                layout=wg.Layout(width=f"{FIG_WIDTH}px"),
+                layout=wg.Layout(width=f"{WIDTH}px"),
             ),
             wg.HBox([fig1_widget, fig2_widget]),
         ]
