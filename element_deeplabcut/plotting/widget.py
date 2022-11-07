@@ -74,14 +74,14 @@ def main(model_report):
 
     fig1 = go.Figure(layout=FIG_LAYOUT)
     fig1.update_layout(
-        title={"text": "Trajectories"},
+        title={"text": "Position in Space"},
         xaxis={"title": "X (px)"},
         yaxis={"title": "Y (px)", "autorange": "reversed"},
     )
 
     fig2 = go.Figure(layout=FIG_LAYOUT)
     fig2.update_layout(
-        title={"text": "Traces"},
+        title={"text": "Position over Time"},
         xaxis={"title": "Time (s)"},
         yaxis={"title": "Position (px)"},
     )
