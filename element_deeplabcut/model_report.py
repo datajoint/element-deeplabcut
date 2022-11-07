@@ -3,6 +3,7 @@ import importlib
 import numpy as np
 import datajoint as dj
 import plotly.graph_objects as go
+from plotly.colors import DEFAULT_PLOTLY_COLORS
 
 from . import model
 
@@ -49,19 +50,36 @@ class PoseEstimationReport(dj.Computed):
 
         position_trace_fig = go.Figure(
             [
-                go.Scatter(x=np.r_[: len(x_pos[0])] / fps_i, y=pos, name=name)
-                for name, pos, fps_i in zip(
-                    np.dstack([body_part + " X", body_part + " Y"]).ravel(),
-                    np.dstack([x_pos, y_pos]).ravel(),
-                    np.dstack([fps, fps]).ravel(),
+                go.Scatter(
+                    x=np.r_[: len(x_pos[0])] / fps_i,
+                    y=pos,
+                    name=name,
+                    marker=dict(color=color),
+                    line=dict(dash=None if i % 2 else "dash"),
+                )
+                for i, (name, pos, fps_i, color) in enumerate(
+                    zip(
+                        np.dstack([body_part + " X", body_part + " Y"]).ravel(),
+                        np.dstack([x_pos, y_pos]).ravel(),
+                        np.dstack([fps] * 2).ravel(),
+                        np.dstack([DEFAULT_PLOTLY_COLORS] * 2).ravel(),
+                    )
                 )
             ]
         )
 
         trajectory_fig = go.Figure(
             [
-                go.Scatter(x=x, y=y, name=name, mode="markers", marker=dict(size=3))
-                for name, x, y in zip(body_part, x_pos, y_pos)
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    name=name,
+                    mode="markers",
+                    marker=dict(size=3, color=color),
+                )
+                for name, x, y, color in zip(
+                    body_part, x_pos, y_pos, DEFAULT_PLOTLY_COLORS
+                )
             ]
         )
         trajectory_fig.update_yaxes(autorange="reversed")
