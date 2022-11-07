@@ -122,10 +122,10 @@ class VideoRecording(dj.Manual):
 
     Attributes:
         Session (foreign key): Session primary key.
-        Equipment (foreign key): Equipment primary key, used for default output
-                                 directory path information.
         recording_id (int): Unique recording ID.
-        recording_start_time (datetime): Recording start time."""
+        Device (foreign key): Device table primary key, used for default output
+            directory path information.
+    """
 
     definition = """
     -> Session
@@ -218,8 +218,10 @@ class BodyPart(dj.Lookup):
     """Body parts tracked by DeepLabCut models
 
     Attributes:
-        Model (foreign key): Model name.
-        BodyPart (foreign key): Body part short name."""
+        body_part ( varchar(32) ): Body part short name.
+        body_part_description ( varchar(1000),optional ): Full description
+
+    """
 
     definition = """
     body_part                : varchar(32)
