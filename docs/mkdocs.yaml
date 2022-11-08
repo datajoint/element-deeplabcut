@@ -68,8 +68,8 @@ theme:
   name: material
   custom_dir: src/.overrides
   icon:
-    logo: main/project-logo-black
-  favicon: assets/images/project-logo-color.png
+    logo: main/company-logo
+  favicon: assets/images/company-logo-blue.png
   features:
     - toc.integrate
     - content.code.annotate
@@ -84,6 +84,7 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
 plugins:
   - markdownextradata: {}
   - search
@@ -106,6 +107,7 @@ plugins:
   - exclude-search:
       exclude:
         - "*/navigation.md"
+
 markdown_extensions:
   - attr_list
   - toc:
