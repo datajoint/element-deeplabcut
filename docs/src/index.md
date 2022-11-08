@@ -6,6 +6,8 @@ and automate data collection and analysis for neuroscience experiments.  Each El
 a modular pipeline for data storage and processing with corresponding database
 tables that can be combined with other Elements to assemble a fully functional pipeline.
 
+![diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_flowchart.svg)
+
 Element DeepLabCut runs DeepLabCut which uses image recognition machine learning models
 to generate animal position estimates from consumer grade video equipment.  The Element
 is composed of two schemas for storing data and running analysis:
@@ -16,5 +18,3 @@ is composed of two schemas for storing data and running analysis:
 
 Visit the [Concepts page](./concepts.md) for more information on 
 pose estimation and Element DeepLabCut.  To get started with building your data pipeline visit the [Tutorials page](./tutorials.md).
-
-![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
