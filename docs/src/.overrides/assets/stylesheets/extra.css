@@ -1,3 +1,7 @@
+.md-footer__inner:not([hidden]) {
+    display: none
+}
+
 :root {
     --dj-primary: #00a0df;
     --dj-secondary: #ff5113;
