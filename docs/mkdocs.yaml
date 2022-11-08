@@ -139,25 +139,33 @@ extra:
     provider: mike
   social:
     - icon: main/company-logo
-      link: https://www.datajoint.com/
-    - icon: fontawesome/solid/ticket
-      link: https://support.djneuro.io/portal/en/home
+      link: https://www.datajoint.com
+      name: DataJoint
     - icon: fontawesome/brands/slack
       link: https://datajoint.slack.com
+      name: Slack
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/datajoint
+      name: LinkedIn
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/DataJointIO
+      link: https://twitter.com/datajoint
+      name: Twitter
     - icon: fontawesome/brands/github
       link: https://github.com/datajoint
+      name: GitHub
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/datajoint
+      name: DockerHub
     - icon: fontawesome/brands/python
       link: https://pypi.org/user/datajointbot
+      name: PyPI
     - icon: fontawesome/brands/stack-overflow
       link: https://stackoverflow.com/questions/tagged/datajoint
+      name: StackOverflow
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/channel/UCdeCuFOTCXlVMRzh6Wk-lGg
+      name: YouTube
+
 extra_css:
   - assets/stylesheets/extra.css
 
