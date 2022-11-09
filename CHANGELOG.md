@@ -2,10 +2,14 @@
 
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [0.2.1] - 2022-10-23
+## 0.2.1 - Unreleased
+
 + Update - Docstrings for mkdocs deployment
++ Update - Doc website styling including logos, navigation, social icons
++ Add - Flow diagram in svg and drawio formats
 
 ## [0.2.0] - 2022-10-10
+
 + Update - Remove direct dependency (`element-interface`) for PyPI release.
 + Update - Docstring PEP257 compliance #24 
 + Update - Explicit handling of KeyboardInterrupt #26
@@ -18,8 +22,9 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Add - mkdocs deployment with workflow API docs
 
 ## [0.1.1] - 2022-06-10
-+ Fixed - Replace lazy imports
-+ Fixed - Project path in the model.Model
+
++ Fix - Replace lazy imports
++ Fix - Project path in the model.Model
 
 ## [0.1.0] - 2022-05-10
 
