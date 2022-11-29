@@ -8,6 +8,6 @@ processing with corresponding database tables that can be combined with other El
 to assemble a fully functional pipeline.
 
 Installation and usage instructions can be found at the 
-[Element documentation](datajoint.com/docs/elements/element-deeplabcut).
+[Element documentation](https://datajoint.com/docs/elements/element-deeplabcut).
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
