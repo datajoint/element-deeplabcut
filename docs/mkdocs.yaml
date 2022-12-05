@@ -7,7 +7,16 @@ repo_name: datajoint/element-deeplabcut
 nav:
   - Element DeepLabCut: index.md
   - Concepts: concepts.md
-  - Tutorials: tutorials.md
+  - Tutorials: 
+    - Overview: tutorials/index.md
+    - Data Download: tutorials/00-DataDownload_Optional.ipynb
+    - Configure: tutorials/01-Configure.ipynb
+    - Workflow Structure: tutorials/02-WorkflowStructure_Optional.ipynb
+    - Process: tutorials/03-Process.ipynb
+    - Automate: tutorials/04-Automate_Optional.ipynb
+    - Visualization: tutorials/05-Visualization_Optional.ipynb
+    - Drop Schemas: tutorials/06-Drop_Optional.ipynb
+    - Alternate Dataset: tutorials/09-AlternateDataset.ipynb  
   - Citation: citation.md
   - API: api/ # defer to gen-files + literate-nav
   - Changelog: changelog.md
@@ -107,6 +116,8 @@ plugins:
   - exclude-search:
       exclude:
         - "*/navigation.md"
+  - mkdocs-jupyter:
+      ignore_h1_titles: True
 
 markdown_extensions:
   - attr_list
