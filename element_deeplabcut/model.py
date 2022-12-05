@@ -37,7 +37,7 @@ def activate(
         model_schema_name (str): schema name on the database server
         create_schema (bool): when True (default), create schema in the database if it
                             does not yet exist.
-        create_tables (str): when True (default), create schema tabkes in the database
+        create_tables (bool): when True (default), create schema tables in the database
                              if they do not yet exist.
         linking_module (str): a module (or name) containing the required dependencies.
 
@@ -59,7 +59,7 @@ def activate(
     ), "The argument 'dependency' must be a module's name or a module"
     assert hasattr(
         linking_module, "get_dlc_root_data_dir"
-    ), "The linking module must specify a lookup funtion for a root data directory"
+    ), "The linking module must specify a lookup function for a root data directory"
 
     global _linking_module
     _linking_module = linking_module
@@ -82,7 +82,7 @@ def get_dlc_root_data_dir() -> list:
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
     root(s) may vary between data modalities and user machines. Returns a full path
-    string or list of strongs for possible root data directories.
+    string or list of strings for possible root data directories.
     """
     root_directories = _linking_module.get_dlc_root_data_dir()
     if isinstance(root_directories, (str, Path)):
@@ -119,10 +119,10 @@ class VideoRecording(dj.Manual):
 
     Attributes:
         Session (foreign key): Session primary key.
-        Equipment (foreign key): Equipment primary key, used for default output
-                                 directory path information.
         recording_id (int): Unique recording ID.
-        recording_start_time (datetime): Recording start time."""
+        Device (foreign key): Device table primary key, used for default output
+            directory path information.
+    """
 
     definition = """
     -> Session
@@ -155,7 +155,7 @@ class RecordingInfo(dj.Imported):
         VideoRecording (foreign key): Video recording key.
         px_height (smallint): Height in pixels.
         px_width (smallint): Width in pixels.
-        nframes (smallint): Number of frames.
+        nframes (int): Number of frames.
         fps (int): Optional. Frames per second, Hz.
         recording_datetime (datetime): Optional. Datetime for the start of recording.
         recording_duration (float): video duration (s) from nframes / fps."""
@@ -165,7 +165,7 @@ class RecordingInfo(dj.Imported):
     ---
     px_height                 : smallint  # height in pixels
     px_width                  : smallint  # width in pixels
-    nframes                   : smallint  # number of frames 
+    nframes                   : int  # number of frames 
     fps = NULL                : int       # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
     recording_duration        : float     # video duration (s) from nframes / fps
@@ -215,8 +215,10 @@ class BodyPart(dj.Lookup):
     """Body parts tracked by DeepLabCut models
 
     Attributes:
-        Model (foreign key): Model name.
-        BodyPart (foreign key): Body part short name."""
+        body_part ( varchar(32) ): Body part short name.
+        body_part_description ( varchar(1000),optional ): Full description
+
+    """
 
     definition = """
     body_part                : varchar(32)
@@ -259,7 +261,7 @@ class BodyPart(dj.Lookup):
         Args:
             dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
             descriptions (list): Optional. List of strings describing new body parts.
-            prompt (bool): Optional, default True. Promp for confirmation before insert.
+            prompt (bool): Optional, default True. Prompt for confirmation before insert.
         """
 
         # handle dlc_config being a yaml file
@@ -486,7 +488,7 @@ class ModelEvaluation(dj.Computed):
     """
 
     def make(self, key):
-        """.populate() method will launch evaulation for each unique entry in Model."""
+        """.populate() method will launch evaluation for each unique entry in Model."""
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
         ).fetch1(

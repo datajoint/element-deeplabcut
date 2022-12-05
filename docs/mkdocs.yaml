@@ -1,12 +1,22 @@
 # ---------------------- PROJECT SPECIFIC ---------------------------
 
 site_name: DataJoint Documentation
+site_url: http://localhost/docs/elements/element-deeplabcut
 repo_url: https://github.com/datajoint/element-deeplabcut
 repo_name: datajoint/element-deeplabcut
 nav:
   - Element DeepLabCut: index.md
   - Concepts: concepts.md
-  - Tutorials: tutorials.md
+  - Tutorials: 
+    - Overview: tutorials/index.md
+    - Data Download: tutorials/00-DataDownload_Optional.ipynb
+    - Configure: tutorials/01-Configure.ipynb
+    - Workflow Structure: tutorials/02-WorkflowStructure_Optional.ipynb
+    - Process: tutorials/03-Process.ipynb
+    - Automate: tutorials/04-Automate_Optional.ipynb
+    - Visualization: tutorials/05-Visualization_Optional.ipynb
+    - Drop Schemas: tutorials/06-Drop_Optional.ipynb
+    - Alternate Dataset: tutorials/09-AlternateDataset.ipynb  
   - Citation: citation.md
   - API: api/ # defer to gen-files + literate-nav
   - Changelog: changelog.md
@@ -67,8 +77,8 @@ theme:
   name: material
   custom_dir: src/.overrides
   icon:
-    logo: main/project-logo-black
-  favicon: assets/images/project-logo-color.png
+    logo: main/company-logo
+  favicon: assets/images/company-logo-blue.png
   features:
     - toc.integrate
     - content.code.annotate
@@ -83,13 +93,21 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
 plugins:
+  - markdownextradata: {}
   - search
   # - redirects: # OPTIONAL REDIRECTS
   #     redirect_maps:
   #       "index.md": "getting_started.md"
   - mkdocstrings:
       default_handler: python
+      handlers:
+        python:
+          options:
+            members_order: source      
+            group_by_category: false
+            line_length: 88
   - gen-files:
       scripts:
       - ./src/api/make_pages.py
@@ -98,6 +116,9 @@ plugins:
   - exclude-search:
       exclude:
         - "*/navigation.md"
+  - mkdocs-jupyter:
+      ignore_h1_titles: True
+
 markdown_extensions:
   - attr_list
   - toc:
@@ -120,45 +141,44 @@ markdown_extensions:
   - pymdownx.snippets
   
 extra:
+  PATCH_VERSION: !ENV PATCH_VERSION
   generator: false # Disable watermark
   analytics:
     provider: google
     property: !ENV GOOGLE_ANALYTICS_KEY
-    feedback:
-      title: Was this page helpful?
-      ratings:
-        - icon: material/emoticon-happy-outline
-          name: This page was helpful
-          data: 1
-          note: >-
-            Thanks for your feedback!
-        - icon: material/emoticon-sad-outline
-          name: This page could be improved
-          data: 0
-          note: >-
-            Thanks for your feedback!
   version:
     provider: mike
   social:
     - icon: main/company-logo
-      link: https://www.datajoint.com/
-    - icon: fontawesome/solid/ticket
-      link: https://support.djneuro.io/portal/en/home
+      link: https://www.datajoint.com
+      name: DataJoint
     - icon: fontawesome/brands/slack
       link: https://datajoint.slack.com
+      name: Slack
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/datajoint
+      name: LinkedIn
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/DataJointIO
+      link: https://twitter.com/datajoint
+      name: Twitter
     - icon: fontawesome/brands/github
       link: https://github.com/datajoint
+      name: GitHub
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/datajoint
+      name: DockerHub
     - icon: fontawesome/brands/python
       link: https://pypi.org/user/datajointbot
+      name: PyPI
     - icon: fontawesome/brands/stack-overflow
       link: https://stackoverflow.com/questions/tagged/datajoint
+      name: StackOverflow
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/channel/UCdeCuFOTCXlVMRzh6Wk-lGg
+      name: YouTube
+
 extra_css:
   - assets/stylesheets/extra.css
+
+extra_javascript:
+  - https://js-na1.hs-scripts.com/23133402.js  # HubSpot chatbot
