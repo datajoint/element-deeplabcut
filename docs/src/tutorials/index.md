@@ -22,7 +22,7 @@ features. This includes getting started with their software (see
 The Element assumes you:
 
 1. Have
-   [download and installed DLC](https://deeplabcut.github.io/DeepLabCut/docs/installation.html).
+   [downloaded and installed DLC](https://deeplabcut.github.io/DeepLabCut/docs/installation.html).
 2. Have a DLC project folder on your machine. You can declare a project either
    from the
    [DLC GUI](https://deeplabcut.github.io/DeepLabCut/docs/PROJECT_GUI.html#video-demos-how-to-launch-and-run-the-project-manager-gui)
