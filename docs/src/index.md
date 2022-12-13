@@ -16,5 +16,6 @@ is composed of two schemas for storing data and running analysis:
   
 - `model` - Manages models and launches pose estimation
 
-Visit the [Concepts page](./concepts.md) for more information on 
-pose estimation and Element DeepLabCut.  To get started with building your data pipeline visit the [Tutorials page](./tutorials.md).
+Visit the [Concepts page](./concepts.md) for more information on pose estimation and
+Element DeepLabCut.  To get started with building your data pipeline visit the
+[Tutorials page](./tutorials/).

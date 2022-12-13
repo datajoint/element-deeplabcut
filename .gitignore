@@ -88,3 +88,4 @@ workflow_deeplabcut/
 
 # docs
 /docs/site
+/docs/src/tutorials/*ipynb

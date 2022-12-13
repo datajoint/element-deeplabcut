@@ -1,6 +1,7 @@
 # Changelog
 
-Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
+Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
+[Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
 ## [0.2.1] - Unreleased
 
@@ -35,10 +36,12 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## [0.0.0a] - 2021-11-15
 
-+ Add - Drafts from a collection of precursor pipelines, including [DataJoint_Demo_DeepLabCut](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut) graciously provided by the Mathis Lab.
++ Add - Drafts from a collection of precursor pipelines, including
+  [DataJoint_Demo_DeepLabCut](https://github.com/MMathisLab/DataJoint_Demo_DeepLabCut)
+  graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
-[0.2.1]: https://github.com/datajoint/element-deeplabcut/compare/0.2.0...0.2.1
+[0.2.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.1
 [0.2.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.0
 [0.1.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.1
 [0.1.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.0
