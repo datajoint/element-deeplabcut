@@ -16,7 +16,7 @@ nav:
     - Automate: tutorials/04-Automate_Optional.ipynb
     - Visualization: tutorials/05-Visualization_Optional.ipynb
     - Drop Schemas: tutorials/06-Drop_Optional.ipynb
-    - Alternate Dataset: tutorials/09-AlternateDataset.ipynb  
+    - Alternate Dataset: tutorials/09-AlternateDataset.ipynb
   - Citation: citation.md
   - API: api/ # defer to gen-files + literate-nav
   - Changelog: changelog.md
@@ -118,6 +118,7 @@ plugins:
         - "*/navigation.md"
   - mkdocs-jupyter:
       ignore_h1_titles: True
+      ignore: ["*make_pages.py"]
 
 markdown_extensions:
   - attr_list

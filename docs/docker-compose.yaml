@@ -16,6 +16,7 @@ services:
       - MODE
       - GOOGLE_ANALYTICS_KEY 
       - PATCH_VERSION
+      - JUPYTER_PLATFORM_DIRS=1
     volumes:
       - ../docs:/main/docs
       - ../${PACKAGE}:/main/${PACKAGE}
