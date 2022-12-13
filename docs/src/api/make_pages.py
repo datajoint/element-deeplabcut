@@ -13,20 +13,7 @@ import subprocess
 package = os.getenv("PACKAGE")
 
 element = package.split("_", 1)[1]
-if not Path(f"workflow_{element}").is_dir():
-    try:
-        subprocess.run(
-            f"git clone https://github.com/datajoint/workflow-{element.replace('_','-')}.git /main/delete".split(
-                " "
-            ),
-            check=True,
-            timeout=5,
-        )
-        os.system(f"mv /main/delete/workflow_{element} /main/")
-        os.system(f"mv /main/delete/notebooks/*ipynb /main/docs/src/tutorials/")
-        os.system("rm -fR /main/delete")
-    except subprocess.CalledProcessError:
-        pass  # no repo found
+# Previous git clone feature moved to docker compose
 
 nav = mkdocs_gen_files.Nav()
 for path in sorted(Path(package).glob("**/*.py")) + sorted(
