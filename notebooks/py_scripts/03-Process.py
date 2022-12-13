@@ -6,9 +6,9 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.7
+#       jupytext_version: 1.14.1
 #   kernelspec:
-#     display_name: Python 3.8.11 ('ele')
+#     display_name: Python 3.9.13 ('ele')
 #     language: python
 #     name: python3
 # ---
@@ -154,6 +154,12 @@ train.TrainingTask()
 # %% tags=[]
 train.ModelTraining.populate()
 
+# %% [markdown]
+# (Output cleared for brevity)
+# ```
+# The network is now trained and ready to evaluate. Use the function 'evaluate_network' to evaluate the network.
+# ```
+
 # %%
 train.ModelTraining()
 
@@ -269,6 +275,3 @@ model.PoseEstimation.get_trajectory(key)
 
 # %% [markdown]
 # In the [next notebook](./04-Automate_Optional.ipynb), we'll look at additional tools in the workflow for automating these steps.
-
-# %% [markdown]
-#
