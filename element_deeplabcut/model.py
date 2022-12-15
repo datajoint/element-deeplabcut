@@ -622,8 +622,9 @@ class PoseEstimationTask(dj.Manual):
             params (dict): Optional. Parameters passed to DLC's analyze_videos:
                 videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
                 dynamic, robust_nframes, allow_growth, use_shelve
-            relative (bool): Report directory relative to get_dlc_processed_data_dir().
-            mkdir (bool): Default False. Make directory if it doesn't exist.
+            relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().
+            mkdir (bool): Default True. Make directory if it doesn't exist.
+            skip_duplicates (bool): Default False. If true skips insertion of duplicate keys
         """
         output_dir = cls.infer_output_dir(key, relative=relative, mkdir=mkdir)
 
