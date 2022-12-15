@@ -87,4 +87,6 @@ temp/*
 workflow_deeplabcut/
 
 # docs
-/docs/site
+/docs/site/
+/docs/src/tutorials/*ipynb
+/docs/mike-mkdocs*
