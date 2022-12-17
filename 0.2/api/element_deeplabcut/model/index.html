@@ -3970,7 +3970,8 @@ snapshotindex, and trainingsetindex.</p>
 <span class="normal">635</span>
 <span class="normal">636</span>
 <span class="normal">637</span>
-<span class="normal">638</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">638</span>
+<span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">PoseEstimationTask</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Manual</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Staging table for pairing of video recording and model before inference.</span>
 
@@ -4052,8 +4053,9 @@ snapshotindex, and trainingsetindex.</p>
 <span class="sd">            params (dict): Optional. Parameters passed to DLC&#39;s analyze_videos:</span>
 <span class="sd">                videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,</span>
 <span class="sd">                dynamic, robust_nframes, allow_growth, use_shelve</span>
-<span class="sd">            relative (bool): Report directory relative to get_dlc_processed_data_dir().</span>
-<span class="sd">            mkdir (bool): Default False. Make directory if it doesn&#39;t exist.</span>
+<span class="sd">            relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().</span>
+<span class="sd">            mkdir (bool): Default True. Make directory if it doesn&#39;t exist.</span>
+<span class="sd">            skip_duplicates (bool): Default False. If true skips insertion of duplicate keys</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="n">relative</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="n">mkdir</span><span class="p">)</span>
 
@@ -4298,7 +4300,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Report directory relative to get_dlc_processed_data_dir().</p></td>
+          <td><p>Default True. Report directory relative to get_dlc_processed_data_dir().</p></td>
           <td>
                 <code>True</code>
           </td>
@@ -4308,9 +4310,19 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default False. Make directory if it doesn't exist.</p></td>
+          <td><p>Default True. Make directory if it doesn't exist.</p></td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>skip_duplicates</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Default False. If true skips insertion of duplicate keys</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
@@ -4351,7 +4363,8 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">635</span>
 <span class="normal">636</span>
 <span class="normal">637</span>
-<span class="normal">638</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">638</span>
+<span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">insert_estimation_task</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -4371,8 +4384,9 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="sd">        params (dict): Optional. Parameters passed to DLC&#39;s analyze_videos:</span>
 <span class="sd">            videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,</span>
 <span class="sd">            dynamic, robust_nframes, allow_growth, use_shelve</span>
-<span class="sd">        relative (bool): Report directory relative to get_dlc_processed_data_dir().</span>
-<span class="sd">        mkdir (bool): Default False. Make directory if it doesn&#39;t exist.</span>
+<span class="sd">        relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().</span>
+<span class="sd">        mkdir (bool): Default True. Make directory if it doesn&#39;t exist.</span>
+<span class="sd">        skip_duplicates (bool): Default False. If true skips insertion of duplicate keys</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="n">relative</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="n">mkdir</span><span class="p">)</span>
 
@@ -4453,8 +4467,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">641</span>
-<span class="normal">642</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">642</span>
 <span class="normal">643</span>
 <span class="normal">644</span>
 <span class="normal">645</span>
@@ -4576,7 +4589,8 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">761</span>
 <span class="normal">762</span>
 <span class="normal">763</span>
-<span class="normal">764</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">764</span>
+<span class="normal">765</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">PoseEstimation</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Computed</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Results of pose estimation.</span>
 
@@ -4796,8 +4810,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">656</span>
-<span class="normal">657</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">657</span>
 <span class="normal">658</span>
 <span class="normal">659</span>
 <span class="normal">660</span>
@@ -4818,7 +4831,8 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">675</span>
 <span class="normal">676</span>
 <span class="normal">677</span>
-<span class="normal">678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
+<span class="normal">678</span>
+<span class="normal">679</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Position of individual body parts by frame index</span>
 
 <span class="sd">    Attributes:</span>
@@ -4879,8 +4893,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">680</span>
-<span class="normal">681</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">681</span>
 <span class="normal">682</span>
 <span class="normal">683</span>
 <span class="normal">684</span>
@@ -4925,7 +4938,8 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">723</span>
 <span class="normal">724</span>
 <span class="normal">725</span>
-<span class="normal">726</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="normal">726</span>
+<span class="normal">727</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;.populate() method will launch training for each PoseEstimationTask&quot;&quot;&quot;</span>
     <span class="c1"># ID model and directories</span>
     <span class="n">dlc_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">()</span>
@@ -5057,8 +5071,7 @@ and x/y coordinates of each joint name for a camera_id, similar to
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">728</span>
-<span class="normal">729</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">729</span>
 <span class="normal">730</span>
 <span class="normal">731</span>
 <span class="normal">732</span>
@@ -5093,7 +5106,8 @@ and x/y coordinates of each joint name for a camera_id, similar to
 <span class="normal">761</span>
 <span class="normal">762</span>
 <span class="normal">763</span>
-<span class="normal">764</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">764</span>
+<span class="normal">765</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">body_parts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Returns a pandas dataframe of coordinates of the specified body_part(s)</span>
 
@@ -5208,8 +5222,7 @@ and x/y coordinates of each joint name for a camera_id, similar to
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">767</span>
-<span class="normal">768</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">768</span>
 <span class="normal">769</span>
 <span class="normal">770</span>
 <span class="normal">771</span>
@@ -5221,7 +5234,8 @@ and x/y coordinates of each joint name for a camera_id, similar to
 <span class="normal">777</span>
 <span class="normal">778</span>
 <span class="normal">779</span>
-<span class="normal">780</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">780</span>
+<span class="normal">781</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Return whether the provided string represents true. Otherwise false.</span>
 
 <span class="sd">    Args:</span>
