@@ -4,7 +4,7 @@
 
 Installation of the Element requires an integrated development environment and database.
 Instructions to setup each of the components can be found on the
-[User Instructions](datajoint.com/docs/elements/user-instructions) page.  These
+[User Instructions](https://datajoint.com/docs/elements/user-guide) page.  These
 instructions use the example
 [workflow for Element DeepLabCut](https://github.com/datajoint/workflow-deeplabcut),
 which can be modified for a user's specific experimental requirements.  This example
@@ -21,14 +21,12 @@ features. This includes getting started with their software (see
 
 The Element assumes you:
 
-1. Have
-   [downloaded and installed DLC](https://deeplabcut.github.io/DeepLabCut/docs/installation.html).
-2. Have a DLC project folder on your machine. You can declare a project either
+1. Have a DLC project folder on your machine. You can declare a project either
    from the
    [DLC GUI](https://deeplabcut.github.io/DeepLabCut/docs/PROJECT_GUI.html#video-demos-how-to-launch-and-run-the-project-manager-gui)
    or via a
    [terminal](https://deeplabcut.github.io/DeepLabCut/docs/standardDeepLabCut_UserGuide.html#deeplabcut-in-the-terminal).
-3. Have labeled data in your DLC project folder. Again, this can be done via
+1. Have labeled data in your DLC project folder. Again, this can be done via
    [the GUI](https://youtu.be/JDsa8R5J0nQ?t=94)
    or a
    [terminal](https://deeplabcut.github.io/DeepLabCut/docs/standardDeepLabCut_UserGuide.html#deeplabcut-in-the-terminal).
