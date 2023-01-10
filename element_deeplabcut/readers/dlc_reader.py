@@ -31,30 +31,35 @@ class PoseEstimation:
             )
         else:
             self.dlc_dir = Path(dlc_dir)
-            assert self.dlc_dir.exists(), f"Unable to find {dlc_dir}"
+            if not self.dlc_dir.exists():
+                raise FileNotFoundError(f"Unable to find {dlc_dir}")
 
         # meta file: pkl - info about this DLC run (input video, configuration, etc.)
         if pkl_path is None:
             self.pkl_paths = sorted(
                 self.dlc_dir.rglob(f"{filename_prefix}*meta.pickle")
             )
-            assert (
-                len(self.pkl_paths) > 0
-            ), f"No meta file (.pickle) found in: {self.dlc_dir}"
+            if not len(self.pkl_paths) > 0:
+                raise FileNotFoundError(
+                    f"No meta file (.pickle) found in: {self.dlc_dir}"
+                )
         else:
             pkl_path = Path(pkl_path)
-            assert pkl_path.exists()
+            if not pkl_path.exists():
+                raise FileNotFoundError(f"{pkl_path} not found")
             self.pkl_paths = [pkl_path]
 
         # data file: h5 - body part outputs from the DLC post estimation step
         if h5_path is None:
             self.h5_paths = sorted(self.dlc_dir.rglob(f"{filename_prefix}*.h5"))
-            assert (
-                len(self.h5_paths) > 0
-            ), f"No DLC output file (.h5) found in: {self.dlc_dir}"
+            if not len(self.h5_paths) > 0:
+                raise FileNotFoundError(
+                    f"No DLC output file (.h5) found in: {self.dlc_dir}"
+                )
         else:
             h5_path = Path(h5_path)
-            assert h5_path.exists()
+            if not h5_path.exists():
+                raise FileNotFoundError(f"{h5_path} not found")
             self.h5_paths = [h5_path]
 
         # validate number of files
@@ -72,14 +77,15 @@ class PoseEstimation:
             # If multiple, defer to the one we save.
             if len(yml_paths) > 1:
                 yml_paths = [val for val in yml_paths if val.stem == "dj_dlc_config"]
-            assert len(yml_paths) == 1, (
-                "Unable to find one unique .yaml file in: "
-                + f"{dlc_dir} - Found: {len(yml_paths)}"
-            )
+            if len(yml_paths) != 1:
+                raise FileNotFoundError(
+                    f"Unable to find one unique .yaml file in: {dlc_dir} - Found: {len(yml_paths)}"
+                )
             self.yml_path = yml_paths[0]
         else:
             self.yml_path = Path(yml_path)
-            assert self.yml_path.exists()
+            if not self.yml_path.exists():
+                raise FileNotFoundError(f"{self.yml_path} not found")
 
         self._pkl = None
         self._rawdata = None
