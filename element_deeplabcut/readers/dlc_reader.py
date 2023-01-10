@@ -50,7 +50,7 @@ class PoseEstimation:
         if h5_path is None:
             self.h5_paths = sorted(self.dlc_dir.rglob(f"{filename_prefix}*.h5"))
             assert (
-                len(self.h5_paths) > 1
+                len(self.h5_paths) > 0
             ), f"No DLC output file (.h5) found in: {self.dlc_dir}"
         else:
             h5_path = Path(h5_path)

@@ -692,11 +692,6 @@ class PoseEstimation(dj.Computed):
         """.populate() method will launch training for each PoseEstimationTask"""
         # ID model and directories
         dlc_model = (Model & key).fetch1()
-
-        assert dlc_model["project_path"], (
-            "Your model table must have a 'project_path'"
-            + "field pointing to a DLC directory"
-        )
         task_mode, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_output_dir"
         )
