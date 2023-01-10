@@ -647,6 +647,8 @@ class PoseEstimationTask(dj.Manual):
             }
         )
 
+    insert_estimation_task = generate
+
 
 @schema
 class PoseEstimation(dj.Computed):
