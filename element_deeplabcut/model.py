@@ -615,7 +615,8 @@ class PoseEstimationTask(dj.Manual):
         Based on the convention / video_dir / device_{}_recording_{}_model_{}
 
         Args:
-            video_recording_key (dict): DataJoint key specifying a pairing of VideoRecording.
+            video_recording_key (dict): DataJoint key specifying a VideoRecording.
+
             model_name (str): Name of DLC model (from Model table) to be used for inference.
             task_mode (str): Default 'trigger' computation. Or 'load' existing results.
             analyze_videos_params (dict): Optional. Parameters passed to DLC's analyze_videos:
