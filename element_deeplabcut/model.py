@@ -3,50 +3,53 @@ Code adapted from the Mathis Lab
 MIT License Copyright (c) 2022 Mackenzie Mathis
 DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
-
 import datajoint as dj
 import os
+import cv2
+import csv
+import yaml
 import inspect
 import importlib
 import numpy as np
+import pandas as pd
 from pathlib import Path
+from typing import Optional
 from datetime import datetime
-import yaml
-import cv2
+from deeplabcut import evaluate_network
 from element_interface.utils import find_full_path, find_root_directory
-
+from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder, GetScorerName
+from .readers import dlc_reader
 
 schema = dj.schema()
 _linking_module = None
 
 
 def activate(
-    dlc_schema_name, *, create_schema=True, create_tables=True, linking_module=None
+    model_schema_name: str,
+    *,
+    create_schema: bool = True,
+    create_tables: bool = True,
+    linking_module: bool = None,
 ):
-    """
-    activate(schema_name, *, create_schema=True, create_tables=True,
-             linking_module=None)
-        :param schema_name: schema name on the database server to activate the
-                            `deeplabcut` element
+    """Activate this schema.
 
-        :param create_schema: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param create_tables: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param linking_module: a module (or name) containing the required dependencies
-                               to activate the `session` element:
-        Upstream tables:
-            + Session: parent table to VideoRecording, identifying a recording session
-            + Equipment: parent table to VideoRecording, identifying recording device
-        Functions:
-            + get_dlc_root_data_dir() -> list Retrieve the root data director(y/ies)
-                with behavioral recordings for all subject/sessions.
-                :return: a string for full path to the root data directory
-            + get_dlc_processed_data_dir(session_key: dict) -> str
-                Optional function to retrive the desired output directory for DeepLabCut
-                files for a given session. If unspecified,
-                output stored in the session video folder, per DLC default
-                :return: a string for the absolute path of output directory
+    Args:
+        model_schema_name (str): schema name on the database server
+        create_schema (bool): when True (default), create schema in the database if it
+                            does not yet exist.
+        create_tables (bool): when True (default), create schema tables in the database
+                             if they do not yet exist.
+        linking_module (str): a module (or name) containing the required dependencies.
+
+    Dependencies:
+    Upstream tables:
+        Session: A parent table to VideoRecording, identifying a recording session.
+        Equipment: A parent table to VideoRecording, identifying a recording device.
+    Functions:
+        get_dlc_root_data_dir(): Returns absolute path for root data director(y/ies)
+                                 with all behavioral recordings, as (list of) string(s).
+        get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
+                                      data. Defaults to session video subfolder.
     """
 
     if isinstance(linking_module, str):
@@ -56,14 +59,14 @@ def activate(
     ), "The argument 'dependency' must be a module's name or a module"
     assert hasattr(
         linking_module, "get_dlc_root_data_dir"
-    ), "The linking module must specify a lookup funtion for a root data directory"
+    ), "The linking module must specify a lookup function for a root data directory"
 
     global _linking_module
     _linking_module = linking_module
 
     # activate
     schema.activate(
-        dlc_schema_name,
+        model_schema_name,
         create_schema=create_schema,
         create_tables=create_tables,
         add_objects=_linking_module.__dict__,
@@ -74,17 +77,12 @@ def activate(
 
 
 def get_dlc_root_data_dir() -> list:
-    """
+    """Pulls relevant func from parent namespace to specify root data dir(s).
+
     It is recommended that all paths in DataJoint Elements stored as relative
     paths, with respect to some user-configured "root" director(y/ies). The
-    root(s) may vary between data modalities and user machines
-
-    get_dlc_root_data_dir() -> list
-        This user-provided function retrieves the possible root data
-        director(y/ies) containing continuous behavioral data for all subjects
-        and sessions (e.g. acquired video or treadmill raw files)
-        :return: a string for full path to the behavioral root data directory,
-         or list of strings for possible root data directories
+    root(s) may vary between data modalities and user machines. Returns a full path
+    string or list of strings for possible root data directories.
     """
     root_directories = _linking_module.get_dlc_root_data_dir()
     if isinstance(root_directories, (str, Path)):
@@ -99,20 +97,17 @@ def get_dlc_root_data_dir() -> list:
     return root_directories
 
 
-def get_dlc_processed_data_dir() -> str:
-    """
-    If specified by the user, this function provides DeepLabCut with an output
-    directory for processed files. If unspecified, output files will be stored
-    in the session directory 'videos' folder, per DeepLabCut default
+def get_dlc_processed_data_dir() -> Optional[str]:
+    """Pulls relevant func from parent namespace. Defaults to DLC's project /videos/.
 
-    get_dlc_processed_data_dir -> str
-        This user-provided function specifies where DeepLabCut output files
-        will be stored.
+    Method in parent namespace should provide a string to a directory where DLC output
+    files will be stored. If unspecified, output files will be stored in the
+    session directory 'videos' folder, per DeepLabCut default.
     """
     if hasattr(_linking_module, "get_dlc_processed_data_dir"):
         return _linking_module.get_dlc_processed_data_dir()
     else:
-        return get_dlc_root_data_dir()[0]
+        return None
 
 
 # ----------------------------- Table declarations ----------------------
@@ -120,14 +115,30 @@ def get_dlc_processed_data_dir() -> str:
 
 @schema
 class VideoRecording(dj.Manual):
+    """Set of video recordings for DLC inferences.
+
+    Attributes:
+        Session (foreign key): Session primary key.
+        recording_id (int): Unique recording ID.
+        Device (foreign key): Device table primary key, used for default output
+            directory path information.
+    """
+
     definition = """
     -> Session
     recording_id: int
     ---
-    -> Equipment
+    -> Device
     """
 
     class File(dj.Part):
+        """File IDs and paths associated with a given recording_id
+
+        Attributes:
+            VideoRecording (foreign key): Video recording primary key.
+            file_path ( varchar(255) ): file path of video, relative to root data dir.
+        """
+
         definition = """
         -> master
         file_id: int
@@ -138,22 +149,35 @@ class VideoRecording(dj.Manual):
 
 @schema
 class RecordingInfo(dj.Imported):
+    """Automated table with video file metadata.
+
+    Attributes:
+        VideoRecording (foreign key): Video recording key.
+        px_height (smallint): Height in pixels.
+        px_width (smallint): Width in pixels.
+        nframes (int): Number of frames.
+        fps (int): Optional. Frames per second, Hz.
+        recording_datetime (datetime): Optional. Datetime for the start of recording.
+        recording_duration (float): video duration (s) from nframes / fps."""
+
     definition = """
     -> VideoRecording
     ---
     px_height                 : smallint  # height in pixels
     px_width                  : smallint  # width in pixels
-    nframes                   : smallint  # number of frames 
-    fps = NULL                : int     # (Hz) frames per second
+    nframes                   : int  # number of frames 
+    fps = NULL                : int       # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
     recording_duration        : float     # video duration (s) from nframes / fps
     """
 
     @property
     def key_source(self):
+        """Defines order of keys for make function when called via `populate()`"""
         return VideoRecording & VideoRecording.File
 
     def make(self, key):
+        """Populates table with video metadata using CV2."""
         file_paths = (VideoRecording.File & key).fetch("file_path")
 
         nframes = 0
@@ -188,6 +212,14 @@ class RecordingInfo(dj.Imported):
 
 @schema
 class BodyPart(dj.Lookup):
+    """Body parts tracked by DeepLabCut models
+
+    Attributes:
+        body_part ( varchar(32) ): Body part short name.
+        body_part_description ( varchar(1000),optional ): Full description
+
+    """
+
     definition = """
     body_part                : varchar(32)
     ---
@@ -195,11 +227,12 @@ class BodyPart(dj.Lookup):
     """
 
     @classmethod
-    def extract_new_body_parts(cls, dlc_config: dict, verbose=True):
-        """Print a list of new body parts from a dlc config,
-        to examine before generating descriptions
-        :param dlc_config:  path to a config.y*ml, or dict including contents thereof
-        :param verbose:     default True. Print existing/new items to console
+    def extract_new_body_parts(cls, dlc_config: dict, verbose: bool = True):
+        """Returns list of body parts present in dlc config, but not BodyPart table.
+
+        Args:
+            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            verbose (bool): Default True. Print both existing and new items to console.
         """
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -223,14 +256,16 @@ class BodyPart(dj.Lookup):
     def insert_from_config(
         cls, dlc_config: dict, descriptions: list = None, prompt=True
     ):
-        """Insert all body parts from a config file
+        """Insert all body parts from a config file.
 
-        :param dlc_config: path to a config.y*ml, or dict including contents thereof
-        :param descriptions: optional list describing new body parts
+        Args:
+            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            descriptions (list): Optional. List of strings describing new body parts.
+            prompt (bool): Optional, default True. Prompt for confirmation before insert.
         """
 
         # handle dlc_config being a yaml file
-        new_body_parts = cls.extract_new_body_parts(dlc_config)
+        new_body_parts = cls.extract_new_body_parts(dlc_config, verbose=False)
         if new_body_parts is not None:  # Required bc np.array is ambiguous as bool
             if descriptions:
                 assert len(descriptions) == len(new_body_parts), (
@@ -260,27 +295,54 @@ class BodyPart(dj.Lookup):
 
 @schema
 class Model(dj.Manual):
+    """DeepLabCut Models applied to generate pose estimations.
+
+    Attributes:
+        model_name ( varchar(64) ): User-friendly model name.
+        task ( varchar(32) ): Task in the config yaml.
+        date ( varchar(16) ): Date in the config yaml.
+        iteration (int): Iteration/version of this model.
+        snapshotindex (int): Which snapshot for prediction (if -1, latest).
+        shuffle (int): Which shuffle of the training dataset.
+        trainingsetindex (int): Which training set fraction to generate model.
+        scorer ( varchar(64) ): Scorer/network name - DLC's GetScorerName().
+        config_template (longblob): Dictionary of the config for analyze_videos().
+        project_path ( varchar(255) ): DLC's project_path in config relative to root.
+        model_prefix ( varchar(32) ): Optional. Prefix for model files.
+        model_description ( varchar(1000) ): Optional. User-entered description.
+        TrainingParamSet (foreign key): Optional. Training parameters primary key.
+
+    Note:
+        Models are uniquely identified by the union of task, date, iteration, shuffle,
+        snapshotindex, and trainingsetindex.
+    """
+
     definition = """
-    model_name           : varchar(64)  # user-friendly model name
+    model_name           : varchar(64)  # User-friendly model name
     ---
-    task                 : varchar(32)  # task in the config yaml
-    date                 : varchar(16)  # date in the config yaml
-    iteration            : int          # iteration/version of this model
+    task                 : varchar(32)  # Task in the config yaml
+    date                 : varchar(16)  # Date in the config yaml
+    iteration            : int          # Iteration/version of this model
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
-    shuffle              : int          # which shuffle of the training dataset
-    trainingsetindex     : int          # which training set fraction to generate model
+    shuffle              : int          # Shuffle (1) or not (0)
+    trainingsetindex     : int          # Index of training fraction list in config.yaml
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
-    scorer               : varchar(64)  # scorer/network name - DLC's GetScorerName()
-    config_template      : longblob     # dictionary of the config for analyze_videos()
+    scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
+    config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
     model_prefix=''      : varchar(32)
-    model_description='' : varchar(1000)
+    model_description='' : varchar(300)
     -> [nullable] train.TrainingParamSet
     """
     # project_path is the only item required downstream in the pose schema
-    # what happens if TrainingParamSet isn't in the namespace?
 
     class BodyPart(dj.Part):
+        """Body parts associated with a given model
+
+        Attributes:
+            body_part ( varchar(32) ): Short name. Also called joint.
+            body_part_description ( varchar(1000) ): Optional. Longer description."""
+
         definition = """
         -> master
         -> BodyPart
@@ -290,31 +352,30 @@ class Model(dj.Manual):
     def insert_new_model(
         cls,
         model_name: str,
-        dlc_config: dict,
+        dlc_config,
         *,
         shuffle: int,
         trainingsetindex,
+        project_path=None,
         model_description="",
         model_prefix="",
         paramset_idx: int = None,
         prompt=True,
+        params=None,
     ):
-        """Insert new model into the dlc.Model table
+        """Insert new model into the dlc.Model table.
 
-        :param model_name: User-friendly name for this model
-        :param dlc_config: path to a config.y*ml, or dict including contents thereof
-        :param shuffle: integer, shuffle number
-        :param trainingsetindex: index of training fraction list in config.yaml
-        :param model_description: Description of this model
-        :param model_prefix: Filename prefix used across DLC project
-        :param body_part_descriptions: optional list for new items in BodyParts table
-        :param paramset_idx: optional index from the TrainingParamSet table
+        Args:
+            model_name (str): User-friendly name for this model.
+            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            shuffle (int): Shuffled or not as 1 or 0.
+            trainingsetindex (int): Index of training fraction list in config.yaml.
+            model_description (str): Optional. Description of this model.
+            model_prefix (str): Optional. Filename prefix used across DLC project
+            paramset_idx (int): Optional. Index from the TrainingParamSet table
+            prompt (bool): Optional. Prompt the user with all info before inserting.
+            params (dict): Optional. If dlc_config is path, dict of override items
         """
-        from deeplabcut.utils.auxiliaryfunctions import GetScorerName
-        from deeplabcut import __version__ as dlc_version
-        from packaging import version
-        from distutils.util import strtobool
-
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -324,50 +385,38 @@ class Model(dj.Manual):
             if dlc_config_fp.suffix in (".yml", ".yaml"):
                 with open(dlc_config_fp, "rb") as f:
                     dlc_config = yaml.safe_load(f)
+            if isinstance(params, dict):
+                dlc_config.update(params)
 
         # ---- Get and resolve project path ----
         project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_config["project_path"]
+            get_dlc_root_data_dir(), dlc_config.get("project_path", project_path)
         )
+        dlc_config["project_path"] = str(project_path)  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
-        # ---- Build config ----
-        template_attributes = [
+        # ---- Verify config ----
+        needed_attributes = [
             "Task",
             "date",
-            "TrainingFraction",
             "iteration",
             "snapshotindex",
-            "batch_size",
-            "cropping",
-            "x1",
-            "x2",
-            "y1",
-            "y2",
-            "project_path",
+            "TrainingFraction",
         ]
-        config_template = {
-            k: v for k, v in dlc_config.items() if k in template_attributes
-        }
+        for attribute in needed_attributes:
+            assert attribute in dlc_config, f"Couldn't find {attribute} in config"
 
         # ---- Get scorer name ----
-        # "or 'f'" below covers case where config returns None. StrToBool handles else
-        scorer_legacy = (
-            1
-            if (
-                strtobool(dlc_config.get("scorer_legacy") or "f")
-                or version.parse(dlc_version) < version.parse("2.1")
-            )
-            else 0
-        )  # if old version, or if specified in params
+        # "or 'f'" below covers case where config returns None. str_to_bool handles else
+        scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
 
         dlc_scorer = GetScorerName(
-            cfg=config_template,
+            cfg=dlc_config,
             shuffle=shuffle,
-            trainFraction=dlc_config["TrainingFraction"][trainingsetindex],
+            trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
             modelprefix=model_prefix,
         )[scorer_legacy]
-        if config_template["snapshotindex"] == -1:
+        if dlc_config["snapshotindex"] == -1:
             dlc_scorer = "".join(dlc_scorer.split("_")[:-1])
 
         # ---- Insert ----
@@ -375,26 +424,27 @@ class Model(dj.Manual):
             "model_name": model_name,
             "model_description": model_description,
             "scorer": dlc_scorer,
-            "task": config_template["Task"],
-            "date": config_template["date"],
-            "iteration": config_template["iteration"],
-            "snapshotindex": config_template["snapshotindex"],
+            "task": dlc_config["Task"],
+            "date": dlc_config["date"],
+            "iteration": dlc_config["iteration"],
+            "snapshotindex": dlc_config["snapshotindex"],
             "shuffle": shuffle,
-            "trainingsetindex": trainingsetindex,
+            "trainingsetindex": int(trainingsetindex),
             "project_path": project_path.relative_to(root_dir).as_posix(),
             "paramset_idx": paramset_idx,
-            "config_template": config_template,
+            "config_template": dlc_config,
         }
 
         # -- prompt for confirmation --
-        print("--- DLC Model specification to be inserted ---")
-        for k, v in model_dict.items():
-            if k != "config_template":
-                print("\t{}: {}".format(k, v))
-            else:
-                print("\t-- Template for config.yaml --")
-                for k, v in model_dict["config_template"].items():
-                    print("\t\t{}: {}".format(k, v))
+        if prompt:
+            print("--- DLC Model specification to be inserted ---")
+            for k, v in model_dict.items():
+                if k != "config_template":
+                    print("\t{}: {}".format(k, v))
+                else:
+                    print("\t-- Template/Contents of config.yaml --")
+                    for k, v in model_dict["config_template"].items():
+                        print("\t\t{}: {}".format(k, v))
 
         if (
             prompt
@@ -402,6 +452,9 @@ class Model(dj.Manual):
         ):
             print("Canceled insert.")
             return
+        # ---- Save DJ-managed config ----
+        _ = dlc_reader.save_yaml(project_path, dlc_config)
+        # ____ Insert into table ----
         with cls.connection.transaction:
             cls.insert1(model_dict)
             # Returns array, so check size for unambiguous truth value
@@ -412,6 +465,17 @@ class Model(dj.Manual):
 
 @schema
 class ModelEvaluation(dj.Computed):
+    """Performance characteristics model calculated by `deeplabcut.evaluate_network`
+
+    Attributes:
+        Model (foreign key): Model name.
+        train_iterations (int): Training iterations.
+        train_error (float): Optional. Train error (px).
+        test_error (float): Optional. Test error (px).
+        p_cutoff (float): Optional. p-cutoff used.
+        train_error_p (float): Optional. Train error with p-cutoff.
+        test_error_p (float): Optional. Test error with p-cutoff."""
+
     definition = """
     -> Model
     ---
@@ -424,11 +488,7 @@ class ModelEvaluation(dj.Computed):
     """
 
     def make(self, key):
-        """.populate() method will launch evaulation for each unique entry in Model"""
-        import csv
-        from deeplabcut import evaluate_network
-        from deeplabcut.utils.auxiliaryfunctions import GetEvaluationFolder
-
+        """.populate() method will launch evaluation for each unique entry in Model."""
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
         ).fetch1(
@@ -440,20 +500,16 @@ class ModelEvaluation(dj.Computed):
         )
 
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
-        yml_paths = list(project_path.glob("*.y*ml"))
-        assert len(yml_paths) == 1, (
-            "Unable to find one unique .yaml file in: "
-            + f"{project_path} - Found: {len(yml_paths)}"
-        )
+        yml_path, _ = dlc_reader.read_yaml(project_path)
 
         evaluate_network(
-            yml_paths[0],
+            yml_path,
             Shuffles=[shuffle],  # this needs to be a list
             trainingsetindex=trainingsetindex,
             comparisonbodyparts="all",
         )
 
-        eval_folder = GetEvaluationFolder(
+        eval_folder = get_evaluation_folder(
             trainFraction=dlc_config["TrainingFraction"][trainingsetindex],
             shuffle=shuffle,
             cfg=dlc_config,
@@ -486,6 +542,17 @@ class ModelEvaluation(dj.Computed):
 
 @schema
 class PoseEstimationTask(dj.Manual):
+    """Staging table for pairing of video recording and model before inference.
+
+    Attributes:
+        VideoRecording (foreign key): Video recording key.
+        Model (foreign key): Model name.
+        task_mode (load or trigger): Optional. Default load. Or trigger computation.
+        pose_estimation_output_dir ( varchar(255) ): Optional. Output dir relative to
+                                                     get_dlc_root_data_dir.
+        pose_estimation_params (longblob): Optional. Params for DLC's analyze_videos
+                                           params, if not default."""
+
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
     -> Model                                    # Must specify a DLC project_path
@@ -496,15 +563,17 @@ class PoseEstimationTask(dj.Manual):
     """
 
     @classmethod
-    def infer_output_dir(cls, key, relative=False, mkdir=False):
-        """Return the expected pose_estimation_output_dir based on the convention
-                 / video_dir / Equipment_{}_recording_{}_model_{}
-        Spaces in model name are replaced with hyphens
-        :param key: key specifying a pairing of VideoRecording and Model
-        :param relative: report directory relative to get_dlc_processed_data_dir()
-        :param mkdir: default False, make directory if it doesn't exist
+    def infer_output_dir(cls, key: dict, relative: bool = False, mkdir: bool = False):
+        """Return the expected pose_estimation_output_dir.
+
+        Spaces in model name are replaced with hyphens.
+        Based on convention: / video_dir / Device_{}_Recording_{}_Model_{}
+
+        Args:
+            key: DataJoint key specifying a pairing of VideoRecording and Model.
+            relative (bool): Report directory relative to get_dlc_processed_data_dir().
+            mkdir (bool): Default False. Make directory if it doesn't exist.
         """
-        processed_dir = Path(get_dlc_processed_data_dir())
         video_filepath = find_full_path(
             get_dlc_root_data_dir(),
             (VideoRecording.File & key).fetch("file_path", limit=1)[0],
@@ -513,8 +582,13 @@ class PoseEstimationTask(dj.Manual):
         recording_key = VideoRecording & key
         device = "-".join(
             str(v)
-            for v in (_linking_module.Equipment & recording_key).fetch1("KEY").values()
+            for v in (_linking_module.Device & recording_key).fetch1("KEY").values()
         )
+        if get_dlc_processed_data_dir():
+            processed_dir = Path(get_dlc_processed_data_dir())
+        else:  # if processed not provided, default to where video is
+            processed_dir = root_dir
+
         output_dir = (
             processed_dir
             / video_filepath.parent.relative_to(root_dir)
@@ -530,22 +604,26 @@ class PoseEstimationTask(dj.Manual):
     @classmethod
     def insert_estimation_task(
         cls,
-        key,
-        task_mode="trigger",
+        key: dict,
+        task_mode: str = "trigger",
         params: dict = None,
-        relative=True,
-        mkdir=True,
-        skip_duplicates=False,
+        relative: bool = True,
+        mkdir: bool = True,
+        skip_duplicates: bool = False,
     ):
-        """Insert PoseEstimationTask with inferred output dir based on the convention
-                processed_dir / video_dir / device_{}_recording_{}_model_{}
-        :param key: key specifying a pairing of VideoRecording and Model
-        :param task_mode: default 'trigger' computation. Or 'load' existing results
-        :param params: DLC's analyze_videos parameters if other than the defaults:
-            videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
-            dynamic, robust_nframes, allow_growth, use_shelve
-        :param relative: report directory relative to get_dlc_processed_data_dir()
-        :param mkdir: default False, make directory if it doesn't exist
+        """Insert PoseEstimationTask in inferred output dir.
+
+        Based on the convention / video_dir / device_{}_recording_{}_model_{}
+
+        Args:
+            key: DataJoint key specifying a pairing of VideoRecording and Model.
+            task_mode (bool): Default 'trigger' computation. Or 'load' existing results.
+            params (dict): Optional. Parameters passed to DLC's analyze_videos:
+                videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
+                dynamic, robust_nframes, allow_growth, use_shelve
+            relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().
+            mkdir (bool): Default True. Make directory if it doesn't exist.
+            skip_duplicates (bool): Default False. If true skips insertion of duplicate keys
         """
         output_dir = cls.infer_output_dir(key, relative=relative, mkdir=mkdir)
 
@@ -562,13 +640,31 @@ class PoseEstimationTask(dj.Manual):
 
 @schema
 class PoseEstimation(dj.Computed):
+    """Results of pose estimation.
+
+    Attributes:
+        PoseEstimationTask (foreign key): Pose Estimation Task key.
+        post_estimation_time (datetime): time of generation of this set of DLC results.
+    """
+
     definition = """
     -> PoseEstimationTask
     ---
-    post_estimation_time: datetime  # time of generation of this set of DLC results
+    pose_estimation_time: datetime  # time of generation of this set of DLC results
     """
 
     class BodyPartPosition(dj.Part):
+        """Position of individual body parts by frame index
+
+        Attributes:
+            PoseEstimation (foreign key): Pose Estimation key.
+            Model.BodyPart (foreign key): Body Part key.
+            frame_index (longblob): Frame index in model.
+            x_pos (longblob): X position.
+            y_pos (longblob): Y position.
+            z_pos (longblob): Optional. Z position.
+            likelihood (longblob): Model confidence."""
+
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
         -> Model.BodyPart
@@ -582,8 +678,6 @@ class PoseEstimation(dj.Computed):
 
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
-        from .readers import dlc_reader
-
         # ID model and directories
         dlc_model = (Model & key).fetch1()
 
@@ -638,25 +732,27 @@ class PoseEstimation(dj.Computed):
             for k, v in dlc_result.data.items()
         ]
 
-        self.insert1({**key, "post_estimation_time": creation_time})
+        self.insert1({**key, "pose_estimation_time": creation_time})
         self.BodyPartPosition.insert(body_parts)
 
     @classmethod
-    def get_trajectory(cls, key, body_parts="all"):
-        """
-        Returns a pandas dataframe of x, y and z coordinates of the specified body_parts
-        :param key: A query specifying one PoseEstimation entry, else error is thrown.
-        :param body_parts: optional, body parts as a list. If none, all joints
-        returns df: multi index pandas dataframe with DLC scorer names, body_parts
-                    and x/y coordinates of each joint name for a camera_id,
-                    similar to output of DLC dataframe. If 2D, z is set of zeros
-        """
-        import pandas as pd
+    def get_trajectory(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
+        """Returns a pandas dataframe of coordinates of the specified body_part(s)
 
+        Args:
+            key (dict): A DataJoint query specifying one PoseEstimation entry.
+            body_parts (list, optional): Body parts as a list. If "all", all joints
+
+        Returns:
+            df: multi index pandas dataframe with DLC scorer names, body_parts
+                and x/y coordinates of each joint name for a camera_id, similar to
+                 output of DLC dataframe. If 2D, z is set of zeros
+        """
         model_name = key["model_name"]
+
         if body_parts == "all":
             body_parts = (cls.BodyPartPosition & key).fetch("body_part")
-        else:
+        elif not isinstance(body_parts, list):
             body_parts = list(body_parts)
 
         df = None
@@ -676,3 +772,19 @@ class PoseEstimation(dj.Computed):
             frame = pd.DataFrame(a, columns=pdindex, index=range(0, a.shape[0]))
             df = pd.concat([df, frame], axis=1)
         return df
+
+
+def str_to_bool(value) -> bool:
+    """Return whether the provided string represents true. Otherwise false.
+
+    Args:
+        value (any): Any input
+
+    Returns:
+        bool (bool): True if value in ("y", "yes", "t", "true", "on", "1")
+    """
+    # Due to distutils equivalent depreciation in 3.10
+    # Adopted from github.com/PostHog/posthog/blob/master/posthog/utils.py
+    if not value:
+        return False
+    return str(value).lower() in ("y", "yes", "t", "true", "on", "1")
