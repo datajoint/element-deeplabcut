@@ -10,7 +10,6 @@ import importlib
 import os
 from pathlib import Path
 from element_interface.utils import find_full_path, dict_to_uuid
-from deeplabcut import train_network
 from .readers import dlc_reader
 
 try:
@@ -249,6 +248,7 @@ class ModelTraining(dj.Computed):
     # https://github.com/DeepLabCut/DeepLabCut/issues/70
 
     def make(self, key):
+        from deeplabcut import train_network
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
             "project_path", "model_prefix"
