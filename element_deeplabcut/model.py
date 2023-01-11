@@ -556,7 +556,6 @@ class PoseEstimationTask(dj.Manual):
     definition = """
     -> VideoRecording                           # Session -> Recording + File part table
     -> Model                                    # Must specify a DLC project_path
-
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
     pose_estimation_output_dir='': varchar(255) # output dir relative to the root dir
@@ -603,40 +602,53 @@ class PoseEstimationTask(dj.Manual):
         return output_dir.relative_to(processed_dir) if relative else output_dir
 
     @classmethod
-    def insert_estimation_task(
+    def generate(
         cls,
-        key: dict,
-        task_mode: str = "trigger",
-        params: dict = None,
-        relative: bool = True,
-        mkdir: bool = True,
-        skip_duplicates: bool = False,
+        video_recording_key: dict,
+        model_name: str,
+        *,
+        task_mode: str = None,
+        analyze_videos_params: dict = None,
     ):
         """Insert PoseEstimationTask in inferred output dir.
 
         Based on the convention / video_dir / device_{}_recording_{}_model_{}
 
         Args:
-            key: DataJoint key specifying a pairing of VideoRecording and Model.
-            task_mode (bool): Default 'trigger' computation. Or 'load' existing results.
-            params (dict): Optional. Parameters passed to DLC's analyze_videos:
+            video_recording_key (dict): DataJoint key specifying a VideoRecording.
+
+            model_name (str): Name of DLC model (from Model table) to be used for inference.
+            task_mode (str): Default 'trigger' computation. Or 'load' existing results.
+            analyze_videos_params (dict): Optional. Parameters passed to DLC's analyze_videos:
                 videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
                 dynamic, robust_nframes, allow_growth, use_shelve
-            relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().
-            mkdir (bool): Default True. Make directory if it doesn't exist.
-            skip_duplicates (bool): Default False. If true skips insertion of duplicate keys
         """
-        output_dir = cls.infer_output_dir(key, relative=relative, mkdir=mkdir)
+        processed_dir = get_dlc_processed_data_dir()
+        output_dir = cls.infer_output_dir(
+            video_recording_key, relative=False, mkdir=True
+        )
+
+        if task_mode is None:
+            try:
+                _ = dlc_reader.PoseEstimation(output_dir)
+            except FileNotFoundError:
+                task_mode = "trigger"
+            else:
+                task_mode = "load"
 
         cls.insert1(
             {
-                **key,
+                **video_recording_key,
+                "model_name": model_name,
                 "task_mode": task_mode,
-                "pose_estimation_params": params,
-                "pose_estimation_output_dir": output_dir,
-            },
-            skip_duplicates=skip_duplicates,
+                "pose_estimation_params": analyze_videos_params,
+                "pose_estimation_output_dir": output_dir.relative_to(
+                    processed_dir
+                ).as_posix(),
+            }
         )
+
+    insert_estimation_task = generate
 
 
 @schema
@@ -669,7 +681,6 @@ class PoseEstimation(dj.Computed):
         definition = """ # uses DeepLabCut h5 output for body part position
         -> master
         -> Model.BodyPart
-
         ---
         frame_index : longblob     # frame index in model
         x_pos       : longblob
@@ -682,22 +693,29 @@ class PoseEstimation(dj.Computed):
         """.populate() method will launch training for each PoseEstimationTask"""
         # ID model and directories
         dlc_model = (Model & key).fetch1()
+        task_mode, output_dir = (PoseEstimationTask & key).fetch1(
+            "task_mode", "pose_estimation_output_dir"
+        )
 
-        task_mode, analyze_video_params, output_dir = (PoseEstimationTask & key).fetch1(
-            "task_mode", "pose_estimation_params", "pose_estimation_output_dir"
-        )
-        analyze_video_params = analyze_video_params or {}
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
-        video_filepaths = [
-            find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-            for fp in (VideoRecording.File & key).fetch("file_path")
-        ]
-        project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_model["project_path"]
-        )
 
         # Triger PoseEstimation
         if task_mode == "trigger":
+            # Triggering dlc for pose estimation required:
+            # - project_path: full path to the directory containing the trained model
+            # - video_filepaths: full paths to the video files for inference
+            # - analyze_video_params: optional parameters to analyze video
+            project_path = find_full_path(
+                get_dlc_root_data_dir(), dlc_model["project_path"]
+            )
+            video_filepaths = [
+                find_full_path(get_dlc_root_data_dir(), fp).as_posix()
+                for fp in (VideoRecording.File & key).fetch("file_path")
+            ]
+            analyze_video_params = (PoseEstimationTask & key).fetch1(
+                "pose_estimation_params"
+            ) or {}
+
             dlc_reader.do_pose_estimation(
                 video_filepaths,
                 dlc_model,
@@ -705,6 +723,7 @@ class PoseEstimation(dj.Computed):
                 output_dir,
                 **analyze_video_params,
             )
+
         dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time).strftime(
             "%Y-%m-%d %H:%M:%S"
