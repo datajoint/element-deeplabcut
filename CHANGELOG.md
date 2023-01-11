@@ -3,9 +3,13 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.2] - Unreleased
++ Fix - improve function to auto generate PoseEstimationTask
++ Update - loading DLC results handles multiple DLC output files
+
 ## [0.2.1] - 2022-12-16
 
-+ Update - Requirements to accomodate DLC package requirements changing
++ Update - Requirements to accommodate DLC package requirements changing
 + Fix - Typos in docstrings
 + Update - Docstrings for mkdocs deployment
 + Update - Doc website styling including logos, navigation, social icons

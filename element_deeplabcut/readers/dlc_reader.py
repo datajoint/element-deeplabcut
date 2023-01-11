@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 import pickle
 import ruamel.yaml as yaml
-from element_interface.utils import find_root_directory
+from element_interface.utils import find_root_directory, dict_to_uuid
 from .. import model
 from ..model import get_dlc_root_data_dir
 from datajoint.errors import DataJointError
@@ -31,35 +31,45 @@ class PoseEstimation:
             )
         else:
             self.dlc_dir = Path(dlc_dir)
-            assert self.dlc_dir.exists(), f"Unable to find {dlc_dir}"
+            if not self.dlc_dir.exists():
+                raise FileNotFoundError(f"Unable to find {dlc_dir}")
 
-        # meta file: pkl - info about this  DLC run (input video, configuration, etc.)
+        # meta file: pkl - info about this DLC run (input video, configuration, etc.)
         if pkl_path is None:
-            pkl_paths = list(self.dlc_dir.rglob(f"{filename_prefix}*meta.pickle"))
-            assert len(pkl_paths) == 1, (
-                "Unable to find one unique .pickle file in: "
-                + f"{dlc_dir} - Found: {len(pkl_paths)}"
+            self.pkl_paths = sorted(
+                self.dlc_dir.rglob(f"{filename_prefix}*meta.pickle")
             )
-            self.pkl_path = pkl_paths[0]
+            if not len(self.pkl_paths) > 0:
+                raise FileNotFoundError(
+                    f"No meta file (.pickle) found in: {self.dlc_dir}"
+                )
         else:
-            self.pkl_path = Path(pkl_path)
-            assert self.pkl_path.exists()
+            pkl_path = Path(pkl_path)
+            if not pkl_path.exists():
+                raise FileNotFoundError(f"{pkl_path} not found")
+            self.pkl_paths = [pkl_path]
 
         # data file: h5 - body part outputs from the DLC post estimation step
         if h5_path is None:
-            h5_paths = list(self.dlc_dir.rglob(f"{filename_prefix}*.h5"))
-            assert len(h5_paths) == 1, (
-                "Unable to find one unique .h5 file in: "
-                + f"{dlc_dir} - Found: {len(h5_paths)}"
-            )
-            self.h5_path = h5_paths[0]
+            self.h5_paths = sorted(self.dlc_dir.rglob(f"{filename_prefix}*.h5"))
+            if not len(self.h5_paths) > 0:
+                raise FileNotFoundError(
+                    f"No DLC output file (.h5) found in: {self.dlc_dir}"
+                )
         else:
-            self.h5_path = Path(h5_path)
-            assert self.h5_path.exists()
+            h5_path = Path(h5_path)
+            if not h5_path.exists():
+                raise FileNotFoundError(f"{h5_path} not found")
+            self.h5_paths = [h5_path]
+
+        # validate number of files
+        assert len(self.h5_paths) == len(
+            self.pkl_paths
+        ), f"Unequal number of .h5 files ({len(self.h5_paths)}) and .pickle files ({len(self.pkl_paths)})"
 
         assert (
-            self.pkl_path.stem == self.h5_path.stem + "_meta"
-        ), f"Mismatching h5 ({self.h5_path.stem}) and pickle {self.pkl_path.stem}"
+            self.pkl_paths[0].stem == self.h5_paths[0].stem + "_meta"
+        ), f"Mismatching h5 ({self.h5_paths[0].stem}) and pickle {self.pkl_paths[0].stem}"
 
         # config file: yaml - configuration for invoking the DLC post estimation step
         if yml_path is None:
@@ -67,14 +77,15 @@ class PoseEstimation:
             # If multiple, defer to the one we save.
             if len(yml_paths) > 1:
                 yml_paths = [val for val in yml_paths if val.stem == "dj_dlc_config"]
-            assert len(yml_paths) == 1, (
-                "Unable to find one unique .yaml file in: "
-                + f"{dlc_dir} - Found: {len(yml_paths)}"
-            )
+            if len(yml_paths) != 1:
+                raise FileNotFoundError(
+                    f"Unable to find one unique .yaml file in: {dlc_dir} - Found: {len(yml_paths)}"
+                )
             self.yml_path = yml_paths[0]
         else:
             self.yml_path = Path(yml_path)
-            assert self.yml_path.exists()
+            if not self.yml_path.exists():
+                raise FileNotFoundError(f"{self.yml_path} not found")
 
         self._pkl = None
         self._rawdata = None
@@ -92,7 +103,7 @@ class PoseEstimation:
             "Task": self.yml["Task"],
             "date": self.yml["date"],
             "iteration": self.pkl["iteration (active-learning)"],
-            "shuffle": int(re.search("shuffle(\d+)", self.pkl["Scorer"]).groups()[0]),
+            "shuffle": int(re.search(r"shuffle(\d+)", self.pkl["Scorer"]).groups()[0]),
             "snapshotindex": self.yml["snapshotindex"],
             "trainingsetindex": train_idx,
             "training_iteration": train_iter,
@@ -100,18 +111,36 @@ class PoseEstimation:
 
         self.fps = self.pkl["fps"]
         self.nframes = self.pkl["nframes"]
-
-        self.creation_time = self.h5_path.stat().st_mtime
+        self.creation_time = self.h5_paths[0].stat().st_mtime
 
     @property
     def pkl(self):
         """Pickle file contents"""
         if self._pkl is None:
-            with open(self.pkl_path, "rb") as f:
-                self._pkl = pickle.load(f)
-        return self._pkl["data"]
+            nframes = 0
+            meta_hash = None
+            for fp in self.pkl_paths:
+                with open(fp, "rb") as f:
+                    meta = pickle.load(f)
+                nframes += meta["data"].pop("nframes")
 
-    @property  # DLC aux_func has a read_config option, but it rewrites the proj path
+                # remove variable fields
+                for k in ("start", "stop", "run_duration"):
+                    meta["data"].pop(k)
+
+                # confirm identical setting in all .pickle files
+                if meta_hash is None:
+                    meta_hash = dict_to_uuid(meta)
+                else:
+                    assert meta_hash == dict_to_uuid(
+                        meta
+                    ), f"Inconsistent DLC-model-config file used: {fp}"
+
+            self._pkl = meta["data"]
+            self._pkl["nframes"] = nframes
+        return self._pkl
+
+    @property
     def yml(self):
         """json-structured config.yaml file contents"""
         if self._yml is None:
@@ -123,7 +152,7 @@ class PoseEstimation:
     def rawdata(self):
         """Raw data from h5 file"""
         if self._rawdata is None:
-            self._rawdata = pd.read_hdf(self.h5_path)
+            self._rawdata = pd.concat([pd.read_hdf(fp) for fp in self.h5_paths])
         return self._rawdata
 
     @property

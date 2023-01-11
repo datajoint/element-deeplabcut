@@ -278,7 +278,8 @@ class ModelTraining(dj.Computed):
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
         train_network_kwargs = {
-            k: v for k, v in dlc_config.items() if k in train_network_input_args
+            k: int(v) if k in ("shuffle", "trainingsetindex", "maxiters") else v 
+            for k, v in dlc_config.items() if k in train_network_input_args
         }
         for k in ["shuffle", "trainingsetindex", "maxiters"]:
             train_network_kwargs[k] = int(train_network_kwargs[k])
