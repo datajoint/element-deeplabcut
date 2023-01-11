@@ -248,7 +248,8 @@ class ModelTraining(dj.Computed):
     # https://github.com/DeepLabCut/DeepLabCut/issues/70
 
     def make(self, key):
-        from deeplabcut import train_network
+        from deeplabcut import train_network # isort:skip
+
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
             "project_path", "model_prefix"
