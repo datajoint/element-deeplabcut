@@ -12,13 +12,6 @@ from pathlib import Path
 from element_interface.utils import find_full_path, dict_to_uuid
 from .readers import dlc_reader
 
-try:
-    from deeplabcut.utils.auxiliaryfunctions import get_model_folder
-except ImportError:
-    from deeplabcut.utils.auxiliaryfunctions import (
-        GetModelFolder as get_model_folder,
-    )
-
 schema = dj.schema()
 _linking_module = None
 
@@ -249,6 +242,12 @@ class ModelTraining(dj.Computed):
 
     def make(self, key):
         from deeplabcut import train_network # isort:skip
+        try:
+            from deeplabcut.utils.auxiliaryfunctions import get_model_folder
+        except ImportError:
+            from deeplabcut.utils.auxiliaryfunctions import (
+                GetModelFolder as get_model_folder
+            )
 
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
