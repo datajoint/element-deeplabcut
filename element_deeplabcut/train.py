@@ -243,11 +243,11 @@ class ModelTraining(dj.Computed):
     def make(self, key):
         from deeplabcut import train_network # isort:skip
         try:
-            from deeplabcut.utils.auxiliaryfunctions import get_model_folder
+            from deeplabcut.utils.auxiliaryfunctions import get_model_folder # isort:skip
         except ImportError:
             from deeplabcut.utils.auxiliaryfunctions import (
                 GetModelFolder as get_model_folder
-            )
+            ) # isort:skip
 
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
