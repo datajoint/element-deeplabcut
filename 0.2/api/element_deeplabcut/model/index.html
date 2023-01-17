@@ -750,19 +750,6 @@
     ModelEvaluation
   </a>
   
-    <nav class="md-nav" aria-label="ModelEvaluation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#element_deeplabcut.model.ModelEvaluation.make" class="md-nav__link">
-    make()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -781,8 +768,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#element_deeplabcut.model.PoseEstimationTask.insert_estimation_task" class="md-nav__link">
-    insert_estimation_task()
+  <a href="#element_deeplabcut.model.PoseEstimationTask.generate" class="md-nav__link">
+    generate()
   </a>
   
 </li>
@@ -1184,7 +1171,9 @@ get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
 </details>
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
@@ -1228,16 +1217,14 @@ get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">activate</span><span class="p">(</span>
+<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">activate</span><span class="p">(</span>
     <span class="n">model_schema_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">create_schema</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">create_tables</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">linking_module</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Activate this schema.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Activate this schema.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_schema_name (str): schema name on the database server</span>
@@ -1308,7 +1295,9 @@ string or list of strings for possible root data directories.</p>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
@@ -1324,10 +1313,8 @@ string or list of strings for possible root data directories.</p>
 <span class="normal">92</span>
 <span class="normal">93</span>
 <span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span>
-<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_root_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Pulls relevant func from parent namespace to specify root data dir(s).</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_root_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pulls relevant func from parent namespace to specify root data dir(s).</span>
 
 <span class="sd">    It is recommended that all paths in DataJoint Elements stored as relative</span>
 <span class="sd">    paths, with respect to some user-configured &quot;root&quot; director(y/ies). The</span>
@@ -1375,7 +1362,9 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
@@ -1383,10 +1372,8 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_processed_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Pulls relevant func from parent namespace. Defaults to DLC&#39;s project /videos/.</span>
+<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_processed_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pulls relevant func from parent namespace. Defaults to DLC&#39;s project /videos/.</span>
 
 <span class="sd">    Method in parent namespace should provide a string to a directory where DLC output</span>
 <span class="sd">    files will be stored. If unspecified, output files will be stored in the</span>
@@ -1463,7 +1450,9 @@ directory path information.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span>
@@ -1492,11 +1481,9 @@ directory path information.</p></td>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">VideoRecording</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Manual</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set of video recordings for DLC inferences.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of video recordings for DLC inferences.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        Session (foreign key): Session primary key.</span>
@@ -1513,7 +1500,7 @@ directory path information.</p></td>
 <span class="s2">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;File IDs and paths associated with a given recording_id</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;File IDs and paths associated with a given recording_id</span>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            VideoRecording (foreign key): Video recording primary key.</span>
@@ -1587,7 +1574,9 @@ directory path information.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">134</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
@@ -1598,10 +1587,8 @@ directory path information.</p></td>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;File IDs and paths associated with a given recording_id</span>
+<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;File IDs and paths associated with a given recording_id</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        VideoRecording (foreign key): Video recording primary key.</span>
@@ -1728,7 +1715,9 @@ directory path information.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
@@ -1786,11 +1775,9 @@ directory path information.</p></td>
 <span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">RecordingInfo</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Imported</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Automated table with video file metadata.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Automated table with video file metadata.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        VideoRecording (foreign key): Video recording key.</span>
@@ -1814,11 +1801,11 @@ directory path information.</p></td>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">key_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Defines order of keys for make function when called via `populate()`&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines order of keys for make function when called via `populate()`&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">VideoRecording</span> <span class="o">&amp;</span> <span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span>
 
     <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Populates table with video metadata using CV2.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Populates table with video metadata using CV2.&quot;&quot;&quot;</span>
         <span class="n">file_paths</span> <span class="o">=</span> <span class="p">(</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">)</span>
 
         <span class="n">nframes</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1904,7 +1891,9 @@ directory path information.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">179</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
 <span class="normal">180</span>
 <span class="normal">181</span>
 <span class="normal">182</span>
@@ -1933,10 +1922,8 @@ directory path information.</p></td>
 <span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Populates table with video metadata using CV2.&quot;&quot;&quot;</span>
+<span class="normal">208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Populates table with video metadata using CV2.&quot;&quot;&quot;</span>
     <span class="n">file_paths</span> <span class="o">=</span> <span class="p">(</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">)</span>
 
     <span class="n">nframes</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2035,7 +2022,9 @@ directory path information.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
@@ -2113,11 +2102,9 @@ directory path information.</p></td>
 <span class="normal">288</span>
 <span class="normal">289</span>
 <span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">BodyPart</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Lookup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Body parts tracked by DeepLabCut models</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Body parts tracked by DeepLabCut models</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        body_part ( varchar(32) ): Body part short name.</span>
@@ -2133,7 +2120,7 @@ directory path information.</p></td>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">extract_new_body_parts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dlc_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns list of body parts present in dlc config, but not BodyPart table.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns list of body parts present in dlc config, but not BodyPart table.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.</span>
@@ -2161,7 +2148,7 @@ directory path information.</p></td>
     <span class="k">def</span> <span class="nf">insert_from_config</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">dlc_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">descriptions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Insert all body parts from a config file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert all body parts from a config file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.</span>
@@ -2263,7 +2250,9 @@ directory path information.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">229</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
 <span class="normal">230</span>
 <span class="normal">231</span>
 <span class="normal">232</span>
@@ -2285,11 +2274,9 @@ directory path information.</p></td>
 <span class="normal">248</span>
 <span class="normal">249</span>
 <span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">extract_new_body_parts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dlc_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns list of body parts present in dlc config, but not BodyPart table.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns list of body parts present in dlc config, but not BodyPart table.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.</span>
@@ -2387,7 +2374,9 @@ directory path information.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">255</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
 <span class="normal">256</span>
 <span class="normal">257</span>
 <span class="normal">258</span>
@@ -2423,13 +2412,11 @@ directory path information.</p></td>
 <span class="normal">288</span>
 <span class="normal">289</span>
 <span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">insert_from_config</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">dlc_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">descriptions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Insert all body parts from a config file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert all body parts from a config file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.</span>
@@ -2614,7 +2601,9 @@ snapshotindex, and trainingsetindex.</p>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">296</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
 <span class="normal">299</span>
@@ -2783,7 +2772,7 @@ snapshotindex, and trainingsetindex.</p>
 <span class="normal">462</span>
 <span class="normal">463</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Manual</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;DeepLabCut Models applied to generate pose estimations.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DeepLabCut Models applied to generate pose estimations.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        model_name ( varchar(64) ): User-friendly model name.</span>
@@ -2825,7 +2814,7 @@ snapshotindex, and trainingsetindex.</p>
     <span class="c1"># project_path is the only item required downstream in the pose schema</span>
 
     <span class="k">class</span> <span class="nc">BodyPart</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Body parts associated with a given model</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Body parts associated with a given model</span>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            body_part ( varchar(32) ): Short name. Also called joint.</span>
@@ -2851,7 +2840,7 @@ snapshotindex, and trainingsetindex.</p>
         <span class="n">prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Insert new model into the dlc.Model table.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert new model into the dlc.Model table.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model_name (str): User-friendly name for this model.</span>
@@ -2864,6 +2853,8 @@ snapshotindex, and trainingsetindex.</p>
 <span class="sd">            prompt (bool): Optional. Prompt the user with all info before inserting.</span>
 <span class="sd">            params (dict): Optional. If dlc_config is path, dict of override items</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">deeplabcut.utils.auxiliaryfunctions</span> <span class="kn">import</span> <span class="n">GetScorerName</span> <span class="c1"># isort:skip</span>
+
         <span class="c1"># handle dlc_config being a yaml file</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dlc_config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">dlc_config_fp</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">Path</span><span class="p">(</span><span class="n">dlc_config</span><span class="p">))</span>
@@ -3010,7 +3001,9 @@ snapshotindex, and trainingsetindex.</p>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">339</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
 <span class="normal">340</span>
 <span class="normal">341</span>
 <span class="normal">342</span>
@@ -3018,10 +3011,8 @@ snapshotindex, and trainingsetindex.</p>
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
-<span class="normal">347</span>
-<span class="normal">348</span>
-<span class="normal">349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPart</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Body parts associated with a given model</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPart</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Body parts associated with a given model</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        body_part ( varchar(32) ): Short name. Also called joint.</span>
@@ -3177,7 +3168,9 @@ snapshotindex, and trainingsetindex.</p>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">351</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
 <span class="normal">352</span>
 <span class="normal">353</span>
 <span class="normal">354</span>
@@ -3304,7 +3297,7 @@ snapshotindex, and trainingsetindex.</p>
     <span class="n">prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Insert new model into the dlc.Model table.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert new model into the dlc.Model table.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_name (str): User-friendly name for this model.</span>
@@ -3317,6 +3310,8 @@ snapshotindex, and trainingsetindex.</p>
 <span class="sd">        prompt (bool): Optional. Prompt the user with all info before inserting.</span>
 <span class="sd">        params (dict): Optional. If dlc_config is path, dict of override items</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">deeplabcut.utils.auxiliaryfunctions</span> <span class="kn">import</span> <span class="n">GetScorerName</span> <span class="c1"># isort:skip</span>
+
     <span class="c1"># handle dlc_config being a yaml file</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dlc_config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">dlc_config_fp</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">Path</span><span class="p">(</span><span class="n">dlc_config</span><span class="p">))</span>
@@ -3579,9 +3574,11 @@ snapshotindex, and trainingsetindex.</p>
 <span class="normal">537</span>
 <span class="normal">538</span>
 <span class="normal">539</span>
-<span class="normal">540</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">ModelEvaluation</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Computed</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Performance characteristics model calculated by `deeplabcut.evaluate_network`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Performance characteristics model calculated by `deeplabcut.evaluate_network`</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        Model (foreign key): Model name.</span>
@@ -3604,7 +3601,9 @@ snapshotindex, and trainingsetindex.</p>
 <span class="s2">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;.populate() method will launch evaluation for each unique entry in Model.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">deeplabcut</span> <span class="kn">import</span> <span class="n">evaluate_network</span> <span class="c1"># isort:skip</span>
+        <span class="kn">from</span> <span class="nn">deeplabcut.utils.auxiliaryfunctions</span> <span class="kn">import</span> <span class="n">get_evaluation_folder</span>  <span class="c1"># isort:skip</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;.populate() method will launch evaluation for each unique entry in Model.&quot;&quot;&quot;</span>
         <span class="n">dlc_config</span><span class="p">,</span> <span class="n">project_path</span><span class="p">,</span> <span class="n">model_prefix</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">,</span> <span class="n">trainingsetindex</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">Model</span> <span class="o">&amp;</span> <span class="n">key</span>
         <span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
@@ -3661,134 +3660,6 @@ snapshotindex, and trainingsetindex.</p>
 
   <div class="doc doc-children">
 
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="element_deeplabcut.model.ModelEvaluation.make" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">make</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
-
-<a href="#element_deeplabcut.model.ModelEvaluation.make" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>.populate() method will launch evaluation for each unique entry in Model.</p>
-
-      <details class="quote">
-        <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">490</span>
-<span class="normal">491</span>
-<span class="normal">492</span>
-<span class="normal">493</span>
-<span class="normal">494</span>
-<span class="normal">495</span>
-<span class="normal">496</span>
-<span class="normal">497</span>
-<span class="normal">498</span>
-<span class="normal">499</span>
-<span class="normal">500</span>
-<span class="normal">501</span>
-<span class="normal">502</span>
-<span class="normal">503</span>
-<span class="normal">504</span>
-<span class="normal">505</span>
-<span class="normal">506</span>
-<span class="normal">507</span>
-<span class="normal">508</span>
-<span class="normal">509</span>
-<span class="normal">510</span>
-<span class="normal">511</span>
-<span class="normal">512</span>
-<span class="normal">513</span>
-<span class="normal">514</span>
-<span class="normal">515</span>
-<span class="normal">516</span>
-<span class="normal">517</span>
-<span class="normal">518</span>
-<span class="normal">519</span>
-<span class="normal">520</span>
-<span class="normal">521</span>
-<span class="normal">522</span>
-<span class="normal">523</span>
-<span class="normal">524</span>
-<span class="normal">525</span>
-<span class="normal">526</span>
-<span class="normal">527</span>
-<span class="normal">528</span>
-<span class="normal">529</span>
-<span class="normal">530</span>
-<span class="normal">531</span>
-<span class="normal">532</span>
-<span class="normal">533</span>
-<span class="normal">534</span>
-<span class="normal">535</span>
-<span class="normal">536</span>
-<span class="normal">537</span>
-<span class="normal">538</span>
-<span class="normal">539</span>
-<span class="normal">540</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;.populate() method will launch evaluation for each unique entry in Model.&quot;&quot;&quot;</span>
-    <span class="n">dlc_config</span><span class="p">,</span> <span class="n">project_path</span><span class="p">,</span> <span class="n">model_prefix</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">,</span> <span class="n">trainingsetindex</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">Model</span> <span class="o">&amp;</span> <span class="n">key</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
-        <span class="s2">&quot;config_template&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_path&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;model_prefix&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;shuffle&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;trainingsetindex&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">project_path</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">project_path</span><span class="p">)</span>
-    <span class="n">yml_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dlc_reader</span><span class="o">.</span><span class="n">read_yaml</span><span class="p">(</span><span class="n">project_path</span><span class="p">)</span>
-
-    <span class="n">evaluate_network</span><span class="p">(</span>
-        <span class="n">yml_path</span><span class="p">,</span>
-        <span class="n">Shuffles</span><span class="o">=</span><span class="p">[</span><span class="n">shuffle</span><span class="p">],</span>  <span class="c1"># this needs to be a list</span>
-        <span class="n">trainingsetindex</span><span class="o">=</span><span class="n">trainingsetindex</span><span class="p">,</span>
-        <span class="n">comparisonbodyparts</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">eval_folder</span> <span class="o">=</span> <span class="n">get_evaluation_folder</span><span class="p">(</span>
-        <span class="n">trainFraction</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;TrainingFraction&quot;</span><span class="p">][</span><span class="n">trainingsetindex</span><span class="p">],</span>
-        <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
-        <span class="n">cfg</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">,</span>
-        <span class="n">modelprefix</span><span class="o">=</span><span class="n">model_prefix</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">eval_path</span> <span class="o">=</span> <span class="n">project_path</span> <span class="o">/</span> <span class="n">eval_folder</span>
-    <span class="k">assert</span> <span class="n">eval_path</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find evaluation folder:</span><span class="se">\n</span><span class="si">{</span><span class="n">eval_path</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="n">eval_csvs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">eval_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*csv&quot;</span><span class="p">))</span>
-    <span class="n">max_modified_time</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">eval_csv</span> <span class="ow">in</span> <span class="n">eval_csvs</span><span class="p">:</span>
-        <span class="n">modified_time</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">eval_csv</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">modified_time</span> <span class="o">&gt;</span> <span class="n">max_modified_time</span><span class="p">:</span>
-            <span class="n">eval_csv_latest</span> <span class="o">=</span> <span class="n">eval_csv</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">eval_csv_latest</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="c1"># in testing, test_error_p returned empty string</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">insert1</span><span class="p">(</span>
-        <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">key</span><span class="p">,</span>
-            <span class="n">train_iterations</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Training iterations:&quot;</span><span class="p">],</span>
-            <span class="n">train_error</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot; Train error(px)&quot;</span><span class="p">],</span>
-            <span class="n">test_error</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot; Test error(px)&quot;</span><span class="p">],</span>
-            <span class="n">p_cutoff</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;p-cutoff used&quot;</span><span class="p">],</span>
-            <span class="n">train_error_p</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Train error with p-cutoff&quot;</span><span class="p">],</span>
-            <span class="n">test_error_p</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;Test error with p-cutoff&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
 
 
 
@@ -3875,9 +3746,7 @@ snapshotindex, and trainingsetindex.</p>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">543</span>
-<span class="normal">544</span>
-<span class="normal">545</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">545</span>
 <span class="normal">546</span>
 <span class="normal">547</span>
 <span class="normal">548</span>
@@ -3971,9 +3840,23 @@ snapshotindex, and trainingsetindex.</p>
 <span class="normal">636</span>
 <span class="normal">637</span>
 <span class="normal">638</span>
-<span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">PoseEstimationTask</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Manual</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Staging table for pairing of video recording and model before inference.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Staging table for pairing of video recording and model before inference.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        VideoRecording (foreign key): Video recording key.</span>
@@ -3987,7 +3870,6 @@ snapshotindex, and trainingsetindex.</p>
     <span class="n">definition</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    -&gt; VideoRecording                           # Session -&gt; Recording + File part table</span>
 <span class="s2">    -&gt; Model                                    # Must specify a DLC project_path</span>
-
 <span class="s2">    ---</span>
 <span class="s2">    task_mode=&#39;load&#39; : enum(&#39;load&#39;, &#39;trigger&#39;)  # load results or trigger computation</span>
 <span class="s2">    pose_estimation_output_dir=&#39;&#39;: varchar(255) # output dir relative to the root dir</span>
@@ -3996,7 +3878,7 @@ snapshotindex, and trainingsetindex.</p>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">infer_output_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">relative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">mkdir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the expected pose_estimation_output_dir.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the expected pose_estimation_output_dir.</span>
 
 <span class="sd">        Spaces in model name are replaced with hyphens.</span>
 <span class="sd">        Based on convention: / video_dir / Device_{}_Recording_{}_Model_{}</span>
@@ -4034,40 +3916,53 @@ snapshotindex, and trainingsetindex.</p>
         <span class="k">return</span> <span class="n">output_dir</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">processed_dir</span><span class="p">)</span> <span class="k">if</span> <span class="n">relative</span> <span class="k">else</span> <span class="n">output_dir</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">insert_estimation_task</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="n">task_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;trigger&quot;</span><span class="p">,</span>
-        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">relative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">mkdir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">video_recording_key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">task_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">analyze_videos_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Insert PoseEstimationTask in inferred output dir.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert PoseEstimationTask in inferred output dir.</span>
 
 <span class="sd">        Based on the convention / video_dir / device_{}_recording_{}_model_{}</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            key: DataJoint key specifying a pairing of VideoRecording and Model.</span>
-<span class="sd">            task_mode (bool): Default &#39;trigger&#39; computation. Or &#39;load&#39; existing results.</span>
-<span class="sd">            params (dict): Optional. Parameters passed to DLC&#39;s analyze_videos:</span>
+<span class="sd">            video_recording_key (dict): DataJoint key specifying a VideoRecording.</span>
+
+<span class="sd">            model_name (str): Name of DLC model (from Model table) to be used for inference.</span>
+<span class="sd">            task_mode (str): Default &#39;trigger&#39; computation. Or &#39;load&#39; existing results.</span>
+<span class="sd">            analyze_videos_params (dict): Optional. Parameters passed to DLC&#39;s analyze_videos:</span>
 <span class="sd">                videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,</span>
 <span class="sd">                dynamic, robust_nframes, allow_growth, use_shelve</span>
-<span class="sd">            relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().</span>
-<span class="sd">            mkdir (bool): Default True. Make directory if it doesn&#39;t exist.</span>
-<span class="sd">            skip_duplicates (bool): Default False. If true skips insertion of duplicate keys</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="n">relative</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="n">mkdir</span><span class="p">)</span>
+        <span class="n">processed_dir</span> <span class="o">=</span> <span class="n">get_dlc_processed_data_dir</span><span class="p">()</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span>
+            <span class="n">video_recording_key</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">task_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">dlc_reader</span><span class="o">.</span><span class="n">PoseEstimation</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">task_mode</span> <span class="o">=</span> <span class="s2">&quot;trigger&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">task_mode</span> <span class="o">=</span> <span class="s2">&quot;load&quot;</span>
 
         <span class="bp">cls</span><span class="o">.</span><span class="n">insert1</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="o">**</span><span class="n">key</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">video_recording_key</span><span class="p">,</span>
+                <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
                 <span class="s2">&quot;task_mode&quot;</span><span class="p">:</span> <span class="n">task_mode</span><span class="p">,</span>
-                <span class="s2">&quot;pose_estimation_params&quot;</span><span class="p">:</span> <span class="n">params</span><span class="p">,</span>
-                <span class="s2">&quot;pose_estimation_output_dir&quot;</span><span class="p">:</span> <span class="n">output_dir</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
+                <span class="s2">&quot;pose_estimation_params&quot;</span><span class="p">:</span> <span class="n">analyze_videos_params</span><span class="p">,</span>
+                <span class="s2">&quot;pose_estimation_output_dir&quot;</span><span class="p">:</span> <span class="n">output_dir</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span>
+                    <span class="n">processed_dir</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+            <span class="p">}</span>
         <span class="p">)</span>
+
+    <span class="n">insert_estimation_task</span> <span class="o">=</span> <span class="n">generate</span>
 </code></pre></div></td></tr></table></div>
         </details>
 
@@ -4147,8 +4042,7 @@ Based on convention: / video_dir / Device_{}<em>Recording</em>{}<em>Model</em>{}
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">566</span>
-<span class="normal">567</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">567</span>
 <span class="normal">568</span>
 <span class="normal">569</span>
 <span class="normal">570</span>
@@ -4184,9 +4078,10 @@ Based on convention: / video_dir / Device_{}<em>Recording</em>{}<em>Model</em>{}
 <span class="normal">600</span>
 <span class="normal">601</span>
 <span class="normal">602</span>
-<span class="normal">603</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">603</span>
+<span class="normal">604</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">infer_output_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">relative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">mkdir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the expected pose_estimation_output_dir.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the expected pose_estimation_output_dir.</span>
 
 <span class="sd">    Spaces in model name are replaced with hyphens.</span>
 <span class="sd">    Based on convention: / video_dir / Device_{}_Recording_{}_Model_{}</span>
@@ -4237,14 +4132,14 @@ Based on convention: / video_dir / Device_{}<em>Recording</em>{}<em>Model</em>{}
 
 
 
-<h3 id="element_deeplabcut.model.PoseEstimationTask.insert_estimation_task" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">insert_estimation_task</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">task_mode</span><span class="o">=</span><span class="s1">&#39;trigger&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<h3 id="element_deeplabcut.model.PoseEstimationTask.generate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">generate</span><span class="p">(</span><span class="n">video_recording_key</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">task_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">analyze_videos_params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#element_deeplabcut.model.PoseEstimationTask.insert_estimation_task" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#element_deeplabcut.model.PoseEstimationTask.generate" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -4264,11 +4159,21 @@ Based on convention: / video_dir / Device_{}<em>Recording</em>{}<em>Model</em>{}
     </thead>
     <tbody>
         <tr>
-          <td><code>key</code></td>
+          <td><code>video_recording_key</code></td>
           <td>
                 <code>dict</code>
           </td>
-          <td><p>DataJoint key specifying a pairing of VideoRecording and Model.</p></td>
+          <td><p>DataJoint key specifying a VideoRecording.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>model_name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of DLC model (from Model table) to be used for inference.</p></td>
           <td>
               <em>required</em>
           </td>
@@ -4276,15 +4181,15 @@ Based on convention: / video_dir / Device_{}<em>Recording</em>{}<em>Model</em>{}
         <tr>
           <td><code>task_mode</code></td>
           <td>
-                <code>bool</code>
+                <code>str</code>
           </td>
           <td><p>Default 'trigger' computation. Or 'load' existing results.</p></td>
           <td>
-                <code>&#39;trigger&#39;</code>
+                <code>None</code>
           </td>
         </tr>
         <tr>
-          <td><code>params</code></td>
+          <td><code>analyze_videos_params</code></td>
           <td>
                 <code>dict</code>
           </td>
@@ -4295,43 +4200,12 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
                 <code>None</code>
           </td>
         </tr>
-        <tr>
-          <td><code>relative</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>Default True. Report directory relative to get_dlc_processed_data_dir().</p></td>
-          <td>
-                <code>True</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>mkdir</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>Default True. Make directory if it doesn't exist.</p></td>
-          <td>
-                <code>True</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>skip_duplicates</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>Default False. If true skips insertion of duplicate keys</p></td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">605</span>
-<span class="normal">606</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">606</span>
 <span class="normal">607</span>
 <span class="normal">608</span>
 <span class="normal">609</span>
@@ -4364,40 +4238,63 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">636</span>
 <span class="normal">637</span>
 <span class="normal">638</span>
-<span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">insert_estimation_task</span><span class="p">(</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">generate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
-    <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-    <span class="n">task_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;trigger&quot;</span><span class="p">,</span>
-    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">relative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">mkdir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">video_recording_key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">task_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">analyze_videos_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Insert PoseEstimationTask in inferred output dir.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert PoseEstimationTask in inferred output dir.</span>
 
 <span class="sd">    Based on the convention / video_dir / device_{}_recording_{}_model_{}</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        key: DataJoint key specifying a pairing of VideoRecording and Model.</span>
-<span class="sd">        task_mode (bool): Default &#39;trigger&#39; computation. Or &#39;load&#39; existing results.</span>
-<span class="sd">        params (dict): Optional. Parameters passed to DLC&#39;s analyze_videos:</span>
+<span class="sd">        video_recording_key (dict): DataJoint key specifying a VideoRecording.</span>
+
+<span class="sd">        model_name (str): Name of DLC model (from Model table) to be used for inference.</span>
+<span class="sd">        task_mode (str): Default &#39;trigger&#39; computation. Or &#39;load&#39; existing results.</span>
+<span class="sd">        analyze_videos_params (dict): Optional. Parameters passed to DLC&#39;s analyze_videos:</span>
 <span class="sd">            videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,</span>
 <span class="sd">            dynamic, robust_nframes, allow_growth, use_shelve</span>
-<span class="sd">        relative (bool): Default True. Report directory relative to get_dlc_processed_data_dir().</span>
-<span class="sd">        mkdir (bool): Default True. Make directory if it doesn&#39;t exist.</span>
-<span class="sd">        skip_duplicates (bool): Default False. If true skips insertion of duplicate keys</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="n">relative</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="n">mkdir</span><span class="p">)</span>
+    <span class="n">processed_dir</span> <span class="o">=</span> <span class="n">get_dlc_processed_data_dir</span><span class="p">()</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span>
+        <span class="n">video_recording_key</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">task_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">dlc_reader</span><span class="o">.</span><span class="n">PoseEstimation</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">task_mode</span> <span class="o">=</span> <span class="s2">&quot;trigger&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">task_mode</span> <span class="o">=</span> <span class="s2">&quot;load&quot;</span>
 
     <span class="bp">cls</span><span class="o">.</span><span class="n">insert1</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="o">**</span><span class="n">key</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">video_recording_key</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
             <span class="s2">&quot;task_mode&quot;</span><span class="p">:</span> <span class="n">task_mode</span><span class="p">,</span>
-            <span class="s2">&quot;pose_estimation_params&quot;</span><span class="p">:</span> <span class="n">params</span><span class="p">,</span>
-            <span class="s2">&quot;pose_estimation_output_dir&quot;</span><span class="p">:</span> <span class="n">output_dir</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span>
+            <span class="s2">&quot;pose_estimation_params&quot;</span><span class="p">:</span> <span class="n">analyze_videos_params</span><span class="p">,</span>
+            <span class="s2">&quot;pose_estimation_output_dir&quot;</span><span class="p">:</span> <span class="n">output_dir</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span>
+                <span class="n">processed_dir</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+        <span class="p">}</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -4467,21 +4364,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">642</span>
-<span class="normal">643</span>
-<span class="normal">644</span>
-<span class="normal">645</span>
-<span class="normal">646</span>
-<span class="normal">647</span>
-<span class="normal">648</span>
-<span class="normal">649</span>
-<span class="normal">650</span>
-<span class="normal">651</span>
-<span class="normal">652</span>
-<span class="normal">653</span>
-<span class="normal">654</span>
-<span class="normal">655</span>
-<span class="normal">656</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">656</span>
 <span class="normal">657</span>
 <span class="normal">658</span>
 <span class="normal">659</span>
@@ -4590,9 +4473,30 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">762</span>
 <span class="normal">763</span>
 <span class="normal">764</span>
-<span class="normal">765</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span>
+<span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">PoseEstimation</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Computed</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Results of pose estimation.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Results of pose estimation.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        PoseEstimationTask (foreign key): Pose Estimation Task key.</span>
@@ -4606,7 +4510,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="s2">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Position of individual body parts by frame index</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Position of individual body parts by frame index</span>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            PoseEstimation (foreign key): Pose Estimation key.</span>
@@ -4620,7 +4524,6 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
         <span class="n">definition</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; # uses DeepLabCut h5 output for body part position</span>
 <span class="s2">        -&gt; master</span>
 <span class="s2">        -&gt; Model.BodyPart</span>
-
 <span class="s2">        ---</span>
 <span class="s2">        frame_index : longblob     # frame index in model</span>
 <span class="s2">        x_pos       : longblob</span>
@@ -4630,25 +4533,32 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="s2">        &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;.populate() method will launch training for each PoseEstimationTask&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;.populate() method will launch training for each PoseEstimationTask&quot;&quot;&quot;</span>
         <span class="c1"># ID model and directories</span>
         <span class="n">dlc_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">()</span>
+        <span class="n">task_mode</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="p">(</span><span class="n">PoseEstimationTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
+            <span class="s2">&quot;task_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;pose_estimation_output_dir&quot;</span>
+        <span class="p">)</span>
 
-        <span class="n">task_mode</span><span class="p">,</span> <span class="n">analyze_video_params</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="p">(</span><span class="n">PoseEstimationTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
-            <span class="s2">&quot;task_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;pose_estimation_params&quot;</span><span class="p">,</span> <span class="s2">&quot;pose_estimation_output_dir&quot;</span>
-        <span class="p">)</span>
-        <span class="n">analyze_video_params</span> <span class="o">=</span> <span class="n">analyze_video_params</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">output_dir</span><span class="p">)</span>
-        <span class="n">video_filepaths</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">fp</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="p">(</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">project_path</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span>
-            <span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">dlc_model</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
 
         <span class="c1"># Triger PoseEstimation</span>
         <span class="k">if</span> <span class="n">task_mode</span> <span class="o">==</span> <span class="s2">&quot;trigger&quot;</span><span class="p">:</span>
+            <span class="c1"># Triggering dlc for pose estimation required:</span>
+            <span class="c1"># - project_path: full path to the directory containing the trained model</span>
+            <span class="c1"># - video_filepaths: full paths to the video files for inference</span>
+            <span class="c1"># - analyze_video_params: optional parameters to analyze video</span>
+            <span class="n">project_path</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span>
+                <span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">dlc_model</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">video_filepaths</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">fp</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="p">(</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">analyze_video_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">PoseEstimationTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
+                <span class="s2">&quot;pose_estimation_params&quot;</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+
             <span class="n">dlc_reader</span><span class="o">.</span><span class="n">do_pose_estimation</span><span class="p">(</span>
                 <span class="n">video_filepaths</span><span class="p">,</span>
                 <span class="n">dlc_model</span><span class="p">,</span>
@@ -4656,6 +4566,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
                 <span class="n">output_dir</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">analyze_video_params</span><span class="p">,</span>
             <span class="p">)</span>
+
         <span class="n">dlc_result</span> <span class="o">=</span> <span class="n">dlc_reader</span><span class="o">.</span><span class="n">PoseEstimation</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
         <span class="n">creation_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">dlc_result</span><span class="o">.</span><span class="n">creation_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
             <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
@@ -4679,7 +4590,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">body_parts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns a pandas dataframe of coordinates of the specified body_part(s)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a pandas dataframe of coordinates of the specified body_part(s)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key (dict): A DataJoint query specifying one PoseEstimation entry.</span>
@@ -4810,21 +4721,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
         <details class="quote">
           <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">657</span>
-<span class="normal">658</span>
-<span class="normal">659</span>
-<span class="normal">660</span>
-<span class="normal">661</span>
-<span class="normal">662</span>
-<span class="normal">663</span>
-<span class="normal">664</span>
-<span class="normal">665</span>
-<span class="normal">666</span>
-<span class="normal">667</span>
-<span class="normal">668</span>
-<span class="normal">669</span>
-<span class="normal">670</span>
-<span class="normal">671</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">671</span>
 <span class="normal">672</span>
 <span class="normal">673</span>
 <span class="normal">674</span>
@@ -4832,8 +4729,21 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">676</span>
 <span class="normal">677</span>
 <span class="normal">678</span>
-<span class="normal">679</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Position of individual body parts by frame index</span>
+<span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position of individual body parts by frame index</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        PoseEstimation (foreign key): Pose Estimation key.</span>
@@ -4847,7 +4757,6 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
     <span class="n">definition</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; # uses DeepLabCut h5 output for body part position</span>
 <span class="s2">    -&gt; master</span>
 <span class="s2">    -&gt; Model.BodyPart</span>
-
 <span class="s2">    ---</span>
 <span class="s2">    frame_index : longblob     # frame index in model</span>
 <span class="s2">    x_pos       : longblob</span>
@@ -4893,20 +4802,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span>
-<span class="normal">684</span>
-<span class="normal">685</span>
-<span class="normal">686</span>
-<span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span>
-<span class="normal">692</span>
-<span class="normal">693</span>
-<span class="normal">694</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">694</span>
 <span class="normal">695</span>
 <span class="normal">696</span>
 <span class="normal">697</span>
@@ -4939,26 +4835,54 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
 <span class="normal">724</span>
 <span class="normal">725</span>
 <span class="normal">726</span>
-<span class="normal">727</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;.populate() method will launch training for each PoseEstimationTask&quot;&quot;&quot;</span>
+<span class="normal">727</span>
+<span class="normal">728</span>
+<span class="normal">729</span>
+<span class="normal">730</span>
+<span class="normal">731</span>
+<span class="normal">732</span>
+<span class="normal">733</span>
+<span class="normal">734</span>
+<span class="normal">735</span>
+<span class="normal">736</span>
+<span class="normal">737</span>
+<span class="normal">738</span>
+<span class="normal">739</span>
+<span class="normal">740</span>
+<span class="normal">741</span>
+<span class="normal">742</span>
+<span class="normal">743</span>
+<span class="normal">744</span>
+<span class="normal">745</span>
+<span class="normal">746</span>
+<span class="normal">747</span>
+<span class="normal">748</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;.populate() method will launch training for each PoseEstimationTask&quot;&quot;&quot;</span>
     <span class="c1"># ID model and directories</span>
     <span class="n">dlc_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">()</span>
+    <span class="n">task_mode</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="p">(</span><span class="n">PoseEstimationTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
+        <span class="s2">&quot;task_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;pose_estimation_output_dir&quot;</span>
+    <span class="p">)</span>
 
-    <span class="n">task_mode</span><span class="p">,</span> <span class="n">analyze_video_params</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="p">(</span><span class="n">PoseEstimationTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
-        <span class="s2">&quot;task_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;pose_estimation_params&quot;</span><span class="p">,</span> <span class="s2">&quot;pose_estimation_output_dir&quot;</span>
-    <span class="p">)</span>
-    <span class="n">analyze_video_params</span> <span class="o">=</span> <span class="n">analyze_video_params</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">output_dir</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">output_dir</span><span class="p">)</span>
-    <span class="n">video_filepaths</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">fp</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="p">(</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">)</span>
-    <span class="p">]</span>
-    <span class="n">project_path</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span>
-        <span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">dlc_model</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
 
     <span class="c1"># Triger PoseEstimation</span>
     <span class="k">if</span> <span class="n">task_mode</span> <span class="o">==</span> <span class="s2">&quot;trigger&quot;</span><span class="p">:</span>
+        <span class="c1"># Triggering dlc for pose estimation required:</span>
+        <span class="c1"># - project_path: full path to the directory containing the trained model</span>
+        <span class="c1"># - video_filepaths: full paths to the video files for inference</span>
+        <span class="c1"># - analyze_video_params: optional parameters to analyze video</span>
+        <span class="n">project_path</span> <span class="o">=</span> <span class="n">find_full_path</span><span class="p">(</span>
+            <span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">dlc_model</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">video_filepaths</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">find_full_path</span><span class="p">(</span><span class="n">get_dlc_root_data_dir</span><span class="p">(),</span> <span class="n">fp</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="p">(</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">analyze_video_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">PoseEstimationTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
+            <span class="s2">&quot;pose_estimation_params&quot;</span>
+        <span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+
         <span class="n">dlc_reader</span><span class="o">.</span><span class="n">do_pose_estimation</span><span class="p">(</span>
             <span class="n">video_filepaths</span><span class="p">,</span>
             <span class="n">dlc_model</span><span class="p">,</span>
@@ -4966,6 +4890,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p></td>
             <span class="n">output_dir</span><span class="p">,</span>
             <span class="o">**</span><span class="n">analyze_video_params</span><span class="p">,</span>
         <span class="p">)</span>
+
     <span class="n">dlc_result</span> <span class="o">=</span> <span class="n">dlc_reader</span><span class="o">.</span><span class="n">PoseEstimation</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
     <span class="n">creation_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">dlc_result</span><span class="o">.</span><span class="n">creation_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
         <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
@@ -5071,28 +4996,7 @@ and x/y coordinates of each joint name for a camera_id, similar to
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">729</span>
-<span class="normal">730</span>
-<span class="normal">731</span>
-<span class="normal">732</span>
-<span class="normal">733</span>
-<span class="normal">734</span>
-<span class="normal">735</span>
-<span class="normal">736</span>
-<span class="normal">737</span>
-<span class="normal">738</span>
-<span class="normal">739</span>
-<span class="normal">740</span>
-<span class="normal">741</span>
-<span class="normal">742</span>
-<span class="normal">743</span>
-<span class="normal">744</span>
-<span class="normal">745</span>
-<span class="normal">746</span>
-<span class="normal">747</span>
-<span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">750</span>
 <span class="normal">751</span>
 <span class="normal">752</span>
 <span class="normal">753</span>
@@ -5107,9 +5011,30 @@ and x/y coordinates of each joint name for a camera_id, similar to
 <span class="normal">762</span>
 <span class="normal">763</span>
 <span class="normal">764</span>
-<span class="normal">765</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span>
+<span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">body_parts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Returns a pandas dataframe of coordinates of the specified body_part(s)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a pandas dataframe of coordinates of the specified body_part(s)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key (dict): A DataJoint query specifying one PoseEstimation entry.</span>
@@ -5222,21 +5147,21 @@ and x/y coordinates of each joint name for a camera_id, similar to
 
       <details class="quote">
         <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">768</span>
-<span class="normal">769</span>
-<span class="normal">770</span>
-<span class="normal">771</span>
-<span class="normal">772</span>
-<span class="normal">773</span>
-<span class="normal">774</span>
-<span class="normal">775</span>
-<span class="normal">776</span>
-<span class="normal">777</span>
-<span class="normal">778</span>
-<span class="normal">779</span>
-<span class="normal">780</span>
-<span class="normal">781</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return whether the provided string represents true. Otherwise false.</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">789</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span>
+<span class="normal">801</span>
+<span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether the provided string represents true. Otherwise false.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value (any): Any input</span>

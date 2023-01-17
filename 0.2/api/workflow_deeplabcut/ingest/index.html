@@ -1013,7 +1013,7 @@
     <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Inserts ./user_data/subject.csv data into corresponding subject schema tables</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inserts ./user_data/subject.csv data into corresponding subject schema tables</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        subject_csv_path (str): relative path of subject csv</span>
@@ -1110,7 +1110,7 @@
 <span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_sessions</span><span class="p">(</span>
     <span class="n">session_csv_path</span><span class="o">=</span><span class="s2">&quot;./user_data/sessions.csv&quot;</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Ingests to session schema from ./user_data/sessions.csv</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ingests to session schema from ./user_data/sessions.csv</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        session_csv_path (str): relative path of session csv</span>
@@ -1232,7 +1232,7 @@
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_train_params</span><span class="p">(</span><span class="n">config_params_csv_path</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided path to load TrainingParamSet with relative path to config.yaml</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use provided path to load TrainingParamSet with relative path to config.yaml</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config_params_csv_path (str): relative path of csv with config parameters</span>
@@ -1354,7 +1354,7 @@
 <span class="normal">95</span>
 <span class="normal">96</span>
 <span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_train_vids</span><span class="p">(</span><span class="n">train_video_csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into train.VideoSet and train.VideoSet.File</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use provided CSV to insert into train.VideoSet and train.VideoSet.File</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        train_video_csv_path (str): relative path of csv with training video info</span>
@@ -1451,7 +1451,7 @@
 <span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_model_vids</span><span class="p">(</span>
     <span class="n">model_video_csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.VideoRecording and VideoRecording.File</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.VideoRecording and VideoRecording.File</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_video_csv_path (str): relative path of csv with model video info</span>
@@ -1569,7 +1569,7 @@
 <span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ingest_model</span><span class="p">(</span>
     <span class="n">model_model_csv_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.Model table</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use provided CSV to insert into model.Model table</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_model_csv_path (str): relative path of csv with DLC Model info</span>
@@ -1711,7 +1711,7 @@ pose estimation</p></td>
     <span class="n">skip_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Ingests to DLC schema from CSVs</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ingests to DLC schema from CSVs</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config_params_csv_path (str): Optional. Csv path for model training config and</span>

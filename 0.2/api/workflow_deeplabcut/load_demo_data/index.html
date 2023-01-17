@@ -974,7 +974,7 @@
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">download_djarchive_dlc_data</span><span class="p">(</span><span class="n">target_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/tmp/test_data/&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Download DLC demo data from djarchive. Approx .3 GB</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download DLC demo data from djarchive. Approx .3 GB</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        target_directory (str, optional): Where to store the downloaded data.</span>
@@ -1124,7 +1124,7 @@ available. If integer, look for that snapshot.</p></td>
 <span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_pose_cfg</span><span class="p">(</span>
     <span class="n">project</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;from_top_tracking&quot;</span><span class="p">,</span> <span class="n">net_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">update_snapshot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Updates weight paths to absolute. If update_snapshot, changes weights to snap #</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Updates weight paths to absolute. If update_snapshot, changes weights to snap #</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project (str, optional): Default from &#39;from_top_tracking&#39;. Poject name/folder in</span>
@@ -1285,7 +1285,7 @@ available. If integer, look for that snapshot.</p></td>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">setup_bare_project</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;from_top_tracking&quot;</span><span class="p">,</span> <span class="n">net_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds absolute paths to config files and generates training-datasets folder</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds absolute paths to config files and generates training-datasets folder</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project (str, optional): Default &#39;from_top_tracking&#39;. DLC project folder</span>
@@ -1438,7 +1438,7 @@ of video</p></td>
     <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">first_n_sec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Save the first 2 seconds of a video relative to dlc root dir.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the first 2 seconds of a video relative to dlc root dir.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vid_path (str, optional): Default &quot;from_top_tracking/videos/test_full.mp4&quot;. Path</span>
@@ -1554,7 +1554,7 @@ revert, in the same directory as the checkpoint file. Defaults to
 <span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert_checkpoint_file</span><span class="p">(</span>
     <span class="n">project</span><span class="o">=</span><span class="s2">&quot;from_top_tracking&quot;</span><span class="p">,</span> <span class="n">original_checkpoint</span><span class="o">=</span><span class="s2">&quot;checkpoint_orig&quot;</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Delete existing checkpoint file and replace with original_checkpoint</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete existing checkpoint file and replace with original_checkpoint</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project (str, optional): DLC project name. Defaults to &quot;from_top_tracking&quot;.</span>
