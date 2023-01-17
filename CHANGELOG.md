@@ -7,7 +7,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 + Fix - improve function to auto generate PoseEstimationTask
 + Update - loading DLC results handles multiple DLC output files
-+ Update - adjusted DLC related imports to be lazy
++ Update - Adopt lazy import strategy for imported DeepLabCut functions
 
 ## [0.2.1] - 2022-12-16
 
