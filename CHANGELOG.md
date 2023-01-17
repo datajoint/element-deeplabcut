@@ -3,9 +3,11 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [0.2.2] - Unreleased
+## [0.2.2] - 2022-01-17
+
 + Fix - improve function to auto generate PoseEstimationTask
 + Update - loading DLC results handles multiple DLC output files
++ Update - Adopt lazy import strategy for imported DeepLabCut functions
 
 ## [0.2.1] - 2022-12-16
 

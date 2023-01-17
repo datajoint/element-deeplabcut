@@ -16,7 +16,6 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime
 from element_interface.utils import find_full_path, find_root_directory
-from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder, GetScorerName
 from .readers import dlc_reader
 
 schema = dj.schema()
@@ -375,6 +374,8 @@ class Model(dj.Manual):
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
         """
+        from deeplabcut.utils.auxiliaryfunctions import GetScorerName # isort:skip
+
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
             dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
@@ -488,6 +489,7 @@ class ModelEvaluation(dj.Computed):
 
     def make(self, key):
         from deeplabcut import evaluate_network # isort:skip
+        from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder  # isort:skip
         """.populate() method will launch evaluation for each unique entry in Model."""
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
