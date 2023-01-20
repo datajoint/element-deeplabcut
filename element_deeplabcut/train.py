@@ -10,15 +10,7 @@ import importlib
 import os
 from pathlib import Path
 from element_interface.utils import find_full_path, dict_to_uuid
-from deeplabcut import train_network
 from .readers import dlc_reader
-
-try:
-    from deeplabcut.utils.auxiliaryfunctions import get_model_folder
-except ImportError:
-    from deeplabcut.utils.auxiliaryfunctions import (
-        GetModelFolder as get_model_folder,
-    )
 
 schema = dj.schema()
 _linking_module = None
@@ -249,6 +241,14 @@ class ModelTraining(dj.Computed):
     # https://github.com/DeepLabCut/DeepLabCut/issues/70
 
     def make(self, key):
+        from deeplabcut import train_network # isort:skip
+        try:
+            from deeplabcut.utils.auxiliaryfunctions import get_model_folder # isort:skip
+        except ImportError:
+            from deeplabcut.utils.auxiliaryfunctions import (
+                GetModelFolder as get_model_folder
+            ) # isort:skip
+
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
             "project_path", "model_prefix"
@@ -278,7 +278,8 @@ class ModelTraining(dj.Computed):
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
         train_network_kwargs = {
-            k: v for k, v in dlc_config.items() if k in train_network_input_args
+            k: int(v) if k in ("shuffle", "trainingsetindex", "maxiters") else v 
+            for k, v in dlc_config.items() if k in train_network_input_args
         }
         for k in ["shuffle", "trainingsetindex", "maxiters"]:
             train_network_kwargs[k] = int(train_network_kwargs[k])
