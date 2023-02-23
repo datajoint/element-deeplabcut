@@ -1,4 +1,5 @@
 datajoint>=0.13
 deeplabcut[tf]>=2.2.1.1
+element-interface>=0.3.0
 opencv-python-headless
-torch==1.12.1
+element-interface>=0.3.0 
