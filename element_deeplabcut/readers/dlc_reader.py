@@ -249,6 +249,7 @@ def save_yaml(
 
 
 def do_pose_estimation(
+    key: dict,
     video_filepaths: list,
     dlc_model: dict,
     project_path: str,
@@ -334,15 +335,10 @@ def do_pose_estimation(
     # ---- Add current video to config ---
     for video_filepath in video_filepaths:
         if video_filepath not in dlc_config["video_sets"]:
-            root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath)
-            relative_path = Path(video_filepath).relative_to(root_dir)
-            recording_id = (
-                model.VideoRecording.File & f'file_path="{relative_path}"'
-            ).fetch1("recording_id")
             try:
-                px_width, px_height = (
-                    model.RecordingInfo & f'recording_id="{recording_id}"'
-                ).fetch1("px_width", "px_height")
+                px_width, px_height = (model.RecordingInfo & key).fetch1(
+                    "px_width", "px_height"
+                )
             except DataJointError:
                 logger.warn(
                     f"Could not find RecordingInfo for {video_filepath.stem}"

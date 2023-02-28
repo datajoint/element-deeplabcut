@@ -374,7 +374,7 @@ class Model(dj.Manual):
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
         """
-        from deeplabcut.utils.auxiliaryfunctions import GetScorerName # isort:skip
+        from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
 
         # handle dlc_config being a yaml file
         if not isinstance(dlc_config, dict):
@@ -392,7 +392,7 @@ class Model(dj.Manual):
         project_path = find_full_path(
             get_dlc_root_data_dir(), dlc_config.get("project_path", project_path)
         )
-        dlc_config["project_path"] = str(project_path)  # update if different
+        dlc_config["project_path"] = project_path.as_posix()  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
         # ---- Verify config ----
@@ -488,8 +488,11 @@ class ModelEvaluation(dj.Computed):
     """
 
     def make(self, key):
-        from deeplabcut import evaluate_network # isort:skip
-        from deeplabcut.utils.auxiliaryfunctions import get_evaluation_folder  # isort:skip
+        from deeplabcut import evaluate_network  # isort:skip
+        from deeplabcut.utils.auxiliaryfunctions import (
+            get_evaluation_folder,
+        )  # isort:skip
+
         """.populate() method will launch evaluation for each unique entry in Model."""
         dlc_config, project_path, model_prefix, shuffle, trainingsetindex = (
             Model & key
@@ -719,6 +722,7 @@ class PoseEstimation(dj.Computed):
             ) or {}
 
             dlc_reader.do_pose_estimation(
+                key,
                 video_filepaths,
                 dlc_model,
                 project_path,
