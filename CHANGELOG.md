@@ -22,10 +22,10 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ## 0.0.0a0 - 2021-12-15
 
 - Add - First draft begins, reflecting precursor pipelines
-- Add - Added Docker files
+- Add - Docker files
 - Add - Draft integration tests
-- Add - Add example data download instructions
-- Add - Added Notebooks to demonstrate use
+- Add - Example data download instructions
+- Add - Notebooks to demonstrate use
 
 [0.2.0]: https://github.com/datajoint/workflow-deeplabcut/releases/tag/0.2.0
 [0.1.1]: https://github.com/datajoint/workflow-deeplabcut/releases/tag/0.1.1
