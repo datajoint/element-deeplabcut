@@ -54,6 +54,8 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
   graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
+[0.2.3]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.3
+[0.2.2]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.2
 [0.2.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.1
 [0.2.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.0
 [0.1.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.1
