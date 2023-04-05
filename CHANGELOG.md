@@ -3,7 +3,12 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [0.2.2] - 2022-01-17
+## [0.2.3] - 2023-02-28
+
++ Fix - For cases of multiple subjects/sessions with same recording_id
++ Update - Use posix to handle DLC project path
+
+## [0.2.2] - 2023-01-17
 
 + Fix - improve function to auto generate PoseEstimationTask
 + Update - loading DLC results handles multiple DLC output files
@@ -49,6 +54,8 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
   graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
+[0.2.3]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.3
+[0.2.2]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.2
 [0.2.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.1
 [0.2.0]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.0
 [0.1.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.1.1
