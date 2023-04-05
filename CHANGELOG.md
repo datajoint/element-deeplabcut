@@ -8,7 +8,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Fix - For cases of multiple subjects/sessions with same recording_id
 + Update - Use posix to handle DLC project path
 
-## [0.2.2] - 2022-01-17
+## [0.2.2] - 2023-01-17
 
 + Fix - improve function to auto generate PoseEstimationTask
 + Update - loading DLC results handles multiple DLC output files
