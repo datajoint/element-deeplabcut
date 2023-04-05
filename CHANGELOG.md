@@ -3,6 +3,11 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.3] - 2022-02-28
+
++ Fix - For cases of multiple subjects/sessions with same recording_id
++ Update - Use posix to handle DLC project path
+
 ## [0.2.2] - 2022-01-17
 
 + Fix - improve function to auto generate PoseEstimationTask
