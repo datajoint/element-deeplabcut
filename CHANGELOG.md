@@ -3,6 +3,10 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.4] - 2023-04-28
+
++ Fix - `.ipynb` output in tutorials is not visible in dark mode.
+
 ## [0.2.3] - 2023-02-28
 
 + Fix - For cases of multiple subjects/sessions with same recording_id
@@ -54,6 +58,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
   graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
+[0.2.4]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.4
 [0.2.3]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.3
 [0.2.2]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.2
 [0.2.1]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.1
