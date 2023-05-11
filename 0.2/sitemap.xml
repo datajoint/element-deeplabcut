@@ -2,127 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/changelog/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/citation/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/concepts/</loc>
-         <lastmod>2023-04-05</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>None</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/element_deeplabcut/model/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/element_deeplabcut/train/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/element_deeplabcut/version/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/element_deeplabcut/export/nwb/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/element_deeplabcut/readers/dlc_reader/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/ingest/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/load_demo_data/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/paths/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/pipeline/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/process/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/api/workflow_deeplabcut/version/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/00-DataDownload_Optional/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/01-Configure/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/02-WorkflowStructure_Optional/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/03-Process/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/04-Automate_Optional/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/05-Visualization_Optional/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/06-Drop_Optional/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>http://localhost/docs/elements/element-deeplabcut/0.2/tutorials/09-AlternateDataset/</loc>
-         <lastmod>2023-04-05</lastmod>
+         <lastmod>2023-05-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
