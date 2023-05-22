@@ -15,7 +15,6 @@ services:
       - PACKAGE
       - UPSTREAM_REPO
       - MODE
-      - GOOGLE_ANALYTICS_KEY 
       - PATCH_VERSION
       - JUPYTER_PLATFORM_DIRS=1
     volumes:
