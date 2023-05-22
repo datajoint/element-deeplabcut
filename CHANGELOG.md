@@ -3,6 +3,10 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.6] - 2023-05-22
+
++ Add - DeepLabCut citation
+
 ## [0.2.5] - 2023-05-11
 
 + Fix - `.ipynb` dark mode output for all notebooks.
@@ -63,6 +67,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
   graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
+[0.2.6]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.6
 [0.2.5]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.5
 [0.2.4]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.4
 [0.2.3]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.3
