@@ -11,3 +11,9 @@ If your work uses the following resources, please cite the respective manuscript
  
 + DeepLabCut 
      + [Manuscripts](https://github.com/DeepLabCut/DeepLabCut#references)
+
++ NWB
+  + [Manuscript](https://www.nwb.org/publications/)
+
++ DANDI
+  + [Citation options](https://www.dandiarchive.org/handbook/10_using_dandi/#citing-dandi)

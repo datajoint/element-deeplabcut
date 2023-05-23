@@ -5,7 +5,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## [0.2.6] - 2023-05-22
 
-+ Add - DeepLabCut citation
++ Add - DeepLabCut, NWB, and DANDI citations
 + Update - mkdocs.yaml
 
 ## [0.2.5] - 2023-05-11
