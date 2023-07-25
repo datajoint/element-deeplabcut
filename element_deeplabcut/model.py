@@ -124,9 +124,9 @@ class VideoRecording(dj.Manual):
 
     definition = """
     -> Session
-    recording_id: int
+    recording_id: varchar(12)
     ---
-    -> Device
+    -> equipment.Device
     """
 
     class File(dj.Part):
