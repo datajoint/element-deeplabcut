@@ -583,11 +583,12 @@ class PoseEstimationTask(dj.Manual):
             get_dlc_root_data_dir(),
             (VideoRecording.File & key).fetch("file_path", limit=1)[0],
         )
-        root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath.parent)
+        # root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath.parent)
+        root_dir = video_filepath.parent #TR23: rtoot dir is session_scan folder
         recording_key = VideoRecording & key
         device = "-".join(
             str(v)
-            for v in (_linking_module.Device & recording_key).fetch1("KEY").values()
+            for v in (_linking_module.equipment.Device & recording_key).fetch1("KEY").values() #TR23: linking to our camera table - not the scanner table
         )
         if get_dlc_processed_data_dir():
             processed_dir = Path(get_dlc_processed_data_dir())
@@ -647,9 +648,10 @@ class PoseEstimationTask(dj.Manual):
                 "model_name": model_name,
                 "task_mode": task_mode,
                 "pose_estimation_params": analyze_videos_params,
-                "pose_estimation_output_dir": output_dir.relative_to(
-                    processed_dir
-                ).as_posix(),
+                "pose_estimation_output_dir": output_dir.as_posix(), #TR23: defaulting to outputdir
+                # "pose_estimation_output_dir": output_dir.relative_to(
+                #     processed_dir
+                # ).as_posix(),
             }
         )
 
