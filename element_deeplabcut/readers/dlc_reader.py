@@ -191,8 +191,8 @@ class PoseEstimation:
         return body_parts_position
 
 
-def read_yaml(fullpath: str, filename: str = "*") -> tuple:
-    """Return contents of yml in fullpath. If available, defer to DJ-saved version
+def read_yaml(fullpath: str, filename: str = "dj_dlc_config") -> tuple:
+    """Return contents of yaml in fullpath. If available, defer to DJ-saved version
 
     Args:
         fullpath (str): String or pathlib path. Directory with yaml files
@@ -204,7 +204,7 @@ def read_yaml(fullpath: str, filename: str = "*") -> tuple:
     from deeplabcut.utils.auxiliaryfunctions import read_config
 
     # Take the DJ-saved if there. If not, return list of available
-    yml_paths = list(Path(fullpath).glob("dj_dlc_config.yaml")) or sorted(
+    yml_paths = list(Path(fullpath).glob(f"{filename}.y*ml")) or sorted(
         list(Path(fullpath).glob(f"{filename}.y*ml"))
     )
 
@@ -225,7 +225,7 @@ def save_yaml(
 
     Args:
         output_dir (str): where to save yaml file
-        config_dict (str): dict of config params or element-deeplabcut model.Model dict
+        config_dict (dict): dict of config params or element-deeplabcut model.Model dict
         filename (str, optional): default 'dj_dlc_config' or preserve original 'config'
             Set to 'config' to overwrite original file.
             If extension is included, removed and replaced with "yaml".

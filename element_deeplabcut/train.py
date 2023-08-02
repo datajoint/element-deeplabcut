@@ -195,7 +195,7 @@ class TrainingParamSet(dj.Lookup):
             if existing_paramset_idx == int(paramset_idx):  # If existing_idx same:
                 return  # job done
         else:
-            cls.insert1(param_dict)  # if duplicate, will raise duplicate error
+            cls.insert1(param_dict, skip_duplicates=True)  # if duplicate, will raise duplicate error
 
 
 @schema
@@ -248,6 +248,8 @@ class ModelTraining(dj.Computed):
             from deeplabcut.utils.auxiliaryfunctions import (
                 GetModelFolder as get_model_folder
             ) # isort:skip
+        
+        from deeplabcut.utils.auxiliaryfunctions import edit_config
 
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
@@ -257,7 +259,7 @@ class ModelTraining(dj.Computed):
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
         # ---- Build and save DLC configuration (yaml) file ----
-        _, dlc_config = dlc_reader.read_yaml(project_path)  # load existing
+        _, dlc_config = dlc_reader.read_yaml(project_path, "config")  # load existing
         dlc_config.update((TrainingParamSet & key).fetch1("params"))
         dlc_config.update(
             {
@@ -273,7 +275,21 @@ class ModelTraining(dj.Computed):
             }
         )
         # Write dlc config file to base project folder
-        dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config)
+        dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config, "dj_dlc_config",mkdir=False)
+
+
+        # ---- Update the project path in the DLC pose configuration (yaml) files ----
+        pose_cfg_path = list(project_path.rglob('train'))[0]
+        #pose_cfg_path_rel = 
+        edits ={
+                "project_path": project_path.as_posix()
+            }
+        pose_cfg = edit_config(pose_cfg_path / 'pose_cfg.yaml', edits, "dj_pose_cfg")
+
+        # Write pose cfg file to base project folder
+        pose_cfg_filepath = dlc_reader.save_yaml(pose_cfg_path, pose_cfg, "pose_cfg",mkdir=False)
+
+#################
 
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
