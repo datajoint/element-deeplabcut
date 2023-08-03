@@ -195,7 +195,9 @@ class TrainingParamSet(dj.Lookup):
             if existing_paramset_idx == int(paramset_idx):  # If existing_idx same:
                 return  # job done
         else:
-            cls.insert1(param_dict, skip_duplicates=True)  # if duplicate, will raise duplicate error
+            cls.insert1(
+                param_dict, skip_duplicates=True
+            )  # if duplicate, will raise duplicate error
 
 
 @schema
@@ -241,14 +243,17 @@ class ModelTraining(dj.Computed):
     # https://github.com/DeepLabCut/DeepLabCut/issues/70
 
     def make(self, key):
-        from deeplabcut import train_network # isort:skip
+        from deeplabcut import train_network  # isort:skip
+
         try:
-            from deeplabcut.utils.auxiliaryfunctions import get_model_folder # isort:skip
+            from deeplabcut.utils.auxiliaryfunctions import (
+                get_model_folder,
+            )  # isort:skip
         except ImportError:
             from deeplabcut.utils.auxiliaryfunctions import (
-                GetModelFolder as get_model_folder
-            ) # isort:skip
-        
+                GetModelFolder as get_model_folder,
+            )  # isort:skip
+
         from deeplabcut.utils.auxiliaryfunctions import edit_config
 
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
@@ -275,27 +280,30 @@ class ModelTraining(dj.Computed):
             }
         )
         # Write dlc config file to base project folder
-        dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config, "dj_dlc_config",mkdir=False)
-
+        dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config)
 
         # ---- Update the project path in the DLC pose configuration (yaml) files ----
-        pose_cfg_path = list(project_path.rglob('train'))[0]
-        #pose_cfg_path_rel = 
-        edits ={
-                "project_path": project_path.as_posix()
-            }
-        pose_cfg = edit_config(pose_cfg_path / 'pose_cfg.yaml', edits, "dj_pose_cfg")
+        model_folder = get_model_folder(
+            trainFraction=dlc_config["train_fraction"],
+            shuffle=dlc_config["shuffle"],
+            cfg=dlc_config,
+            modelprefix=dlc_config["modelprefix"],
+        )
+        model_train_folder = project_path / model_folder / "train"
 
-        # Write pose cfg file to base project folder
-        pose_cfg_filepath = dlc_reader.save_yaml(pose_cfg_path, pose_cfg, "pose_cfg",mkdir=False)
+        pose_cfg = edit_config(
+            model_train_folder / "pose_cfg.yaml",
+            {"project_path": project_path.as_posix()},
+        )
 
-#################
+        #################
 
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
         train_network_kwargs = {
-            k: int(v) if k in ("shuffle", "trainingsetindex", "maxiters") else v 
-            for k, v in dlc_config.items() if k in train_network_input_args
+            k: int(v) if k in ("shuffle", "trainingsetindex", "maxiters") else v
+            for k, v in dlc_config.items()
+            if k in train_network_input_args
         }
         for k in ["shuffle", "trainingsetindex", "maxiters"]:
             train_network_kwargs[k] = int(train_network_kwargs[k])
@@ -305,18 +313,7 @@ class ModelTraining(dj.Computed):
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
             print("DLC training stopped via Keyboard Interrupt")
 
-        snapshots = list(
-            (
-                project_path
-                / get_model_folder(
-                    trainFraction=dlc_config["train_fraction"],
-                    shuffle=dlc_config["shuffle"],
-                    cfg=dlc_config,
-                    modelprefix=dlc_config["modelprefix"],
-                )
-                / "train"
-            ).glob("*index*")
-        )
+        snapshots = list(model_train_folder.glob("*index*"))
         max_modified_time = 0
         # DLC goes by snapshot magnitude when judging 'latest' for evaluation
         # Here, we mean most recently generated
