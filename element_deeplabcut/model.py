@@ -652,7 +652,7 @@ class PoseEstimationTask(dj.Manual):
                 # "pose_estimation_output_dir": output_dir.relative_to(
                 #     processed_dir
                 # ).as_posix(),
-            }
+            }, skip_duplicates=True #TR23
         )
 
     insert_estimation_task = generate
