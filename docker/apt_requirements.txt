@@ -1,0 +1,4 @@
+git
+libgl1
+ffmpeg
+locales-all

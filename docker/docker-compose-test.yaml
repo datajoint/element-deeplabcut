@@ -1,0 +1,63 @@
+# .env file. Careful that vscode black does not add spaces around '='
+#   COMPOSE_PROJECT_NAME='dlc'
+#   TEST_DATA_DIR=<local dir for from_top_tracking>
+#   GITHUB_USERNAME=datajoint
+#   INSTALL_OPTION=local-all, local-dlc, or git
+#   TEST_CMD="pytest" # pytest --dj-{verbose,teardown} False  # options
+#                     # to do nothing, set as "True"
+# export COMPOSE_DOCKER_CLI_BUILD=0 # some machines need for smooth --build
+# docker compose --env-file ./docker/.env -f ./docker/docker-compose-test.yaml up --build --force-recreate --detach
+# docker exec -it workflow-deeplabcut /bin/bash
+# docker compose -f ./docker/docker-compose-test.yaml down --volumes
+
+version: "2.4"
+
+services:
+  db:
+    networks:
+      deeplabcut:
+    image: datajoint/mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: simple
+    container_name: workflow-deeplabcut-db
+
+  workflow:
+    networks:
+      deeplabcut:
+    build:
+      context: ../../
+      dockerfile: ./workflow-deeplabcut/docker/Dockerfile.test
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+    image: workflow-deeplabcut:0.1.1
+    container_name: workflow-deeplabcut
+    environment:
+      - DJ_HOST=db
+      - DJ_USER=root
+      - DJ_PASS=simple
+      - DLC_ROOT_DATA_DIR=/main/test_data/
+      - DATABASE_PREFIX=test_
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - INSTALL_OPTION=${INSTALL_OPTION}
+      - TEST_CMD=${TEST_CMD}
+    command:
+      - bash
+      - -c
+      - |
+        eval ${TEST_CMD}
+        tail -f /dev/null
+    volumes:
+      - ${TEST_DATA_DIR}:/main/test_data/
+      - ../../workflow-deeplabcut/docker/apt_requirements.txt:/tmp/apt_requirements.txt
+      - ../../element-lab:/main/element-lab
+      - ../../element-animal:/main/element-animal
+      - ../../element-session:/main/element-session
+      - ../../element-deeplabcut:/main/element-deeplabcut
+      - ../../workflow-deeplabcut:/main/workflow-deeplabcut
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  deeplabcut:

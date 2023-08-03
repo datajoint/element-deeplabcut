@@ -1,0 +1,4 @@
+paramset_idx,paramset_desc,config_path,shuffle,trainingsetindex,filter_type,track_method,scorer_legacy,maxiters
+0,from_top_tracking,from_top_tracking/config.yaml,1,0,,,False,5
+1,OpenField,openfield-Pranav-2018-10-30/config.yaml,1,0,,,False,5
+2,Reaching,Reaching-Mackenzie-2018-08-30/config.yaml,1,0,,,False,5

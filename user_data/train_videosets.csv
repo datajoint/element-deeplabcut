@@ -1,0 +1,11 @@
+video_set_id,file_id,file_path
+0,1,from_top_tracking/labeled-data/train1/CollectedData_DJ.h5
+0,2,from_top_tracking/labeled-data/train2/CollectedData_DJ.h5
+1,1,openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.h5
+1,2,openfield-Pranav-2018-10-30/labeled-data/m4s1/CollectedData_Pranav.csv
+1,3,openfield-Pranav-2018-10-30/labeled-data/m4s1/img0000.png
+1,4,openfield-Pranav-2018-10-30/videos/m3v1mp4.mp4
+2,1,Reaching-Mackenzie-2018-08-30/labeled-data/reachingvideo1/CollectedData_Mackenzie.csv
+2,2,Reaching-Mackenzie-2018-08-30/labeled-data/reachingvideo1/CollectedData_Mackenzie.h5
+2,3,Reaching-Mackenzie-2018-08-30/labeled-data/reachingvideo1/img005.png
+2,4,Reaching-Mackenzie-2018-08-30/videos/reachingvideo1.avi

@@ -1,0 +1,2 @@
+model_name,config_relative_path,shuffle,trainingsetindex,paramset_idx,prompt,model_description,params
+FromTop-latest,from_top_tracking/config.yaml,1,0,0,False,FromTop - latest snapshot,{"snapshotindex":4}

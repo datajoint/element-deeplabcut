@@ -1,0 +1,26 @@
+{
+    "database.host": "<HOST>",
+    "database.password": "<PASS>",
+    "database.user": "<USER>",
+    "database.port": 3306,
+    "database.reconnect": true,
+    "connection.init_function": null,
+    "connection.charset": "",
+    "loglevel": "INFO",
+    "safemode": true,
+    "fetch_format": "array",
+    "display.limit": 12,
+    "display.width": 14,
+    "display.show_tuple_count": true,
+    "database.use_tls": null,
+    "enable_python_native_blobs": true,
+    "database.ingest_filename_short": "",
+    "database.ingest_filename_full": "",
+    "custom": {
+        "database.prefix": "YourPrefix_",
+        "dlc_root_data_dir": [
+            "/Abolute/Path/Here/",
+            "/Abolute/Other/Path/"
+        ]
+    }
+}
