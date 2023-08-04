@@ -630,7 +630,9 @@ class PoseEstimationTask(dj.Manual):
         """
         processed_dir = get_dlc_processed_data_dir()
         output_dir = cls.infer_output_dir(
-            {**video_recording_key, "model_name": model_name}, relative=False, mkdir=True
+            {**video_recording_key, "model_name": model_name},
+            relative=False,
+            mkdir=True,
         )
 
         if task_mode is None:
