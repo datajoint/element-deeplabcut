@@ -17,7 +17,7 @@
         <link rel="next" href="../version/">
       
       <link rel="icon" href="../../../assets/images/company-logo-blue.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
     
     
       
@@ -25,10 +25,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a6bdf11c.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -51,16 +51,6 @@
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
-  
-
-
-  
-  
-
-
-  
-    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
-  
 
     
     
@@ -981,6 +971,7 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -994,6 +985,8 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
   <div class="doc doc-contents ">
   
       <p>Activate this schema.</p>
+
+
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -1011,7 +1004,11 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
           <td>
                 <code>str</code>
           </td>
-          <td><p>schema name on the database server</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>schema name on the database server</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1021,8 +1018,12 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
           <td>
                 <code>bool</code>
           </td>
-          <td><p>when True (default), create schema in the database if it
-                does not yet exist.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>when True (default), create schema in the database if it
+                does not yet exist.</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1032,8 +1033,12 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
           <td>
                 <code>bool</code>
           </td>
-          <td><p>when True (default), create schema tables in the database
-                 if they do not yet exist.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>when True (default), create schema tables in the database
+                 if they do not yet exist.</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1043,7 +1048,11 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
           <td>
                 <code>str</code>
           </td>
-          <td><p>a module (or name) containing the required dependencies.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>a module (or name) containing the required dependencies.</p>
+            </div>
+          </td>
           <td>
                 <code>None</code>
           </td>
@@ -1059,9 +1068,9 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.</
 get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
                               data. Defaults to session video subfolder.</p>
 </details>
-      <details class="quote">
-        <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+          <details class="quote">
+            <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
@@ -1149,10 +1158,11 @@ get_dlc_processed_data_dir(): Optional. Returns absolute path for processed
         <span class="n">add_objects</span><span class="o">=</span><span class="n">_linking_module</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1177,9 +1187,9 @@ paths, with respect to some user-configured "root" director(y/ies). The
 root(s) may vary between data modalities and user machines. Returns a full path
 string or list of strings for possible root data directories.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
+          <details class="quote">
+            <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
@@ -1217,10 +1227,11 @@ string or list of strings for possible root data directories.</p>
 
     <span class="k">return</span> <span class="n">root_directories</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1244,9 +1255,9 @@ string or list of strings for possible root data directories.</p>
 files will be stored. If unspecified, output files will be stored in the
 session directory 'videos' folder, per DeepLabCut default.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">89</span>
+          <details class="quote">
+            <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
 <span class="normal">92</span>
@@ -1268,7 +1279,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_dlc_root_data_dir</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1283,18 +1294,20 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
 
 <h2 id="element_deeplabcut.train.VideoSet" class="doc doc-heading">
-        <code>VideoSet</code>
+          <code>VideoSet</code>
 
 
 <a href="#element_deeplabcut.train.VideoSet" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Manual">Manual</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Manual">Manual</span></code></p>
 
   
       <p>Collection of videos included in a given training set.</p>
+
+
 
   <p><strong>Attributes:</strong></p>
   <table>
@@ -1311,15 +1324,18 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>int</code>
           </td>
-          <td><p>Unique ID for collection of videos.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Unique ID for collection of videos.</p>
+            </div>
+          </td>
         </tr>
     </tbody>
   </table>
 
-
-        <details class="quote">
-          <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+            <details class="quote">
+              <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
@@ -1367,7 +1383,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 <span class="s2">        file_path: varchar(255)</span>
 <span class="s2">        &quot;&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -1384,18 +1400,20 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
 
 <h3 id="element_deeplabcut.train.VideoSet.File" class="doc doc-heading">
-        <code>File</code>
+          <code>File</code>
 
 
 <a href="#element_deeplabcut.train.VideoSet.File" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Part">Part</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Part">Part</span></code></p>
 
   
       <p>File IDs and paths in a given VideoSet</p>
+
+
 
   <p><strong>Attributes:</strong></p>
   <table>
@@ -1412,22 +1430,29 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>foreign key</code>
           </td>
-          <td><p>VideoSet key.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>VideoSet key.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>file_path</code></td>
           <td>
                 <code> varchar(255) </code>
           </td>
-          <td><p>Path to file on disk relative to root.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Path to file on disk relative to root.</p>
+            </div>
+          </td>
         </tr>
     </tbody>
   </table>
 
-
-        <details class="quote">
-          <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
+            <details class="quote">
+              <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span>
@@ -1453,7 +1478,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 <span class="s2">    file_path: varchar(255)</span>
 <span class="s2">    &quot;&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -1488,18 +1513,20 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
 
 <h2 id="element_deeplabcut.train.TrainingParamSet" class="doc doc-heading">
-        <code>TrainingParamSet</code>
+          <code>TrainingParamSet</code>
 
 
 <a href="#element_deeplabcut.train.TrainingParamSet" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Lookup">Lookup</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Lookup">Lookup</span></code></p>
 
   
       <p>Parameters used to train a model</p>
+
+
 
   <p><strong>Attributes:</strong></p>
   <table>
@@ -1516,43 +1543,62 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>smallint</code>
           </td>
-          <td><p>Index uniqely identifying paramset.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Index uniqely identifying paramset.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>paramset_desc</code></td>
           <td>
                 <code> varchar(128) </code>
           </td>
-          <td><p>Description of paramset.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Description of paramset.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>param_set_hash</code></td>
           <td>
                 <code>uuid</code>
           </td>
-          <td><p>Hash identifying this paramset.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Hash identifying this paramset.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>params</code></td>
           <td>
                 <code>longblob</code>
           </td>
-          <td><p>Dictionary of all applicable parameters.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Dictionary of all applicable parameters.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>Note</code></td>
           <td>
                 <code>longblob</code>
           </td>
-          <td><p>param_set_hash must be unique.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>param_set_hash must be unique.</p>
+            </div>
+          </td>
         </tr>
     </tbody>
   </table>
 
-
-        <details class="quote">
-          <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
+            <details class="quote">
+              <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
@@ -1688,11 +1734,12 @@ session directory 'videos' folder, per DeepLabCut default.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">insert1</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>  <span class="c1"># if duplicate, will raise duplicate error</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
   <div class="doc doc-children">
+
 
 
 
@@ -1718,6 +1765,8 @@ session directory 'videos' folder, per DeepLabCut default.</p>
   
       <p>Insert a new set of training parameters into dlc.TrainingParamSet.</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1734,7 +1783,11 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Description of parameter set to be inserted</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Description of parameter set to be inserted</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1744,10 +1797,14 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>dict</code>
           </td>
-          <td><p>Dictionary including all settings to specify model training.
+          <td>
+            <div class="doc-md-description">
+              <p>Dictionary including all settings to specify model training.
         Must include shuffle &amp; trainingsetindex b/c not in config.yaml.
         project_path and video_sets will be overwritten by config.yaml.
-        Note that trainingsetindex is 0-indexed</p></td>
+        Note that trainingsetindex is 0-indexed</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1757,7 +1814,11 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>int</code>
           </td>
-          <td><p>optional, integer to represent parameters.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>optional, integer to represent parameters.</p>
+            </div>
+          </td>
           <td>
                 <code>None</code>
           </td>
@@ -1765,9 +1826,9 @@ session directory 'videos' folder, per DeepLabCut default.</p>
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
+          <details class="quote">
+            <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
@@ -1853,7 +1914,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">insert1</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>  <span class="c1"># if duplicate, will raise duplicate error</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1877,18 +1938,20 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
 
 <h2 id="element_deeplabcut.train.TrainingTask" class="doc doc-heading">
-        <code>TrainingTask</code>
+          <code>TrainingTask</code>
 
 
 <a href="#element_deeplabcut.train.TrainingTask" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Manual">Manual</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Manual">Manual</span></code></p>
 
   
       <p>Staging table for pairing videosets and training parameter sets</p>
+
+
 
   <p><strong>Attributes:</strong></p>
   <table>
@@ -1905,44 +1968,63 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>foreign key</code>
           </td>
-          <td><p>VideoSet Key.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>VideoSet Key.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>TrainingParamSet</code></td>
           <td>
                 <code>foreign key</code>
           </td>
-          <td><p>TrainingParamSet key.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>TrainingParamSet key.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>training_id</code></td>
           <td>
                 <code>int</code>
           </td>
-          <td><p>Unique ID for training task.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Unique ID for training task.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>model_prefix</code></td>
           <td>
                 <code> varchar(32) </code>
           </td>
-          <td><p>Optional. Prefix for model files.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Optional. Prefix for model files.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>project_path</code></td>
           <td>
                 <code> varchar(255) </code>
           </td>
-          <td><p>Optional. DLC's project_path in config relative
-                           to get_dlc_root_data_dir</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Optional. DLC's project_path in config relative
+                           to get_dlc_root_data_dir</p>
+            </div>
+          </td>
         </tr>
     </tbody>
   </table>
 
-
-        <details class="quote">
-          <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
+            <details class="quote">
+              <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span>
@@ -1984,7 +2066,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 <span class="s2">    project_path=&#39;&#39; : varchar(255) # DLC&#39;s project_path in config relative to root</span>
 <span class="s2">    &quot;&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -2010,18 +2092,20 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
 
 <h2 id="element_deeplabcut.train.ModelTraining" class="doc doc-heading">
-        <code>ModelTraining</code>
+          <code>ModelTraining</code>
 
 
 <a href="#element_deeplabcut.train.ModelTraining" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Computed">Computed</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="datajoint">dj</span>.<span title="datajoint.Computed">Computed</span></code></p>
 
   
       <p>Automated Model training information.</p>
+
+
 
   <p><strong>Attributes:</strong></p>
   <table>
@@ -2038,29 +2122,40 @@ session directory 'videos' folder, per DeepLabCut default.</p>
           <td>
                 <code>foreign key</code>
           </td>
-          <td><p>TrainingTask key.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>TrainingTask key.</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>latest_snapshot</code></td>
           <td>
                 <code>int unsigned</code>
           </td>
-          <td><p>Latest exact snapshot index (i.e., never -1).</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Latest exact snapshot index (i.e., never -1).</p>
+            </div>
+          </td>
         </tr>
         <tr>
           <td><code>config_template</code></td>
           <td>
                 <code>longblob</code>
           </td>
-          <td><p>Stored full config file.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Stored full config file.</p>
+            </div>
+          </td>
         </tr>
     </tbody>
   </table>
 
-
-        <details class="quote">
-          <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
+            <details class="quote">
+              <summary>Source code in <code>element_deeplabcut/train.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
@@ -2151,7 +2246,15 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
-<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">ModelTraining</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Computed</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Automated Model training information.</span>
 
@@ -2171,13 +2274,17 @@ session directory 'videos' folder, per DeepLabCut default.</p>
     <span class="c1"># https://github.com/DeepLabCut/DeepLabCut/issues/70</span>
 
     <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">deeplabcut</span> <span class="kn">import</span> <span class="n">train_network</span> <span class="c1"># isort:skip</span>
+        <span class="kn">from</span> <span class="nn">deeplabcut</span> <span class="kn">import</span> <span class="n">train_network</span>  <span class="c1"># isort:skip</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">deeplabcut.utils.auxiliaryfunctions</span> <span class="kn">import</span> <span class="n">get_model_folder</span> <span class="c1"># isort:skip</span>
+            <span class="kn">from</span> <span class="nn">deeplabcut.utils.auxiliaryfunctions</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">get_model_folder</span><span class="p">,</span>
+                <span class="n">edit_config</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># isort:skip</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">deeplabcut.utils.auxiliaryfunctions</span> <span class="kn">import</span> <span class="p">(</span>
-                <span class="n">GetModelFolder</span> <span class="k">as</span> <span class="n">get_model_folder</span>
-            <span class="p">)</span> <span class="c1"># isort:skip</span>
+                <span class="n">GetModelFolder</span> <span class="k">as</span> <span class="n">get_model_folder</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># isort:skip</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch training for each train.TrainingTask training_id via `.populate()`.&quot;&quot;&quot;</span>
         <span class="n">project_path</span><span class="p">,</span> <span class="n">model_prefix</span> <span class="o">=</span> <span class="p">(</span><span class="n">TrainingTask</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">(</span>
@@ -2205,11 +2312,26 @@ session directory 'videos' folder, per DeepLabCut default.</p>
         <span class="c1"># Write dlc config file to base project folder</span>
         <span class="n">dlc_cfg_filepath</span> <span class="o">=</span> <span class="n">dlc_reader</span><span class="o">.</span><span class="n">save_yaml</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">dlc_config</span><span class="p">)</span>
 
+        <span class="c1"># ---- Update the project path in the DLC pose configuration (yaml) files ----</span>
+        <span class="n">model_folder</span> <span class="o">=</span> <span class="n">get_model_folder</span><span class="p">(</span>
+            <span class="n">trainFraction</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;train_fraction&quot;</span><span class="p">],</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;shuffle&quot;</span><span class="p">],</span>
+            <span class="n">cfg</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">,</span>
+            <span class="n">modelprefix</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;modelprefix&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">model_train_folder</span> <span class="o">=</span> <span class="n">project_path</span> <span class="o">/</span> <span class="n">model_folder</span> <span class="o">/</span> <span class="s2">&quot;train&quot;</span>
+
+        <span class="n">edit_config</span><span class="p">(</span>
+            <span class="n">model_train_folder</span> <span class="o">/</span> <span class="s2">&quot;pose_cfg.yaml&quot;</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">&quot;project_path&quot;</span><span class="p">:</span> <span class="n">project_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()},</span>
+        <span class="p">)</span>
+
         <span class="c1"># ---- Trigger DLC model training job ----</span>
         <span class="n">train_network_input_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">train_network</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">train_network_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;shuffle&quot;</span><span class="p">,</span> <span class="s2">&quot;trainingsetindex&quot;</span><span class="p">,</span> <span class="s2">&quot;maxiters&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span> 
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dlc_config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">train_network_input_args</span>
+            <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;shuffle&quot;</span><span class="p">,</span> <span class="s2">&quot;trainingsetindex&quot;</span><span class="p">,</span> <span class="s2">&quot;maxiters&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dlc_config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">train_network_input_args</span>
         <span class="p">}</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;shuffle&quot;</span><span class="p">,</span> <span class="s2">&quot;trainingsetindex&quot;</span><span class="p">,</span> <span class="s2">&quot;maxiters&quot;</span><span class="p">]:</span>
             <span class="n">train_network_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">train_network_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
@@ -2219,18 +2341,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>  <span class="c1"># Instructions indicate to train until interrupt</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DLC training stopped via Keyboard Interrupt&quot;</span><span class="p">)</span>
 
-        <span class="n">snapshots</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="p">(</span>
-                <span class="n">project_path</span>
-                <span class="o">/</span> <span class="n">get_model_folder</span><span class="p">(</span>
-                    <span class="n">trainFraction</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;train_fraction&quot;</span><span class="p">],</span>
-                    <span class="n">shuffle</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;shuffle&quot;</span><span class="p">],</span>
-                    <span class="n">cfg</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">,</span>
-                    <span class="n">modelprefix</span><span class="o">=</span><span class="n">dlc_config</span><span class="p">[</span><span class="s2">&quot;modelprefix&quot;</span><span class="p">],</span>
-                <span class="p">)</span>
-                <span class="o">/</span> <span class="s2">&quot;train&quot;</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*index*&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">snapshots</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">model_train_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*index*&quot;</span><span class="p">))</span>
         <span class="n">max_modified_time</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># DLC goes by snapshot magnitude when judging &#39;latest&#39; for evaluation</span>
         <span class="c1"># Here, we mean most recently generated</span>
@@ -2244,7 +2355,7 @@ session directory 'videos' folder, per DeepLabCut default.</p>
             <span class="p">{</span><span class="o">**</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;latest_snapshot&quot;</span><span class="p">:</span> <span class="n">latest_snapshot</span><span class="p">,</span> <span class="s2">&quot;config_template&quot;</span><span class="p">:</span> <span class="n">dlc_config</span><span class="p">}</span>
         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -2269,8 +2380,6 @@ session directory 'videos' folder, per DeepLabCut default.</p>
 
 </div>
 
-
-  
 
 
 
@@ -2388,12 +2497,14 @@ session directory 'videos' folder, per DeepLabCut default.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["toc.integrate", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["toc.integrate", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
-        <script src="https://js-na1.hs-scripts.com/23133402.js"></script>
+        
+          <script src="https://js-na1.hs-scripts.com/23133402.js"></script>
+        
       
     
   </body>

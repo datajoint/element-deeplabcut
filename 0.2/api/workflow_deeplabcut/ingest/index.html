@@ -17,7 +17,7 @@
         <link rel="next" href="../load_demo_data/">
       
       <link rel="icon" href="../../../assets/images/company-logo-blue.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
     
     
       
@@ -25,10 +25,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a6bdf11c.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -51,16 +51,6 @@
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
-  
-
-
-  
-  
-
-
-  
-    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
-  
 
     
     
@@ -759,13 +749,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.ingest.get_dlc_root_data_dir" class="md-nav__link">
-    get_dlc_root_data_dir()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#workflow_deeplabcut.ingest.ingest_subjects" class="md-nav__link">
     ingest_subjects()
   </a>
@@ -810,13 +793,6 @@
         <li class="md-nav__item">
   <a href="#workflow_deeplabcut.ingest.ingest_dlc_items" class="md-nav__link">
     ingest_dlc_items()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.ingest.str_to_bool" class="md-nav__link">
-    str_to_bool()
   </a>
   
 </li>
@@ -969,45 +945,6 @@
 
 
 
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.ingest.get_dlc_root_data_dir" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_dlc_root_data_dir</span><span class="p">()</span></code>
-
-<a href="#workflow_deeplabcut.ingest.get_dlc_root_data_dir" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Returns a list of root directories for Element DeepLabCut</p>
-
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/paths.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_root_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of root directories for Element DeepLabCut&quot;&quot;&quot;</span>
-    <span class="n">dlc_root_dirs</span> <span class="o">=</span> <span class="n">dj</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dlc_root_data_dir&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">dlc_root_dirs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dlc_root_dirs</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">dlc_root_dirs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dlc_root_dirs</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
 
 
 
@@ -1027,6 +964,8 @@
   
       <p>Inserts ./user_data/subject.csv data into corresponding subject schema tables</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1043,7 +982,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>relative path of subject csv</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>relative path of subject csv</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;./user_data/subjects.csv&#39;</code>
           </td>
@@ -1053,7 +996,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Passed to DataJoint insert</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1063,7 +1010,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Display number of entries inserted when ingesting</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Display number of entries inserted when ingesting</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1071,9 +1022,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
@@ -1103,10 +1054,11 @@
     <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">subject</span><span class="o">.</span><span class="n">Subject</span><span class="p">()]</span>
     <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1127,6 +1079,8 @@
   
       <p>Ingests to session schema from ./user_data/sessions.csv</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1143,7 +1097,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>relative path of session csv</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>relative path of session csv</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;./user_data/sessions.csv&#39;</code>
           </td>
@@ -1153,7 +1111,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Passed to DataJoint insert</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1163,7 +1125,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Display number of entries inserted when ingesting</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Display number of entries inserted when ingesting</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1171,9 +1137,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
@@ -1201,10 +1167,11 @@
 
     <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1225,6 +1192,8 @@
   
       <p>Use provided path to load TrainingParamSet with relative path to config.yaml</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1241,7 +1210,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>relative path of csv with config parameters</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>relative path of csv with config parameters</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1251,7 +1224,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Passed to DataJoint insert</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1261,7 +1238,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Display number of entries inserted when ingesting</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Display number of entries inserted when ingesting</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1269,9 +1250,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
@@ -1351,10 +1332,11 @@
             <span class="o">+</span> <span class="s2">&quot;----&quot;</span>
         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1375,6 +1357,8 @@
   
       <p>Use provided CSV to insert into train.VideoSet and train.VideoSet.File</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1391,7 +1375,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>relative path of csv with training video info</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>relative path of csv with training video info</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1401,7 +1389,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default False. Display number of entries inserted when ingesting</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default False. Display number of entries inserted when ingesting</p>
+            </div>
+          </td>
           <td>
                 <code>False</code>
           </td>
@@ -1411,7 +1403,11 @@
           <td>
                 <code>dict</code>
           </td>
-          <td><p>Optional. Unused dict of keyword arguments.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Optional. Unused dict of keyword arguments.</p>
+            </div>
+          </td>
           <td>
                 <code>{}</code>
           </td>
@@ -1419,9 +1415,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
@@ -1445,10 +1441,11 @@
     <span class="c1"># With current CSV organization, must skip vids, as primary key is duplicated</span>
     <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1469,6 +1466,8 @@
   
       <p>Use provided CSV to insert into model.VideoRecording and VideoRecording.File</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1485,7 +1484,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>relative path of csv with model video info</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>relative path of csv with model video info</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1495,7 +1498,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Passed to DataJoint insert</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1505,7 +1512,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default False. Display number of entries inserted when ingesting</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default False. Display number of entries inserted when ingesting</p>
+            </div>
+          </td>
           <td>
                 <code>False</code>
           </td>
@@ -1513,9 +1524,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
@@ -1541,10 +1552,11 @@
     <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">VideoRecording</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">VideoRecording</span><span class="o">.</span><span class="n">File</span><span class="p">()]</span>
     <span class="n">ingest_csv_to_table</span><span class="p">(</span><span class="n">csvs</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">skip_duplicates</span><span class="o">=</span><span class="n">skip_duplicates</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1565,6 +1577,8 @@
   
       <p>Use provided CSV to insert into model.Model table</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1581,7 +1595,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>relative path of csv with DLC Model info</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>relative path of csv with DLC Model info</p>
+            </div>
+          </td>
           <td>
               <em>required</em>
           </td>
@@ -1591,7 +1609,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default True. Passed to DataJoint insert</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default True. Passed to DataJoint insert</p>
+            </div>
+          </td>
           <td>
                 <code>True</code>
           </td>
@@ -1601,7 +1623,11 @@
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Default False. Display number of entries inserted when ingesting</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default False. Display number of entries inserted when ingesting</p>
+            </div>
+          </td>
           <td>
                 <code>False</code>
           </td>
@@ -1609,9 +1635,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
@@ -1681,10 +1707,11 @@
         <span class="n">insert_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">())</span> <span class="o">-</span> <span class="n">prev_len</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">---- Inserting </span><span class="si">{</span><span class="n">insert_len</span><span class="si">}</span><span class="s2"> entry(s) into model ----&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1705,6 +1732,8 @@
   
       <p>Ingests to DLC schema from CSVs</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1721,8 +1750,12 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>Optional. Csv path for model training config and
-parameters</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Optional. Csv path for model training config and
+parameters</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;./user_data/config_params.csv&#39;</code>
           </td>
@@ -1732,7 +1765,11 @@ parameters</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Optional. Csv path for list of training videosets</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Optional. Csv path for list of training videosets</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;./user_data/train_videosets.csv&#39;</code>
           </td>
@@ -1742,8 +1779,12 @@ parameters</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Optional. Csv path for list of modeling videos for
-pose estimation</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Optional. Csv path for list of modeling videos for
+pose estimation</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;./user_data/model_videos.csv&#39;</code>
           </td>
@@ -1751,9 +1792,9 @@ pose estimation</p></td>
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/ingest.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
@@ -1815,7 +1856,7 @@ pose estimation</p></td>
         <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1823,98 +1864,6 @@ pose estimation</p></td>
 
 
 
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.ingest.str_to_bool" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
-
-<a href="#workflow_deeplabcut.ingest.str_to_bool" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Return whether the provided string represents true. Otherwise false.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>value</code></td>
-          <td>
-                <code>any</code>
-          </td>
-          <td><p>Any input</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>bool</code></td>          <td>
-                <code>bool</code>
-          </td>
-          <td><p>True if value in ("y", "yes", "t", "true", "on", "1")</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-      <details class="quote">
-        <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">793</span>
-<span class="normal">794</span>
-<span class="normal">795</span>
-<span class="normal">796</span>
-<span class="normal">797</span>
-<span class="normal">798</span>
-<span class="normal">799</span>
-<span class="normal">800</span>
-<span class="normal">801</span>
-<span class="normal">802</span>
-<span class="normal">803</span>
-<span class="normal">804</span>
-<span class="normal">805</span>
-<span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether the provided string represents true. Otherwise false.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value (any): Any input</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        bool (bool): True if value in (&quot;y&quot;, &quot;yes&quot;, &quot;t&quot;, &quot;true&quot;, &quot;on&quot;, &quot;1&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Due to distutils equivalent depreciation in 3.10</span>
-    <span class="c1"># Adopted from github.com/PostHog/posthog/blob/master/posthog/utils.py</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
 
 
 
@@ -1925,8 +1874,6 @@ pose estimation</p></td>
 
 </div>
 
-
-  
 
 
 
@@ -2044,12 +1991,14 @@ pose estimation</p></td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["toc.integrate", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["toc.integrate", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
-        <script src="https://js-na1.hs-scripts.com/23133402.js"></script>
+        
+          <script src="https://js-na1.hs-scripts.com/23133402.js"></script>
+        
       
     
   </body>

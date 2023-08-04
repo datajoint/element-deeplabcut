@@ -17,7 +17,7 @@
         <link rel="next" href="../paths/">
       
       <link rel="icon" href="../../../assets/images/company-logo-blue.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
     
     
       
@@ -25,10 +25,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a6bdf11c.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -51,16 +51,6 @@
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
-  
-
-
-  
-  
-
-
-  
-    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
-  
 
     
     
@@ -773,13 +763,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflow_deeplabcut.load_demo_data.get_dlc_root_data_dir" class="md-nav__link">
-    get_dlc_root_data_dir()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#workflow_deeplabcut.load_demo_data.download_djarchive_dlc_data" class="md-nav__link">
     download_djarchive_dlc_data()
   </a>
@@ -940,45 +923,6 @@
 
 
 
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="workflow_deeplabcut.load_demo_data.get_dlc_root_data_dir" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_dlc_root_data_dir</span><span class="p">()</span></code>
-
-<a href="#workflow_deeplabcut.load_demo_data.get_dlc_root_data_dir" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Returns a list of root directories for Element DeepLabCut</p>
-
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/paths.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dlc_root_data_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of root directories for Element DeepLabCut&quot;&quot;&quot;</span>
-    <span class="n">dlc_root_dirs</span> <span class="o">=</span> <span class="n">dj</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dlc_root_data_dir&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">dlc_root_dirs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dlc_root_dirs</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">dlc_root_dirs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dlc_root_dirs</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
 
 
 
@@ -998,6 +942,8 @@
   
       <p>Download DLC demo data from djarchive. Approx .3 GB</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1014,7 +960,11 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>Where to store the downloaded data.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Where to store the downloaded data.</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;/tmp/test_data/&#39;</code>
           </td>
@@ -1022,9 +972,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
@@ -1052,10 +1002,11 @@
         <span class="s2">&quot;workflow-dlc-data&quot;</span><span class="p">,</span> <span class="n">target_directory</span><span class="o">=</span><span class="n">target_directory</span><span class="p">,</span> <span class="n">revision</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1076,6 +1027,8 @@
   
       <p>Updates weight paths to absolute. If update_snapshot, changes weights to snap #</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1092,8 +1045,12 @@
           <td>
                 <code>str</code>
           </td>
-          <td><p>Default from 'from_top_tracking'. Poject name/folder in
-dlc_root_data_dir</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default from 'from_top_tracking'. Poject name/folder in
+dlc_root_data_dir</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;from_top_tracking&#39;</code>
           </td>
@@ -1103,8 +1060,12 @@ dlc_root_data_dir</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Project net weights (e.g., resnet50)
-If project is 'from_top_tracking', 'mobilenet_v2_1.0'</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Project net weights (e.g., resnet50)
+If project is 'from_top_tracking', 'mobilenet_v2_1.0'</p>
+            </div>
+          </td>
           <td>
                 <code>None</code>
           </td>
@@ -1114,8 +1075,12 @@ If project is 'from_top_tracking', 'mobilenet_v2_1.0'</p></td>
           <td>
                 <code>int</code>
           </td>
-          <td><p>Default 0 = no. If -1, highest integer value
-available. If integer, look for that snapshot.</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default 0 = no. If -1, highest integer value
+available. If integer, look for that snapshot.</p>
+            </div>
+          </td>
           <td>
                 <code>0</code>
           </td>
@@ -1123,9 +1088,9 @@ available. If integer, look for that snapshot.</p></td>
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
@@ -1247,10 +1212,11 @@ available. If integer, look for that snapshot.</p></td>
 
     <span class="k">return</span> <span class="n">augmenter_type</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1271,6 +1237,8 @@ available. If integer, look for that snapshot.</p></td>
   
       <p>Adds absolute paths to config files and generates training-datasets folder</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1287,7 +1255,11 @@ available. If integer, look for that snapshot.</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Default 'from_top_tracking'. DLC project folder</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default 'from_top_tracking'. DLC project folder</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;from_top_tracking&#39;</code>
           </td>
@@ -1297,8 +1269,12 @@ available. If integer, look for that snapshot.</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Project net (e.g., resnet50) passed to
-            creat_training_dataset. If 'from_top', 'mobilenet_v2_1.0'</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Project net (e.g., resnet50) passed to
+            creat_training_dataset. If 'from_top', 'mobilenet_v2_1.0'</p>
+            </div>
+          </td>
           <td>
                 <code>None</code>
           </td>
@@ -1306,9 +1282,9 @@ available. If integer, look for that snapshot.</p></td>
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
 <span class="normal"> 89</span>
 <span class="normal"> 90</span>
 <span class="normal"> 91</span>
@@ -1390,10 +1366,11 @@ available. If integer, look for that snapshot.</p></td>
         <span class="n">posecfg_template</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">project_path</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;train/pose_cfg.y?ml&quot;</span><span class="p">))),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1414,6 +1391,8 @@ available. If integer, look for that snapshot.</p></td>
   
       <p>Save the first 2 seconds of a video relative to dlc root dir.</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1430,8 +1409,12 @@ available. If integer, look for that snapshot.</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Default "from_top_tracking/videos/test_full.mp4". Path
-relative to get_dlc_root_data_dir() root directory</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default "from_top_tracking/videos/test_full.mp4". Path
+relative to get_dlc_root_data_dir() root directory</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;from_top_tracking/videos/test.mp4&#39;</code>
           </td>
@@ -1441,8 +1424,12 @@ relative to get_dlc_root_data_dir() root directory</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Destination relative to vid_path root. If none,
-adds '-Ns' to filename, where N in first_n_sec</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Destination relative to vid_path root. If none,
+adds '-Ns' to filename, where N in first_n_sec</p>
+            </div>
+          </td>
           <td>
                 <code>None</code>
           </td>
@@ -1452,8 +1439,12 @@ adds '-Ns' to filename, where N in first_n_sec</p></td>
           <td>
                 <code>int</code>
           </td>
-          <td><p>Default 2. # of seconds to extract from beginning
-of video</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>Default 2. # of seconds to extract from beginning
+of video</p>
+            </div>
+          </td>
           <td>
                 <code>2</code>
           </td>
@@ -1461,9 +1452,9 @@ of video</p></td>
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
@@ -1533,10 +1524,11 @@ of video</p></td>
     <span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 
 
@@ -1557,6 +1549,8 @@ of video</p></td>
   
       <p>Delete existing checkpoint file and replace with original_checkpoint</p>
 
+
+
   <p><strong>Parameters:</strong></p>
   <table>
     <thead>
@@ -1573,7 +1567,11 @@ of video</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>DLC project name. Defaults to "from_top_tracking".</p></td>
+          <td>
+            <div class="doc-md-description">
+              <p>DLC project name. Defaults to "from_top_tracking".</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;from_top_tracking&#39;</code>
           </td>
@@ -1583,9 +1581,13 @@ of video</p></td>
           <td>
                 <code>str</code>
           </td>
-          <td><p>Original checkpoint file ot use in the
+          <td>
+            <div class="doc-md-description">
+              <p>Original checkpoint file ot use in the
 revert, in the same directory as the checkpoint file. Defaults to
-"checkpoint_orig".</p></td>
+"checkpoint_orig".</p>
+            </div>
+          </td>
           <td>
                 <code>&#39;checkpoint_orig&#39;</code>
           </td>
@@ -1593,9 +1595,9 @@ revert, in the same directory as the checkpoint file. Defaults to
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
+          <details class="quote">
+            <summary>Source code in <code>workflow_deeplabcut/load_demo_data.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
@@ -1637,7 +1639,7 @@ revert, in the same directory as the checkpoint file. Defaults to
         <span class="n">original_checkpoint_path</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">original_checkpoint_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;checkpoint&quot;</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1651,8 +1653,6 @@ revert, in the same directory as the checkpoint file. Defaults to
 
 </div>
 
-
-  
 
 
 
@@ -1770,12 +1770,14 @@ revert, in the same directory as the checkpoint file. Defaults to
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["toc.integrate", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["toc.integrate", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
-        <script src="https://js-na1.hs-scripts.com/23133402.js"></script>
+        
+          <script src="https://js-na1.hs-scripts.com/23133402.js"></script>
+        
       
     
   </body>
