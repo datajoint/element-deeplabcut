@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 from os import path
 
-pkg_name = next(p for p in find_packages() if "." not in p)
+pkg_name = "element_deeplabcut"
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, "README.md"), "r") as f:
@@ -26,5 +26,15 @@ setup(
     keywords="neuroscience behavior deeplabcut datajoint",
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
-    install_requires=requirements,
+    install_requires=[
+        "datajoint>=0.13",
+        "element-interface>=0.3.0",
+        "opencv-python-headless",
+        "element-lab>=0.2.0",
+        "element-animal>=0.1.5",
+        "element-session>=0.1.2",
+        "element-interface>=0.5.0",
+        "ipykernel>=6.0.1",
+        "pygit2",
+    ],
 )
