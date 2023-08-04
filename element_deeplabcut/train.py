@@ -248,13 +248,12 @@ class ModelTraining(dj.Computed):
         try:
             from deeplabcut.utils.auxiliaryfunctions import (
                 get_model_folder,
+                edit_config,
             )  # isort:skip
         except ImportError:
             from deeplabcut.utils.auxiliaryfunctions import (
                 GetModelFolder as get_model_folder,
             )  # isort:skip
-
-        from deeplabcut.utils.auxiliaryfunctions import edit_config
 
         """Launch training for each train.TrainingTask training_id via `.populate()`."""
         project_path, model_prefix = (TrainingTask & key).fetch1(
@@ -291,12 +290,10 @@ class ModelTraining(dj.Computed):
         )
         model_train_folder = project_path / model_folder / "train"
 
-        pose_cfg = edit_config(
+        edit_config(
             model_train_folder / "pose_cfg.yaml",
             {"project_path": project_path.as_posix()},
         )
-
-        #################
 
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
