@@ -88,7 +88,7 @@ corresponding tables in the database.  Within the workflow, Element DeepLabCut c
 to upstream Elements including Lab, Animal, and Session.  For more detailed
 documentation on each table, see the API docs for the respective schemas.
 
-![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
+![pipeline](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/pipeline.svg)
 
 ### `lab` schema ([API docs](../api/workflow_deeplabcut/pipeline/#workflow_deeplabcut.pipeline.Device))
 
