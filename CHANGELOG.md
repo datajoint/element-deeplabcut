@@ -6,6 +6,7 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 ## [0.2.7] - 2023-08-04
 
 + Update - GitHub Actions with new reusable workflows
++ Update - Readme instructions
 
 ## [0.2.6] - 2023-05-22
 
