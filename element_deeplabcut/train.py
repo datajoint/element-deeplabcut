@@ -246,6 +246,7 @@ class ModelTraining(dj.Computed):
         try:
             from deeplabcut.utils.auxiliaryfunctions import (
                 get_model_folder,
+                edit_config,
             )  # isort:skip
         except ImportError:
             from deeplabcut.utils.auxiliaryfunctions import (
@@ -278,6 +279,20 @@ class ModelTraining(dj.Computed):
         # Write dlc config file to base project folder
         dlc_cfg_filepath = dlc_reader.save_yaml(project_path, dlc_config)
 
+        # ---- Update the project path in the DLC pose configuration (yaml) files ----
+        model_folder = get_model_folder(
+            trainFraction=dlc_config["train_fraction"],
+            shuffle=dlc_config["shuffle"],
+            cfg=dlc_config,
+            modelprefix=dlc_config["modelprefix"],
+        )
+        model_train_folder = project_path / model_folder / "train"
+
+        edit_config(
+            model_train_folder / "pose_cfg.yaml",
+            {"project_path": project_path.as_posix()},
+        )
+
         # ---- Trigger DLC model training job ----
         train_network_input_args = list(inspect.signature(train_network).parameters)
         train_network_kwargs = {
@@ -293,18 +308,7 @@ class ModelTraining(dj.Computed):
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
             print("DLC training stopped via Keyboard Interrupt")
 
-        snapshots = list(
-            (
-                project_path
-                / get_model_folder(
-                    trainFraction=dlc_config["train_fraction"],
-                    shuffle=dlc_config["shuffle"],
-                    cfg=dlc_config,
-                    modelprefix=dlc_config["modelprefix"],
-                )
-                / "train"
-            ).glob("*index*")
-        )
+        snapshots = list(model_train_folder.glob("*index*"))
         max_modified_time = 0
         # DLC goes by snapshot magnitude when judging 'latest' for evaluation
         # Here, we mean most recently generated
