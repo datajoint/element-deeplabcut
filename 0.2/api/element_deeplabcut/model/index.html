@@ -4126,7 +4126,9 @@ snapshotindex, and trainingsetindex.</p>
 <span class="normal">653</span>
 <span class="normal">654</span>
 <span class="normal">655</span>
-<span class="normal">656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">PoseEstimationTask</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Manual</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Staging table for pairing of video recording and model before inference.</span>
 
@@ -4211,7 +4213,9 @@ snapshotindex, and trainingsetindex.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">processed_dir</span> <span class="o">=</span> <span class="n">get_dlc_processed_data_dir</span><span class="p">()</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span>
-            <span class="p">{</span><span class="o">**</span><span class="n">video_recording_key</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">},</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">{</span><span class="o">**</span><span class="n">video_recording_key</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">},</span>
+            <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">task_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4556,7 +4560,9 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 <span class="normal">651</span>
 <span class="normal">652</span>
 <span class="normal">653</span>
-<span class="normal">654</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">video_recording_key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -4580,7 +4586,9 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">processed_dir</span> <span class="o">=</span> <span class="n">get_dlc_processed_data_dir</span><span class="p">()</span>
     <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">infer_output_dir</span><span class="p">(</span>
-        <span class="p">{</span><span class="o">**</span><span class="n">video_recording_key</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">},</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">{</span><span class="o">**</span><span class="n">video_recording_key</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">},</span>
+        <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">mkdir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">task_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4679,9 +4687,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 
             <details class="quote">
               <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">659</span>
-<span class="normal">660</span>
-<span class="normal">661</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">661</span>
 <span class="normal">662</span>
 <span class="normal">663</span>
 <span class="normal">664</span>
@@ -4810,7 +4816,9 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 <span class="normal">787</span>
 <span class="normal">788</span>
 <span class="normal">789</span>
-<span class="normal">790</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@schema</span>
 <span class="k">class</span> <span class="nc">PoseEstimation</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Computed</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Results of pose estimation.</span>
 
@@ -5067,9 +5075,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 
             <details class="quote">
               <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">674</span>
-<span class="normal">675</span>
-<span class="normal">676</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">676</span>
 <span class="normal">677</span>
 <span class="normal">678</span>
 <span class="normal">679</span>
@@ -5088,7 +5094,9 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 <span class="normal">692</span>
 <span class="normal">693</span>
 <span class="normal">694</span>
-<span class="normal">695</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
+<span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BodyPartPosition</span><span class="p">(</span><span class="n">dj</span><span class="o">.</span><span class="n">Part</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Position of individual body parts by frame index</span>
 
 <span class="sd">    Attributes:</span>
@@ -5149,9 +5157,7 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 
           <details class="quote">
             <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">697</span>
-<span class="normal">698</span>
-<span class="normal">699</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">699</span>
 <span class="normal">700</span>
 <span class="normal">701</span>
 <span class="normal">702</span>
@@ -5204,7 +5210,9 @@ dynamic, robust_nframes, allow_growth, use_shelve</p>
 <span class="normal">749</span>
 <span class="normal">750</span>
 <span class="normal">751</span>
-<span class="normal">752</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="normal">752</span>
+<span class="normal">753</span>
+<span class="normal">754</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;.populate() method will launch training for each PoseEstimationTask&quot;&quot;&quot;</span>
     <span class="c1"># ID model and directories</span>
     <span class="n">dlc_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span> <span class="o">&amp;</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">fetch1</span><span class="p">()</span>
@@ -5362,9 +5370,7 @@ and x/y coordinates of each joint name for a camera_id, similar to
 
           <details class="quote">
             <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">754</span>
-<span class="normal">755</span>
-<span class="normal">756</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">756</span>
 <span class="normal">757</span>
 <span class="normal">758</span>
 <span class="normal">759</span>
@@ -5398,7 +5404,9 @@ and x/y coordinates of each joint name for a camera_id, similar to
 <span class="normal">787</span>
 <span class="normal">788</span>
 <span class="normal">789</span>
-<span class="normal">790</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">body_parts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a pandas dataframe of coordinates of the specified body_part(s)</span>
 
@@ -5526,9 +5534,7 @@ and x/y coordinates of each joint name for a camera_id, similar to
 
           <details class="quote">
             <summary>Source code in <code>element_deeplabcut/model.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">793</span>
-<span class="normal">794</span>
-<span class="normal">795</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">795</span>
 <span class="normal">796</span>
 <span class="normal">797</span>
 <span class="normal">798</span>
@@ -5539,7 +5545,9 @@ and x/y coordinates of each joint name for a camera_id, similar to
 <span class="normal">803</span>
 <span class="normal">804</span>
 <span class="normal">805</span>
-<span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">str_to_bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether the provided string represents true. Otherwise false.</span>
 
 <span class="sd">    Args:</span>
