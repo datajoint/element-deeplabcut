@@ -657,6 +657,8 @@ class PoseEstimationTask(dj.Manual):
                 "task_mode": key["task_mode"],
                 "pose_estimation_params": analyze_videos_params,
                 "pose_estimation_output_dir": pose_estimation_output_dir,
+            },
+            skip_duplicates=True,
         )
 
     insert_estimation_task = generate
