@@ -760,7 +760,7 @@ class PoseEstimation(dj.Computed):
         self.BodyPartPosition.insert(body_parts)
 
     @classmethod
-    def get_trajectory(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
+    def coordinates_dataframe(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
         """Returns a pandas dataframe of coordinates of the specified body_part(s)
 
         Args:
