@@ -609,10 +609,8 @@ class PoseEstimationTask(dj.Manual):
     @classmethod
     def generate(
         cls,
-        video_recording_key: dict,
+        key: dict,
         model_name: str,
-        *,
-        task_mode: str = None,
         analyze_videos_params: dict = None,
     ):
         """Insert PoseEstimationTask in inferred output dir.
@@ -643,23 +641,22 @@ class PoseEstimationTask(dj.Manual):
             ).as_posix()
         else:
             pose_estimation_output_dir = output_dir.as_posix()
+
+        if key["task_mode"] is None:
             try:
                 _ = dlc_reader.PoseEstimation(output_dir)
             except FileNotFoundError:
-                task_mode = "trigger"
+                key["task_mode"] = "trigger"
             else:
-                task_mode = "load"
+                key["task_mode"] = "load"
 
         cls.insert1(
             {
-                **video_recording_key,
+                **key,
                 "model_name": model_name,
-                "task_mode": task_mode,
+                "task_mode": key["task_mode"],
                 "pose_estimation_params": analyze_videos_params,
-                "pose_estimation_output_dir": output_dir.relative_to(
-                    processed_dir
-                ).as_posix(),
-            }
+                "pose_estimation_output_dir": pose_estimation_output_dir,
         )
 
     insert_estimation_task = generate
