@@ -40,7 +40,7 @@ setup(
     extras_requires={
         "default": ["deeplabcut[tf]>=2.2.1.1"],
         "apple_mchips": [
-            "deeplabcut[apple_mchips]",
+            "'deeplabcut[apple_mchips]'",
             "tables=3.7.0",
         ],  # "tensorflow-deps",
     },
