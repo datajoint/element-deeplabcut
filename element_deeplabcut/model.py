@@ -628,12 +628,21 @@ class PoseEstimationTask(dj.Manual):
                 videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
                 dynamic, robust_nframes, allow_growth, use_shelve
         """
-        processed_dir = get_dlc_processed_data_dir()
+
         output_dir = cls.infer_output_dir(
-            {**video_recording_key, "model_name": model_name}, relative=False, mkdir=True
+            {**key, "model_name": model_name},
+            relative=False,
+            mkdir=True,
         )
 
-        if task_mode is None:
+        processed_dir = get_dlc_processed_data_dir()
+
+        if processed_dir:
+            pose_estimation_output_dir = output_dir.relative_to(
+                processed_dir
+            ).as_posix()
+        else:
+            pose_estimation_output_dir = output_dir.as_posix()
             try:
                 _ = dlc_reader.PoseEstimation(output_dir)
             except FileNotFoundError:
