@@ -9,7 +9,8 @@ services:
     # image: datajoint/element_deeplabcut:latest
     extra_hosts:
       - fakeservices.datajoint.io:127.0.0.1
-    environment: #  - DJ_PUBLIC_S3_LOCATION=djhub.vathes.datapub.elements:/deeplabcut-v1
+    #environment: 
+    #  - DJ_PUBLIC_S3_LOCATION=djhub.vathes.datapub.elements:/deeplabcut-v1
 
     devices:
       - /dev/fuse
