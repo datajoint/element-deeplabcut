@@ -4,7 +4,7 @@ services:
     cpus: 4
     mem_limit: 8g
     build:
-      #   context: ..
+      context: ..
       dockerfile: ./.devcontainer/Dockerfile
     # image: datajoint/element_deeplabcut:latest
     extra_hosts:
