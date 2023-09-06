@@ -36,12 +36,30 @@ setup(
         "element-interface>=0.5.0",
         "ipykernel>=6.0.1",
         "pygit2",
+        "graphviz",  # This worked to me installing using conda, not pip! -> pip install anaconda graphviz at the very beginning
     ],
     extras_requires={
         "default": ["deeplabcut[tf]>=2.2.1.1"],
         "apple_mchips": [
             "'deeplabcut[apple_mchips]'",
             "tables=3.7.0",
-        ],  # "tensorflow-deps",
+            "tensorflow-deps",
+            # "--upgrade tensorflow_macos==2.10.0", ##issue with keras.legacy after installing keras -c apple
+            # conda install keras -c apple
+        ],
     },
 )
+
+# TO-DO: CHECK THIS FILE TO INSTALL ELEMENT IN ANOTHER CONDA ENVIRONMENT
+"""
+!!!! For M2 downgrade tensorflow-macos and keras to 2.12.0
+tensorboard                   2.12.3
+tensorboard-data-server       0.7.1
+tensorboard-plugin-wit        1.8.1
+tensorflow                    2.13.0
+tensorflow-estimator          2.12.0
+tensorflow-macos              2.12.0
+tensorflow-metal              1.0.1
+tensorpack                    0.11
+keras                         2.12.0
+"""

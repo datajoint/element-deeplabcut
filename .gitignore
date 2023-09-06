@@ -81,6 +81,7 @@ ENV/
 
 # datajoint, notes, nwb export
 dj_local_c*.json
+dj_pose*.y*ml
 temp*
 temp/*
 *nwb
