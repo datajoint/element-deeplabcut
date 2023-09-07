@@ -19,7 +19,7 @@ services:
     security_opt:
       - apparmor:unconfined
     volumes:
-      - ..:/workspaces/element-deeplabcut:cached
+      #- ..:/workspaces/element-deeplabcut:cached
       - docker_data:/var/lib/docker # persist docker images
     privileged: true # only because of dind
 volumes:
