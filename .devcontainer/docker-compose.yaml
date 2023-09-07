@@ -3,10 +3,10 @@ services:
   app:
     cpus: 4
     mem_limit: 8g
-    #build:
-    #  context: ..
-    #  dockerfile: ./.devcontainer/Dockerfile
-    image: datajoint/element_calcium_imaging:latest
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    #image: datajoint/element_calcium_imaging:latest
     extra_hosts:
       - fakeservices.datajoint.io:127.0.0.1
     environment:
