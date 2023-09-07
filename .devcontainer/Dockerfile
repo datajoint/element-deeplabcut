@@ -1,5 +1,4 @@
 FROM python:3.9-slim@sha256:5f0192a4f58a6ce99f732fe05e3b3d00f12ae62e183886bca3ebe3d202686c7f
-#FROM python:3.9-slim
 
 ENV PATH /usr/local/bin:$PATH
 ENV PYTHON_VERSION 3.9.17
