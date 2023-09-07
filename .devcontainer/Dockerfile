@@ -30,9 +30,9 @@ RUN \
 COPY ./ /tmp/element-deeplabcut/
 
 RUN \
-    #pipeline dependencies
+    # pipeline dependencies
     apt-get install gcc g++ ffmpeg libsm6 libxext6 -y && \
-    pip install --no-cache-dir -e /tmp/element-deeplabcut/ && \
+    pip install --no-cache-dir -e /tmp/element-deeplabcut[elements] && \
     # clean up
     rm -rf /tmp/element-deeplabcut/ && \
     apt-get clean
@@ -41,7 +41,8 @@ ENV DJ_HOST fakeservices.datajoint.io
 ENV DJ_USER root
 ENV DJ_PASS simple
 
-ENV DLC_ROOT_DATA_DIR /workspaces/element-deeplabcut/example_data
+ENV DLC_ROOT_DATA_DIR /workspaces/element-deeplabcut/
+ENV CURRENT_PROJECT_FOLDER Top_tracking-DataJoint-2023-08-03
 ENV DATABASE_PREFIX neuro_
 
 USER vscode
