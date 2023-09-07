@@ -42,7 +42,7 @@ ENV DJ_HOST fakeservices.datajoint.io
 ENV DJ_USER root
 ENV DJ_PASS simple
 
-ENV IMAGING_ROOT_DATA_DIR /workspaces/element-deeplabcut/example_data
+#ENV ROOT_DATA_DIR /workspaces/element-deeplabcut/
 ENV DATABASE_PREFIX neuro_
 
 USER vscode
