@@ -41,7 +41,7 @@ ENV DJ_HOST fakeservices.datajoint.io
 ENV DJ_USER root
 ENV DJ_PASS simple
 
-ENV DLC_ROOT_DATA_DIR /workspaces/element-deeplabcut/
+ENV DLC_ROOT_DATA_DIR /workspaces/element-deeplabcut/example_data
 ENV CURRENT_PROJECT_FOLDER Top_tracking-DataJoint-2023-08-03
 ENV DATABASE_PREFIX neuro_
 
