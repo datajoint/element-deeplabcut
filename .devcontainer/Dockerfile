@@ -1,5 +1,4 @@
-#FROM python:3.9-slim@sha256:5f0192a4f58a6ce99f732fe05e3b3d00f12ae62e183886bca3ebe3d202686c7f
-FROM python:3.9-slim
+FROM python:3.9-slim@sha256:5f0192a4f58a6ce99f732fe05e3b3d00f12ae62e183886bca3ebe3d202686c7f
 
 ENV PATH /usr/local/bin:$PATH
 ENV PYTHON_VERSION 3.9.17
@@ -9,7 +8,6 @@ RUN \
     # install docker
     apt-get update && \
     apt-get install ca-certificates curl gnupg lsb-release -y && \
-    apt-utils && \
     mkdir -m 0755 -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
@@ -32,18 +30,18 @@ RUN \
 COPY ./ /tmp/element-deeplabcut/
 
 RUN \
-    # pipeline dependencies
+    #pipeline dependencies
     apt-get install gcc g++ ffmpeg libsm6 libxext6 -y && \
-    pip install --no-cache-dir -e /tmp/element-deeplabcut[elements] && \
+    pip install --no-cache-dir -e /tmp/element-deeplabcut/ && \
     # clean up
-    rm -rf /tmp/element-deeplabcut && \
+    rm -rf /tmp/element-deeplabcut/ && \
     apt-get clean
 
 ENV DJ_HOST fakeservices.datajoint.io
 ENV DJ_USER root
 ENV DJ_PASS simple
 
-#ENV ROOT_DATA_DIR /workspaces/element-deeplabcut/
+ENV IMAGING_ROOT_DATA_DIR /workspaces/element-calcium-imaging/example_data
 ENV DATABASE_PREFIX neuro_
 
 USER vscode
