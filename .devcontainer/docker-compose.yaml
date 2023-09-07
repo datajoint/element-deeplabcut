@@ -9,8 +9,8 @@ services:
     #image: datajoint/element_deeplabcut:latest
     extra_hosts:
       - fakeservices.datajoint.io:127.0.0.1
-    #environment:
-    #  - DJ_PUBLIC_S3_LOCATION=djhub.vathes.datapub.elements:/deeplabcut-v1
+    environment:
+      - DJ_PUBLIC_S3_LOCATION=djhub.vathes.datapub.elements:/deeplabcut-v1
     devices:
       - /dev/fuse
     cap_add:
@@ -18,7 +18,7 @@ services:
     security_opt:
       - apparmor:unconfined
     volumes:
-      #  - ..:/workspaces/element-deeplabcut:cached
+      - ..:/workspaces/element-deeplabcut:cached
       - docker_data:/var/lib/docker # persist docker images
     privileged: true # only because of dind
 volumes:
