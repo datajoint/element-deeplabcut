@@ -81,11 +81,13 @@ ENV/
 
 # datajoint, notes, nwb export
 dj_local_c*.json
+dj_ex*.json
 dj_pose*.y*ml
 temp*
 temp/*
 *nwb
 workflow_deeplabcut/
+example_data/
 
 # docs
 /docs/site/

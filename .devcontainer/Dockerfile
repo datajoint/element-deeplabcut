@@ -31,7 +31,9 @@ COPY ./ /tmp/element-deeplabcut/
 
 RUN \
     # pipeline dependencies
-    apt-get install gcc g++ ffmpeg libsm6 libxext6 -y && \
+    apt-get install gcc && \
+    #g++ ffmpeg libsm6 libxext6 -y && \
+    pip install numcodecs && \
     pip install --no-cache-dir -e /tmp/element-deeplabcut[elements] && \
     # clean up
     rm -rf /tmp/element-deeplabcut/ && \
