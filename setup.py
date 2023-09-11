@@ -11,13 +11,13 @@ with open(path.join(here, "README.md"), "r") as f:
 with open(path.join(here, pkg_name, "version.py")) as f:
     exec(f.read())
 
-with urllib.request.urlopen(
-    "https://github.com/DeepLabCut/DeepLabCut/blob/main/requirements.txt"
-) as f:
-    dlc_requirements = f.read().decode("UTF-8").split("\n")
+#with urllib.request.urlopen(
+#    "https://github.com/DeepLabCut/DeepLabCut/blob/main/requirements.txt"
+#) as f:
+#    dlc_requirements = f.read().decode("UTF-8").split("\n")
 
-dlc_requirements.remove("")
-dlc_requirements.append("future")
+#dlc_requirements.remove("")
+#dlc_requirements.append("future")
 
 setup(
     name=pkg_name.replace("_", "-"),
@@ -39,9 +39,9 @@ setup(
         "pygit2",
     ],
     extras_requires={
-        "dlc_requirements": [dlc_requirements],
-        "dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
-        #"dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],
+        #"dlc_requirements": [dlc_requirements],
+        #"dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
+        "dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],
         "dlc_apple_mchips": [
             "'deeplabcut[apple_mchips]'",
             "tables=3.7.0",
@@ -54,6 +54,6 @@ setup(
             "element-session>=0.1.2",
             "element-interface>=0.5.0",
         ],
-        "tests": ["pytest", "pytest-cov", "shutils"],
+        #"tests": ["pytest", "pytest-cov", "shutils"],
     },
 )

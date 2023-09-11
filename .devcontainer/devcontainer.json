@@ -6,7 +6,7 @@
 	"remoteEnv": {
 		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
 	},
-	"onCreateCommand": "mkdir -p ${DLC_ROOT_DATA_DIR} && pip install -e .",
+	"onCreateCommand": "pip install -e .",
 	"postStartCommand": "docker volume prune -f",
 	"hostRequirements": {
 		"cpus": 4,
