@@ -41,8 +41,8 @@ setup(
     ],
     extras_requires={
         "dlc_requirements": [dlc_requirements],
-        # "dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
-        "dlc_default": ["deeplabcut[tf]>=2.2.1.1"],
+        "dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
+        #"dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],
         "dlc_apple_mchips": [
             "'deeplabcut[apple_mchips]'",
             "tables=3.7.0",
