@@ -31,8 +31,10 @@ COPY ./ /tmp/element-deeplabcut/
 
 RUN \
     # pipeline dependencies
-    apt-get install gcc numcodecs psutils ffmpeg graphviz && \
+    apt-get install gcc psutils ffmpeg graphviz && \
+    pip install numcodecs && \
     pip install --no-cache-dir -e /tmp/element-deeplabcut[elements,dlc_default] && \
+    #TO-DO: ADD element-deeplabcut[tests]
     # clean up
     rm -rf /tmp/element-deeplabcut/ && \
     apt-get clean
