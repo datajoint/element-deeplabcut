@@ -34,7 +34,6 @@ setup(
     scripts=[],
     install_requires=[
         "datajoint>=0.13",
-        "element-interface>=0.3.0",
         "opencv-python-headless",
         "ipykernel>=6.0.1",
         "pygit2",
