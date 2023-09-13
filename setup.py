@@ -43,10 +43,10 @@ setup(
         #"dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
         "dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],
         "dlc_apple_mchips": [
-            "'deeplabcut[apple_mchips]'",
-            "tables=3.7.0",
-            "tensorflow-deps>=2.9.0",
-            "keras >=2.12.0",
+            "tensorflow-macos==2.12.0",
+            "tensorflow-metal",
+            "tables==3.7.0",
+            "'deeplabcut[apple_mchips,gui]'",
         ],
         "elements": [
             "element-lab>=0.2.0",
