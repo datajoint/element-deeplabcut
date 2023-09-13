@@ -38,7 +38,7 @@ setup(
         "ipykernel>=6.0.1",
         "pygit2",
     ],
-    extras_requires={
+    extras_require={
         #"dlc_requirements": [dlc_requirements],
         #"dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
         "dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],

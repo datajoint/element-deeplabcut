@@ -35,7 +35,7 @@ RUN \
     #pip install gcc ffmpeg graphviz && \
     apt-get install -y gcc ffmpeg graphviz && \
     #pip install numcodecs && \
-    #pip install --no-cache-dir -e /tmp/element-deeplabcut[elements] && \
+    pip install --no-cache-dir -e /tmp/element-deeplabcut[elements,dlc_default] && \
     #TO-DO: ADD element-deeplabcut[dlc_default,tests]
     # clean up
     rm -rf /tmp/element-deeplabcut/ && \
