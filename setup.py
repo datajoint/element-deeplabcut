@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 from os import path
-import urllib.request
 
 pkg_name = "element_deeplabcut"
 here = path.abspath(path.dirname(__file__))
@@ -10,14 +9,6 @@ with open(path.join(here, "README.md"), "r") as f:
 
 with open(path.join(here, pkg_name, "version.py")) as f:
     exec(f.read())
-
-#with urllib.request.urlopen(
-#    "https://github.com/DeepLabCut/DeepLabCut/blob/main/requirements.txt"
-#) as f:
-#    dlc_requirements = f.read().decode("UTF-8").split("\n")
-
-#dlc_requirements.remove("")
-#dlc_requirements.append("future")
 
 setup(
     name=pkg_name.replace("_", "-"),
@@ -34,26 +25,25 @@ setup(
     scripts=[],
     install_requires=[
         "datajoint>=0.13",
-        "opencv-python-headless",
-        "ipykernel>=6.0.1",
-        "pygit2",
+        "graphviz",
+        "pydot",
+        "networkx==2.8.2",
     ],
     extras_require={
-        #"dlc_requirements": [dlc_requirements],
-        #"dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
+        # "dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
         "dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],
         "dlc_apple_mchips": [
             "tensorflow-macos==2.12.0",
             "tensorflow-metal",
             "tables==3.7.0",
-            "'deeplabcut[apple_mchips,gui]'",
+            "'deeplabcut'",
         ],
+        "dlc_gui": ["'deeplabcut[gui]"],
         "elements": [
             "element-lab>=0.2.0",
             "element-animal>=0.1.5",
             "element-session>=0.1.2",
             "element-interface>=0.5.0",
         ],
-        #"tests": ["pytest", "pytest-cov", "shutils"],
     },
 )
