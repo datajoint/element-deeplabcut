@@ -32,6 +32,6 @@ jobs:
       - name: Run style tests
         run: |
           python_version=${{matrix.py_ver}}
-          black element_calcium_imaging --check --verbose --target-version py${python_version//.}
+          black element_deeplabcut --check --verbose --target-version py${python_version//.}
           black notebooks --check --verbose --target-version py${python_version//.}
 
