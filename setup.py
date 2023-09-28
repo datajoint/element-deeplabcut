@@ -30,15 +30,14 @@ setup(
         "networkx==2.8.2",
     ],
     extras_require={
-        # "dlc_default": ["deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut"]
-        "dlc_default": ["'deeplabcut[tf]'>=2.2.1.1"],
+        "dlc_default": ["deeplabcut[tf]>=2.2.1.1"],
         "dlc_apple_mchips": [
             "tensorflow-macos==2.12.0",
             "tensorflow-metal",
             "tables==3.7.0",
-            "'deeplabcut'",
+            "deeplabcut",
         ],
-        "dlc_gui": ["'deeplabcut[gui]"],
+        "dlc_gui": ["deeplabcut[gui]"],
         "elements": [
             "element-lab>=0.2.0",
             "element-animal>=0.1.5",
