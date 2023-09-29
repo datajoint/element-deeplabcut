@@ -28,6 +28,8 @@ setup(
         "graphviz",
         "pydot",
         "networkx==2.8.2",
+        "ipykernel",
+        "ipywidgets",
     ],
     extras_require={
         "dlc_default": ["deeplabcut[tf]>=2.2.1.1"],
