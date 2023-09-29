@@ -609,8 +609,10 @@ class PoseEstimationTask(dj.Manual):
     @classmethod
     def generate(
         cls,
-        key: dict,
+        video_recording_key: dict,
         model_name: str,
+        *,
+        task_mode: str = None,
         analyze_videos_params: dict = None,
     ):
         """Insert PoseEstimationTask in inferred output dir.
@@ -626,39 +628,31 @@ class PoseEstimationTask(dj.Manual):
                 videotype, gputouse, save_as_csv, batchsize, cropping, TFGPUinference,
                 dynamic, robust_nframes, allow_growth, use_shelve
         """
-
+        processed_dir = get_dlc_processed_data_dir()
         output_dir = cls.infer_output_dir(
-            {**key, "model_name": model_name},
+            {**video_recording_key, "model_name": model_name},
             relative=False,
             mkdir=True,
         )
 
-        processed_dir = get_dlc_processed_data_dir()
-
-        if processed_dir:
-            pose_estimation_output_dir = output_dir.relative_to(
-                processed_dir
-            ).as_posix()
-        else:
-            pose_estimation_output_dir = output_dir.as_posix()
-
-        if key["task_mode"] is None:
+        if task_mode is None:
             try:
                 _ = dlc_reader.PoseEstimation(output_dir)
             except FileNotFoundError:
-                key["task_mode"] = "trigger"
+                task_mode = "trigger"
             else:
-                key["task_mode"] = "load"
+                task_mode = "load"
 
         cls.insert1(
             {
-                **key,
+                **video_recording_key,
                 "model_name": model_name,
-                "task_mode": key["task_mode"],
+                "task_mode": task_mode,
                 "pose_estimation_params": analyze_videos_params,
-                "pose_estimation_output_dir": pose_estimation_output_dir,
-            },
-            skip_duplicates=True,
+                "pose_estimation_output_dir": output_dir.relative_to(
+                    processed_dir
+                ).as_posix(),
+            }
         )
 
     insert_estimation_task = generate
@@ -760,7 +754,7 @@ class PoseEstimation(dj.Computed):
         self.BodyPartPosition.insert(body_parts)
 
     @classmethod
-    def coordinates_dataframe(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
+    def get_trajectory(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
         """Returns a pandas dataframe of coordinates of the specified body_part(s)
 
         Args:

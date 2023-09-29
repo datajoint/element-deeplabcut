@@ -21,7 +21,7 @@ def activate(
     *,
     create_schema: bool = True,
     create_tables: bool = True,
-    linking_module: str = None
+    linking_module: str = None,
 ):
     """Activate this schema.
 
@@ -195,9 +195,7 @@ class TrainingParamSet(dj.Lookup):
             if existing_paramset_idx == int(paramset_idx):  # If existing_idx same:
                 return  # job done
         else:
-            cls.insert1(
-                param_dict, skip_duplicates=True
-            )  # if duplicate, will raise duplicate error
+            cls.insert1(param_dict)  # if duplicate, will raise duplicate error
 
 
 @schema
@@ -263,7 +261,7 @@ class ModelTraining(dj.Computed):
         project_path = find_full_path(get_dlc_root_data_dir(), project_path)
 
         # ---- Build and save DLC configuration (yaml) file ----
-        _, dlc_config = dlc_reader.read_yaml(project_path, "config")  # load existing
+        _, dlc_config = dlc_reader.read_yaml(project_path)  # load existing
         dlc_config.update((TrainingParamSet & key).fetch1("params"))
         dlc_config.update(
             {
