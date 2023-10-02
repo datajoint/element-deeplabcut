@@ -14,4 +14,7 @@ dj.config["custom"]["dlc_root_data_dir"] = os.getenv(
     "DLC_ROOT_DATA_DIR", dj.config["custom"].get("dlc_root_data_dir", "")
 )
 
+dj.config["custom"]["current_project_folder"] = os.getenv(
+    "CURRENT_PROJECT_FOLDER", dj.config["custom"].get("current_project_folder", "")
+)
 db_prefix = dj.config["custom"].get("database.prefix", "")
