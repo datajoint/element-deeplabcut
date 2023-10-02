@@ -20,7 +20,6 @@ tables that can be combined with other Elements to assemble a fully functional p
 
 + Please fork this repository
 
-<<<<<<< HEAD
 + Clone the repository to your computer
 
   ```bash
@@ -34,27 +33,6 @@ tables that can be combined with other Elements to assemble a fully functional p
   ```
 
 + [Interactive tutorial on GitHub Codespaces](#interactive-tutorial)
-=======
-![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
-
-## Experiment Flowchart
-
-![flowchart](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/flowchart.svg)
-
-## Data Pipeline Diagram
-
-![pipeline](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/pipeline.svg)
-
-## Getting Started
-
-+ Install from PyPI
-
-     ```bash
-     pip install element-deeplabcut
-     ```
-
-+ [Interactive tutorial](https://github.com/datajoint/workflow-deeplabcut)
->>>>>>> c94f33679d2837b7f8111816f56f5f199d27d917
 
 + [Documentation](https://datajoint.com/docs/elements/element-deeplabcut)
 
@@ -62,7 +40,6 @@ tables that can be combined with other Elements to assemble a fully functional p
 
 + If you need help getting started or run into any errors, please open a GitHub Issue 
 or contact our team by email at support@datajoint.com.
-<<<<<<< HEAD
 
 ## Interactive Tutorial
 
@@ -100,5 +77,3 @@ MYSQL_VER=8.0 docker compose -f docker-compose-db.yaml up --build -d
 1. We recommend you start by navigating to the `notebooks` directory on the left panel and go through the `tutorial.ipynb` Jupyter notebook. Execute the cells in the notebook to begin your walk through of the tutorial.
 
 1. Once you are done, see the options available to you in the menu in the bottom-left corner. For example, in Codespace you will have an option to `Stop Current Codespace` but when running Dev Container on your own machine the equivalent option is `Reopen folder locally`. By default, GitHub will also automatically stop the Codespace after 30 minutes of inactivity.  Once the Codespace is no longer being used, we recommend deleting the Codespace.
-=======
->>>>>>> c94f33679d2837b7f8111816f56f5f199d27d917
