@@ -34,4 +34,3 @@ jobs:
           python_version=${{matrix.py_ver}}
           black element_deeplabcut --check --verbose --target-version py${python_version//.}
           black notebooks --check --verbose --target-version py${python_version//.}
-

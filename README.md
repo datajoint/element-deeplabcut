@@ -1,4 +1,6 @@
-# DataJoint Element - DeepLabCut
+[![PyPI version](https://badge.fury.io/py/element-deeplabcut.svg)](http://badge.fury.io/py/element-deeplabcut)
+
+# DataJoint Element for Pose Estimation with DeepLabCut
 
 DataJoint Element for markerless pose estimation with
 [DeepLabCut](https://www.deeplabcut.org/).  DataJoint Elements collectively standardize
@@ -23,3 +25,28 @@ Installation and usage instructions can be found at the
 [Element documentation](https://datajoint.com/docs/elements/element-deeplabcut).
 
 ![element-deeplabcut diagram](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
+
+## Experiment Flowchart
+
+![flowchart](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/flowchart.svg)
+
+## Data Pipeline Diagram
+
+![pipeline](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/pipeline.svg)
+
+## Getting Started
+
++ Install from PyPI
+
+     ```bash
+     pip install element-deeplabcut
+     ```
+
++ [Interactive tutorial](https://github.com/datajoint/workflow-deeplabcut)
+
++ [Documentation](https://datajoint.com/docs/elements/element-deeplabcut)
+
+## Support
+
++ If you need help getting started or run into any errors, please open a GitHub Issue 
+or contact our team by email at support@datajoint.com.
