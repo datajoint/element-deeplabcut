@@ -20,7 +20,7 @@ setup(
     author_email="info@datajoint.com",
     license="MIT",
     url=f'https://github.com/datajoint/{pkg_name.replace("_", "-")}',
-    keywords="neuroscience behavior pose-estimation science datajoint",
+    keywords="neuroscience behavior deeplabcut pose-estimation science datajoint",
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
     install_requires=[
