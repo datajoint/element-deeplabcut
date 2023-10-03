@@ -14,7 +14,7 @@ tables that can be combined with other Elements to assemble a fully functional p
 
 ## Data Pipeline Diagram
 
-![pipeline](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/diagram_dlc.svg)
+![pipeline](https://raw.githubusercontent.com/datajoint/element-deeplabcut/main/images/pipeline_dlc.svg)
 
 ## Getting Started
 
