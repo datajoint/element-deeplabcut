@@ -44,7 +44,7 @@ ENV DJ_PASS simple
 
 ENV DLC_ROOT_DATA_DIR /workspaces/element-deeplabcut/example_data
 ENV CURRENT_PROJECT_FOLDER from_top_tracking
-ENV DATABASE_PREFIX dlc_
+ENV DATABASE_PREFIX neuro_
 
 USER vscode
 CMD bash -c "sudo rm /var/run/docker.pid; sudo dockerd"
