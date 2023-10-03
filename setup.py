@@ -41,10 +41,10 @@ setup(
         ],
         "dlc_gui": ["deeplabcut[gui]"],
         "elements": [
-            "element-lab>=0.2.0",
-            "element-animal>=0.1.5",
-            "element-session>=0.1.2",
-            "element-interface>=0.5.0",
+            "element-lab>=0.3.0",
+            "element-animal>=0.1.8",
+            "element-session>=0.1.5",
+            "element-interface>=0.6.0",
         ],
     },
 )
