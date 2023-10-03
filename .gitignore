@@ -1,9 +1,15 @@
+# User data
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Distribution, packaging, PyInstaller
+# C extensions
+*.so
+
+# Distribution, packaging
 .Python
 env/
 build/
@@ -21,11 +27,17 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea/
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+
+# Installer logs
 pip-log.txt
 pip-delete*.txt
-.idea/
 
 # Unit test / coverage reports
 htmlcov/
@@ -39,54 +51,82 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# C extension, Translations
-*.so
+# Translations
 *.mo
 *.pot
 
-# editors: vscode, emacs, Mac
-.vscode
-**/*~
-**/#*#
-**/.#*
-.DS_Store
-
-# Django, Flask, Scrapy, Sphinx, mkdocs:
-# PyBuilder, Jupyter, SageMath, celery beat
+# Django stuff:
 *.log
 local_settings.py
+
+# Flask stuff:
 instance/
 .webassets-cache
+
+# Scrapy stuff:
 .scrapy
 scratchpaper.*
+
+# Sphinx documentation
 docs/_build/
-/site
+
+# PyBuilder
 target/
+
+# Jupyter Notebook
 .ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
 celerybeat-schedule
+
+# SageMath parsed files
 *.sage.py
 
-# dotenv, virtualenv, pyenv, mypy
-./.env
+# dotenv
+.env
+
+# virtualenv
 .venv
 venv/
 ENV/
-.python-version
-.mypy_cache/
+./.env
 
-# Spyder/Rope project settings
+# Spyder project settings
 .spyderproject
 .spyproject
+
+# Rope project settings
 .ropeproject
 
-# datajoint, notes, nwb export
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# datajoint
 dj_local_c*.json
+dj_*.y*ml
 temp*
 temp/*
-*nwb
-workflow_deeplabcut/
 
 # docs
-/docs/site/
+/docs/site
 /docs/src/tutorials/*ipynb
-/docs/mike-mkdocs*
+
+# emacs
+**/*~
+**/#*#
+**/.#*
+
+example_data
+
+#nwb export
+*nwb
+
+# vscode
+*.code-workspace
+.vscode

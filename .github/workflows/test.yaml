@@ -6,6 +6,8 @@ on:
   schedule:
     - cron: "0 8 * * 1"
 jobs:
+  devcontainer-build:
+    uses: datajoint/.github/.github/workflows/devcontainer-build.yaml@main
   tests:
     runs-on: ubuntu-latest
     strategy:
@@ -31,3 +33,4 @@ jobs:
         run: |
           python_version=${{matrix.py_ver}}
           black element_deeplabcut --check --verbose --target-version py${python_version//.}
+          black notebooks --check --verbose --target-version py${python_version//.}
