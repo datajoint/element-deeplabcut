@@ -13,7 +13,7 @@ with open(path.join(here, pkg_name, "version.py")) as f:
 setup(
     name=pkg_name.replace("_", "-"),
     version=__version__,
-    description="DeepLabCut DataJoint Element",
+    description="DataJoint Element for Continuous Behavior Tracking via DeepLabCut",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="DataJoint",
