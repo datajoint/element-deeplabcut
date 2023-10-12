@@ -10,7 +10,7 @@ services:
     extra_hosts:
       - fakeservices.datajoint.io:127.0.0.1
     environment:
-      - DJ_PUBLIC_S3_LOCATION=djhub.vathes.datapub.elements:/workflow-dlc-data/v1
+      - DJ_PUBLIC_S3_LOCATION=djhub.vathes.datapub.elements:/workflow-dlc-data/v2
     devices:
       - /dev/fuse
     cap_add:
