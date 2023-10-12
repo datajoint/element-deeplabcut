@@ -453,7 +453,10 @@ class Model(dj.Manual):
             print("Canceled insert.")
             return
         # ---- Save DJ-managed config ----
-        _ = dlc_reader.save_yaml(project_path, dlc_config)
+        try:
+            _ = dlc_reader.save_yaml(project_path, dlc_config)
+        except PermissionError:
+            pass
         # ____ Insert into table ----
         with cls.connection.transaction:
             cls.insert1(model_dict)
