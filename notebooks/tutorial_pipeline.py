@@ -39,7 +39,7 @@ def get_dlc_processed_data_dir() -> str:
     """Returns an output directory relative to custom 'dlc_output_dir' root"""
     from pathlib import Path
 
-    dlc_output_dir = dj.config.get("custom", {}).get("dlc_output_dir")
+    dlc_output_dir = dj.config.get("custom", {}).get("dlc_processed_data_dir")
     if dlc_output_dir:
         return Path(dlc_output_dir)
     else:
