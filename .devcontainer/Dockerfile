@@ -49,3 +49,5 @@ ENV DATABASE_PREFIX neuro_
 
 USER vscode
 CMD bash -c "sudo rm /var/run/docker.pid; sudo dockerd"
+
+ENV LD_LIBRARY_PATH="/lib:/opt/conda/lib"
