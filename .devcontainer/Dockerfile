@@ -42,9 +42,12 @@ ENV DJ_HOST fakeservices.datajoint.io
 ENV DJ_USER root
 ENV DJ_PASS simple
 
-ENV DLC_ROOT_DATA_DIR /workspaces/element-deeplabcut/example_data
-ENV CURRENT_PROJECT_FOLDER from_top_tracking
+ENV DATA_MOUNTPOINT /workspaces/element-deeplabcut/example_data
+ENV DLC_ROOT_DATA_DIR $DATA_MOUNTPOINT/inbox
+ENV DLC_PROCESSED_DATA_DIR $DATA_MOUNTPOINT/outbox
 ENV DATABASE_PREFIX neuro_
 
 USER vscode
 CMD bash -c "sudo rm /var/run/docker.pid; sudo dockerd"
+
+ENV LD_LIBRARY_PATH="/lib:/opt/conda/lib"
