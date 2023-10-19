@@ -5,10 +5,10 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 
 ## [0.2.9] - 2023-10-18
 
-+ Update - DLC project directory (v2) of example data
++ Update - DLC project directory (named v2) of example data
 + Update - The mounting strategy to update the environment variables
-+ Update - Tutorial notebook markdowns, cod and visualizations
-+ Update - Readme pipeline link
++ Update - Tutorial notebook markdowns, code, and visualizations
++ Fix - Rename pipeline link in README
 
 ## [0.2.8] - 2023-08-07
 
