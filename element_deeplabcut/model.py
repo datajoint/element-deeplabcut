@@ -389,8 +389,6 @@ class Model(dj.Manual):
             dlc_config.update(params)
 
         # ---- Get and resolve project path ----
-        import pdb
-        pdb.set_trace()
         project_path = dlc_config_fp.parent
         dlc_config["project_path"] = project_path.as_posix()  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
