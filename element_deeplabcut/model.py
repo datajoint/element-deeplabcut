@@ -377,18 +377,20 @@ class Model(dj.Manual):
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
 
         # handle dlc_config being a yaml file
-        if not isinstance(dlc_config, dict):
-            dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
-            assert dlc_config_fp.exists(), (
-                "dlc_config is neither dict nor filepath" + f"\n Check: {dlc_config_fp}"
-            )
-            if dlc_config_fp.suffix in (".yml", ".yaml"):
-                with open(dlc_config_fp, "rb") as f:
-                    dlc_config = yaml.safe_load(f)
-            if isinstance(params, dict):
-                dlc_config.update(params)
+        #if not isinstance(dlc_config, dict):
+        dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
+        assert dlc_config_fp.exists(), (
+            "dlc_config is not a filepath" + f"\n Check: {dlc_config_fp}"
+        )
+        if dlc_config_fp.suffix in (".yml", ".yaml"):
+            with open(dlc_config_fp, "rb") as f:
+                dlc_config = yaml.safe_load(f)
+        if isinstance(params, dict):
+            dlc_config.update(params)
 
         # ---- Get and resolve project path ----
+        import pdb
+        pdb.set_trace()
         project_path = dlc_config_fp.parent
         dlc_config["project_path"] = project_path.as_posix()  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
