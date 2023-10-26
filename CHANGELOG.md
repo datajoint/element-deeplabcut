@@ -3,6 +3,13 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.9] - 2023-10-18
+
++ Update - DLC project directory (named v2) of example data
++ Update - The mounting strategy to update the environment variables
++ Update - Add a new tutorial notebook
++ Fix - Rename pipeline link in README
+
 ## [0.2.8] - 2023-08-07
 
 + Update - GitHub Actions with new reusable workflows

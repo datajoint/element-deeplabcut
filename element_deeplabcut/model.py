@@ -229,7 +229,7 @@ class BodyPart(dj.Lookup):
         """Returns list of body parts present in dlc config, but not BodyPart table.
 
         Args:
-            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            dlc_config ( varchar(255) ): Path to a config.y*ml.
             verbose (bool): Default True. Print both existing and new items to console.
         """
         if not isinstance(dlc_config, dict):
@@ -257,7 +257,7 @@ class BodyPart(dj.Lookup):
         """Insert all body parts from a config file.
 
         Args:
-            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
+            dlc_config ( varchar(255) ): Path to a config.y*ml.
             descriptions (list): Optional. List of strings describing new body parts.
             prompt (bool): Optional, default True. Prompt for confirmation before insert.
         """
@@ -365,8 +365,8 @@ class Model(dj.Manual):
 
         Args:
             model_name (str): User-friendly name for this model.
-            dlc_config (str or dict):  path to a config.y*ml, or dict of such contents.
-            shuffle (int): Shuffled or not as 1 or 0.
+            dlc_config ( varchar(255) ): Path to a config.y*ml.
+            shuffle (int): Which shuffle of the training dataset.
             trainingsetindex (int): Index of training fraction list in config.yaml.
             model_description (str): Optional. Description of this model.
             model_prefix (str): Optional. Filename prefix used across DLC project
@@ -377,21 +377,18 @@ class Model(dj.Manual):
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
 
         # handle dlc_config being a yaml file
-        if not isinstance(dlc_config, dict):
-            dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
-            assert dlc_config_fp.exists(), (
-                "dlc_config is neither dict nor filepath" + f"\n Check: {dlc_config_fp}"
-            )
-            if dlc_config_fp.suffix in (".yml", ".yaml"):
-                with open(dlc_config_fp, "rb") as f:
-                    dlc_config = yaml.safe_load(f)
-            if isinstance(params, dict):
-                dlc_config.update(params)
+        dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
+        assert dlc_config_fp.exists(), (
+            "dlc_config is not a filepath" + f"\n Check: {dlc_config_fp}"
+        )
+        if dlc_config_fp.suffix in (".yml", ".yaml"):
+            with open(dlc_config_fp, "rb") as f:
+                dlc_config = yaml.safe_load(f)
+        if isinstance(params, dict):
+            dlc_config.update(params)
 
         # ---- Get and resolve project path ----
-        project_path = find_full_path(
-            get_dlc_root_data_dir(), dlc_config.get("project_path", project_path)
-        )
+        project_path = dlc_config_fp.parent
         dlc_config["project_path"] = project_path.as_posix()  # update if different
         root_dir = find_root_directory(get_dlc_root_data_dir(), project_path)
 
@@ -452,11 +449,7 @@ class Model(dj.Manual):
         ):
             print("Canceled insert.")
             return
-        # ---- Save DJ-managed config ----
-        try:
-            _ = dlc_reader.save_yaml(project_path, dlc_config)
-        except PermissionError:
-            pass
+
         # ____ Insert into table ----
         with cls.connection.transaction:
             cls.insert1(model_dict)
