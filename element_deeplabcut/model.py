@@ -377,7 +377,6 @@ class Model(dj.Manual):
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
 
         # handle dlc_config being a yaml file
-        #if not isinstance(dlc_config, dict):
         dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
         assert dlc_config_fp.exists(), (
             "dlc_config is not a filepath" + f"\n Check: {dlc_config_fp}"
