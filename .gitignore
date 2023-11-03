@@ -122,6 +122,7 @@ temp/*
 **/#*#
 **/.#*
 
+# Codespaces
 example_data
 
 #nwb export
