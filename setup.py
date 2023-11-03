@@ -25,7 +25,6 @@ setup(
     scripts=[],
     install_requires=[
         "datajoint>=0.13",
-        "graphviz",
         "pydot",
         "ipykernel",
         "ipywidgets",
