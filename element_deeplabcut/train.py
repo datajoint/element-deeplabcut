@@ -11,8 +11,11 @@ import os
 from pathlib import Path
 from element_interface.utils import find_full_path, dict_to_uuid
 from .readers import dlc_reader
+from . import model
 
 schema = dj.schema()
+model = dj.schema()
+
 _linking_module = None
 
 
@@ -54,8 +57,16 @@ def activate(
     _linking_module = linking_module
 
     # activate
+    model.activate(
+        train_schema_name=model_schema_name,
+        create_schema=create_schema,
+        create_tables=create_tables,
+        add_objects=_linking_module.__dict__,
+    )
+
+    # activate
     schema.activate(
-        train_schema_name,
+        train_schema_name=train_schema_name,
         create_schema=create_schema,
         create_tables=create_tables,
         add_objects=_linking_module.__dict__,
@@ -321,3 +332,16 @@ class ModelTraining(dj.Computed):
         self.insert1(
             {**key, "latest_snapshot": latest_snapshot, "config_template": dlc_config}
         )
+
+        """
+        model.insert_new_model(**key,
+        model_name=dlc_config['task'],
+        dlc_config=dlc_config,
+        shuffle: int,
+        trainingsetindex,
+        project_path=None,
+        model_description="",
+        model_prefix="",
+        paramset_idx: int = None,
+        )
+        """
