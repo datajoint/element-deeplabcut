@@ -18,21 +18,21 @@ tables that can be combined with other Elements to assemble a fully functional p
 
 ## Getting Started
 
-+ Please fork this repository
++ Please fork this repository.
 
-+ Clone the repository to your computer
++ Clone the repository to your computer.
 
   ```bash
   git clone https://github.com/<enter_github_username>/element-deeplabcut
   ```
 
-+ Install with `pip`
++ Install with `pip`:
 
   ```bash
   pip install -e .
   ```
 
-+ [Interactive tutorial on GitHub Codespaces](#interactive-tutorial)
++ [Interactive tutorial on GitHub Codespaces](https://github.com/datajoint/element-deeplabcut#interactive-tutorial)
 
 + [Documentation](https://datajoint.com/docs/elements/element-deeplabcut)
 
