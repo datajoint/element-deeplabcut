@@ -451,12 +451,12 @@ class Model(dj.Manual):
             return
 
         # ____ Insert into table ----
-        with cls.connection.transaction:
-            cls.insert1(model_dict)
-            # Returns array, so check size for unambiguous truth value
-            if BodyPart.extract_new_body_parts(dlc_config, verbose=False).size > 0:
-                BodyPart.insert_from_config(dlc_config, prompt=prompt)
-            cls.BodyPart.insert((model_name, bp) for bp in dlc_config["bodyparts"])
+        # with cls.connection.transaction:
+        cls.insert1(model_dict)
+        # Returns array, so check size for unambiguous truth value
+        if BodyPart.extract_new_body_parts(dlc_config, verbose=False).size > 0:
+            BodyPart.insert_from_config(dlc_config, prompt=prompt)
+        cls.BodyPart.insert((model_name, bp) for bp in dlc_config["bodyparts"])
 
 
 @schema
