@@ -354,7 +354,6 @@ class Model(dj.Manual):
         *,
         shuffle: int,
         trainingsetindex,
-        project_path=None,
         model_description="",
         model_prefix="",
         paramset_idx: int = None,
