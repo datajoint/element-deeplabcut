@@ -27,7 +27,6 @@ setup(
         "datajoint>=0.13",
         "graphviz",
         "pydot",
-        "networkx==2.8.2",
         "ipykernel",
         "ipywidgets",
     ],
