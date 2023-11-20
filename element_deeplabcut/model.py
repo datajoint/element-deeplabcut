@@ -354,7 +354,6 @@ class Model(dj.Manual):
         *,
         shuffle: int,
         trainingsetindex,
-        project_path=None,
         model_description="",
         model_prefix="",
         paramset_idx: int = None,
@@ -450,13 +449,19 @@ class Model(dj.Manual):
             print("Canceled insert.")
             return
 
+        def _do_insert():
+            cls.insert1(model_dict)
+            # Returns array, so check size for unambiguous truth value
+            if BodyPart.extract_new_body_parts(dlc_config, verbose=False).size > 0:
+                BodyPart.insert_from_config(dlc_config, prompt=prompt)
+            cls.BodyPart.insert((model_name, bp) for bp in dlc_config["bodyparts"])
+
         # ____ Insert into table ----
-        # with cls.connection.transaction:
-        cls.insert1(model_dict)
-        # Returns array, so check size for unambiguous truth value
-        if BodyPart.extract_new_body_parts(dlc_config, verbose=False).size > 0:
-            BodyPart.insert_from_config(dlc_config, prompt=prompt)
-        cls.BodyPart.insert((model_name, bp) for bp in dlc_config["bodyparts"])
+        if cls.connection.in_transaction:
+            _do_insert()
+        else:
+            with cls.connection.transaction:
+                _do_insert()
 
 
 @schema
