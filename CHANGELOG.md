@@ -3,6 +3,10 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.10] - 2023-11-20
+
++ Fix - Revert fixing of networkx version in setup 
+
 ## [0.2.9] - 2023-10-18
 
 + Update - DLC project directory (named v2) of example data
