@@ -3,6 +3,10 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.11] - 2023-11-28
+
++ Fix - Modify training to update init_weights path in pose_cfg.yaml
+
 ## [0.2.10] - 2023-11-20
 
 + Fix - Revert fixing of networkx version in setup 
