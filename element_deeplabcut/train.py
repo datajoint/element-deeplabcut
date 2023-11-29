@@ -295,7 +295,7 @@ class ModelTraining(dj.Computed):
 
         if "pose_estimation_tensorflow/models/pretrained" in init_weights_path.as_posix():
             # this is the res_net models, construct new path here
-            init_weights_path = Path(deeplabcut.__file__).parent / "pose_estimation_tensorflow/models/pretrained" / init_weights_path.name
+            init_weights_path = Path(deeplabcut.__path__[0]) / "pose_estimation_tensorflow/models/pretrained" / init_weights_path.name
         else:
             # this is existing snapshot weights, update path here
             init_weights_path = model_train_folder / init_weights_path.name
