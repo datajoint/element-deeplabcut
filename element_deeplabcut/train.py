@@ -322,22 +322,19 @@ class ModelTraining(dj.Computed):
             print("DLC training stopped via Keyboard Interrupt")
 
         snapshots = list(model_train_folder.glob("*index*"))
-        max_modified_time = 0
         # DLC goes by snapshot magnitude when judging 'latest' for evaluation
         # Here, we mean most recently generated
-        for snapshot in snapshots:
-            modified_time = os.path.getmtime(snapshot)
-            if modified_time > max_modified_time:
-                latest_snapshot = int(snapshot.stem[9:])
-                max_modified_time = modified_time
+        
+        # `snapshotindex` refers to the file index of the snapshot generated
+        # The most recent snapshot index will be the number of snapshots
 
         # update snapshotindex in the config
-        dlc_config["snapshotindex"] = latest_snapshot
+        dlc_config["snapshotindex"] = len(snapshots)
         edit_config(
             dlc_cfg_filepath,
-            {"snapshotindex": latest_snapshot},
+            {"snapshotindex": len(snapshots)},
         )
 
         self.insert1(
-            {**key, "latest_snapshot": latest_snapshot, "config_template": dlc_config}
+            {**key, "latest_snapshot": len(snapshots), "config_template": dlc_config}
         )
