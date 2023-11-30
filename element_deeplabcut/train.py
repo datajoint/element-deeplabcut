@@ -326,15 +326,17 @@ class ModelTraining(dj.Computed):
         # Here, we mean most recently generated
         
         # `snapshotindex` refers to the file index of the snapshot generated
-        # The most recent snapshot index will be the number of snapshots
+        # The most recent snapshot index will be the number of snapshots - 1
+        # because it is an index
 
         # update snapshotindex in the config
-        dlc_config["snapshotindex"] = len(snapshots)
+        latest_snapshot = len(snapshots)-1
+        dlc_config["snapshotindex"] = latest_snapshot
         edit_config(
             dlc_cfg_filepath,
-            {"snapshotindex": len(snapshots)},
+            {"snapshotindex": latest_snapshot},
         )
 
         self.insert1(
-            {**key, "latest_snapshot": len(snapshots), "config_template": dlc_config}
+            {**key, "latest_snapshot": latest_snapshot, "config_template": dlc_config}
         )
