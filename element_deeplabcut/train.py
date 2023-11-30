@@ -321,23 +321,28 @@ class ModelTraining(dj.Computed):
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
             print("DLC training stopped via Keyboard Interrupt")
 
-        snapshots = list(model_train_folder.glob("*index*"))
+        snapshots = sorted(list(model_train_folder.glob("*index*")))
         max_modified_time = 0
         # DLC goes by snapshot magnitude when judging 'latest' for evaluation
         # Here, we mean most recently generated
         for snapshot in snapshots:
             modified_time = os.path.getmtime(snapshot)
             if modified_time > max_modified_time:
-                latest_snapshot = int(snapshot.stem[9:])
+                latest_snapshot_file = snapshot
+                latest_snapshot = int(latest_snapshot_file.stem[9:])
                 max_modified_time = modified_time
 
         # update snapshotindex in the config
-        dlc_config["snapshotindex"] = latest_snapshot
+        snapshotindex = snapshots.index(latest_snapshot_file)
+        
+        dlc_config["snapshotindex"] = snapshotindex
         edit_config(
             dlc_cfg_filepath,
-            {"snapshotindex": latest_snapshot},
+            {"snapshotindex": snapshotindex},
         )
 
         self.insert1(
             {**key, "latest_snapshot": latest_snapshot, "config_template": dlc_config}
         )
+
+
