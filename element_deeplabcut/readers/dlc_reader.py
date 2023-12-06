@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import pickle
-import ruamel.yaml as yaml
+from ruamel.yaml import YAML
 from element_interface.utils import find_root_directory, dict_to_uuid
 from .. import model
 from ..model import get_dlc_root_data_dir
@@ -145,7 +145,8 @@ class PoseEstimation:
         """json-structured config.yaml file contents"""
         if self._yml is None:
             with open(self.yml_path, "rb") as f:
-                self._yml = yaml.safe_load(f)
+                yaml = YAML(typ="safe", pure=True)
+                self._yml = yaml.load(f)
         return self._yml
 
     @property
