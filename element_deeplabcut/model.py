@@ -307,7 +307,7 @@ class Model(dj.Manual):
         config_template (longblob): Dictionary of the config for analyze_videos().
         project_path ( varchar(255) ): DLC's project_path in config relative to root.
         model_prefix ( varchar(32) ): Optional. Prefix for model files.
-        model_description ( varchar(1000) ): Optional. User-entered description.
+        model_description ( varchar(300) ): Optional. User-entered description.
         TrainingParamSet (foreign key): Optional. Training parameters primary key.
 
     Note:
