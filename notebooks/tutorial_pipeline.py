@@ -1,3 +1,4 @@
+import os
 import datajoint as dj
 from collections import abc
 from element_lab import lab
