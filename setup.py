@@ -24,7 +24,7 @@ setup(
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
     install_requires=[
-        "datajoint>=0.13",
+        "datajoint>=0.13.0",
         "graphviz",
         "pydot",
         "ipykernel",
