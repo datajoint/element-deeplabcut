@@ -145,7 +145,7 @@ class PoseEstimation:
         """json-structured config.yaml file contents"""
         if self._yml is None:
             with open(self.yml_path, "rb") as f:
-                yaml_loader = yaml.YAML(typ='safe', pure=True)
+                yaml_loader = yaml.YAML(typ="safe", pure=True)
                 self._yml = yaml_loader.load(f)
         return self._yml
 
