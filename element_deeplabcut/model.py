@@ -7,7 +7,7 @@ import datajoint as dj
 import os
 import cv2
 import csv
-import ruamel.yaml as yaml
+from ruamel.yaml import YAML
 import inspect
 import importlib
 import numpy as np
@@ -239,6 +239,7 @@ class BodyPart(dj.Lookup):
                 ".yaml",
             ), f"dlc_config is neither dict nor filepath\n Check: {dlc_config_fp}"
             if dlc_config_fp.suffix in (".yml", ".yaml"):
+                yaml = YAML(typ="safe", pure=True)
                 with open(dlc_config_fp, "rb") as f:
                     dlc_config = yaml.load(f)
         # -- Check and insert new BodyPart --
@@ -381,6 +382,7 @@ class Model(dj.Manual):
             "dlc_config is not a filepath" + f"\n Check: {dlc_config_fp}"
         )
         if dlc_config_fp.suffix in (".yml", ".yaml"):
+            yaml = YAML(typ="safe", pure=True)
             with open(dlc_config_fp, "rb") as f:
                 dlc_config = yaml.load(f)
         if isinstance(params, dict):
