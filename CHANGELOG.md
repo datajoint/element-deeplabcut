@@ -3,6 +3,14 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.11] - 2023-01-04
+
++ Fix - docstring typo
++ Fix - `dj.config()` setup moved to `tutorial_pipeline.py` instead of `__init__.py`
++ Bugfix - Resolved AttributeError from the latest update of the YAML dependency
++ Update - Flowchart images to increase consistency with other DataJoint Elements
++ Update - Elements installed directly from GitHub instead of PyPI
+
 ## [0.2.10] - 2023-11-20
 
 + Fix - Revert fixing of networkx version in setup 
