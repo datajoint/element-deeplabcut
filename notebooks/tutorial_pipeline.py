@@ -1,3 +1,4 @@
+import os
 import datajoint as dj
 from collections import abc
 from element_lab import lab
@@ -8,15 +9,23 @@ from element_deeplabcut import train, model
 from element_animal.subject import Subject
 from element_lab.lab import Source, Lab, Protocol, User, Project
 
-__all__ = [
-    "Subject",
-    "Source",
-    "Lab",
-    "Protocol",
-    "User",
-    "Project",
-    "Session",
-]
+
+if "custom" not in dj.config:
+    dj.config["custom"] = {}
+
+# overwrite dj.config['custom'] values with environment variables if available
+
+dj.config["custom"]["database.prefix"] = os.getenv(
+    "DATABASE_PREFIX", dj.config["custom"].get("database.prefix", "")
+)
+
+dj.config["custom"]["dlc_root_data_dir"] = os.getenv(
+    "DLC_ROOT_DATA_DIR", dj.config["custom"].get("dlc_root_data_dir", "")
+)
+
+dj.config["custom"]["dlc_processed_data_dir"] = os.getenv(
+    "DLC_PROCESSED_DATA_DIR", dj.config["custom"].get("dlc_processed_data_dir", "")
+)
 
 if "custom" not in dj.config:
     dj.config["custom"] = {}
@@ -24,6 +33,7 @@ if "custom" not in dj.config:
 db_prefix = dj.config["custom"].get("database.prefix", "")
 
 
+# Declare functions for retrieving data
 def get_dlc_root_data_dir() -> list:
     """Returns a list of root directories for Element DeepLabCut"""
     dlc_root_dirs = dj.config.get("custom", {}).get("dlc_root_data_dir")
@@ -46,17 +56,23 @@ def get_dlc_processed_data_dir() -> str:
         return None
 
 
-# Activate "lab", "subject", "session" schema -------------
+__all__ = [
+    "Subject",
+    "Source",
+    "Lab",
+    "Protocol",
+    "User",
+    "Project",
+    "Session",
+]
+
+# Activate schemas -------------
 
 lab.activate(db_prefix + "lab")
-
 subject.activate(db_prefix + "subject", linking_module=__name__)
-
 Experimenter = lab.User
 Session = session.Session
 session.activate(db_prefix + "session", linking_module=__name__)
-
-# Activate equipment table ------------------------------------
 
 
 @lab.schema
