@@ -7,11 +7,12 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 import datajoint as dj
 import inspect
 import importlib
-import os
+import re
 from pathlib import Path
+import yaml
+
 from element_interface.utils import find_full_path, dict_to_uuid
 from .readers import dlc_reader
-import yaml
 
 schema = dj.schema()
 _linking_module = None
@@ -335,15 +336,16 @@ class ModelTraining(dj.Computed):
         except KeyboardInterrupt:  # Instructions indicate to train until interrupt
             print("DLC training stopped via Keyboard Interrupt")
 
-        snapshots = sorted(list(model_train_folder.glob("*index*")))
-        max_modified_time = 0
         # DLC goes by snapshot magnitude when judging 'latest' for evaluation
         # Here, we mean most recently generated
+        snapshots = sorted(model_train_folder.glob("snapshot*.index"))
+        max_modified_time = 0
         for snapshot in snapshots:
-            modified_time = os.path.getmtime(snapshot)
+            modified_time = snapshot.stat().st_mtime
+            print(modified_time)
             if modified_time > max_modified_time:
                 latest_snapshot_file = snapshot
-                latest_snapshot = int(latest_snapshot_file.stem[9:])
+                latest_snapshot = int(re.search(r"(\d+)\.index", latest_snapshot_file.name).group(1))
                 max_modified_time = modified_time
 
         # update snapshotindex in the config
