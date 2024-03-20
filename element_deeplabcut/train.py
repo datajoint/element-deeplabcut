@@ -342,7 +342,6 @@ class ModelTraining(dj.Computed):
         max_modified_time = 0
         for snapshot in snapshots:
             modified_time = snapshot.stat().st_mtime
-            print(modified_time)
             if modified_time > max_modified_time:
                 latest_snapshot_file = snapshot
                 latest_snapshot = int(re.search(r"(\d+)\.index", latest_snapshot_file.name).group(1))
