@@ -45,5 +45,6 @@ setup(
             "element-session @ git+https://github.com/datajoint/element-session.git",
             "element-interface @ git+https://github.com/datajoint/element-interface.git",
         ],
+        "tests": ["pytest", "pytest-cov", "shutils"],
     },
 )
