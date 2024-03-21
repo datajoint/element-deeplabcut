@@ -36,13 +36,17 @@ def pipeline():
         "lab": pipeline.lab,
         "subject": pipeline.subject,
         "session": pipeline.session,
-        "train": pipeline.train,
         "model": pipeline.model,
+        "train": pipeline.train,
         "Device": pipeline.Device
     }
 
     if _tear_down:
-        pipeline["subject"].Subject.delete()
+        pipeline.model.schema.drop()
+        pipeline.train.schema.drop()
+        pipeline.session.schema.drop()
+        pipeline.subject.schema.drop()
+        pipeline.lab.schema.drop()
 
 
 @pytest.fixture(scope="session")
@@ -82,14 +86,14 @@ def insert_upstreams(pipeline):
     ]
 
     model.VideoRecording.File.insert(
-        {**recording_key, "file_id": v_idx, "file_path": Path(f)}
-        for v_idx, f in enumerate(video_files)
+        [{**recording_key, "file_id": v_idx, "file_path": Path(f)}
+        for v_idx, f in enumerate(video_files)], skip_duplicates=True
     )
 
     yield
 
     if _tear_down:
-        pipeline.subject.Subject.delete()
+        subject.Subject.delete()
 
 
 @pytest.fixture(scope="session")
@@ -107,15 +111,22 @@ def recording_info(pipeline, insert_upstreams):
 def insert_dlc_model(pipeline):
     model = pipeline["model"]
 
-    config_file_rel = "from_top_tracking-DataJoint-2023-10-11/config.yaml"
-    model.Model.insert_new_model(
-    model_name="from_top_tracking_model_test",
-    dlc_config=config_file_rel,
-    shuffle=1,
-    trainingsetindex=0,
-    model_description="Model in example data: from_top_tracking model",
-    prompt=False
-)
+    if not model.Model & {"model_name": "from_top_tracking_model_test"}:
+        config_file_rel = "from_top_tracking-DataJoint-2023-10-11/config.yaml"
+
+        model.Model.insert_new_model(
+        model_name="from_top_tracking_model_test",
+        dlc_config=config_file_rel,
+        shuffle=1,
+        trainingsetindex=0,
+        model_description="Model in example data: from_top_tracking model",
+        prompt=False
+    )
+
+    yield
+
+    if _tear_down:
+        model.Model.delete()
     
 
 @pytest.fixture(scope="session")
