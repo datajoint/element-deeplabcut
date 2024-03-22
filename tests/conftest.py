@@ -38,7 +38,7 @@ def pipeline():
         "session": pipeline.session,
         "model": pipeline.model,
         "train": pipeline.train,
-        "Device": pipeline.Device
+        "Device": pipeline.Device,
     }
 
     if _tear_down:
@@ -80,14 +80,17 @@ def insert_upstreams(pipeline):
     model.VideoRecording.insert1(
         {**recording_key, "device": "Camera1"}, skip_duplicates=True
     )
-    
+
     video_files = [
-    "./example_data/inbox/from_top_tracking-DataJoint-2023-10-11/videos/train1.mp4"
+        "./example_data/inbox/from_top_tracking-DataJoint-2023-10-11/videos/train1.mp4"
     ]
 
     model.VideoRecording.File.insert(
-        [{**recording_key, "file_id": v_idx, "file_path": Path(f)}
-        for v_idx, f in enumerate(video_files)], skip_duplicates=True
+        [
+            {**recording_key, "file_id": v_idx, "file_path": Path(f)}
+            for v_idx, f in enumerate(video_files)
+        ],
+        skip_duplicates=True,
     )
 
     yield
@@ -115,19 +118,19 @@ def insert_dlc_model(pipeline):
         config_file_rel = "from_top_tracking-DataJoint-2023-10-11/config.yaml"
 
         model.Model.insert_new_model(
-        model_name="from_top_tracking_model_test",
-        dlc_config=config_file_rel,
-        shuffle=1,
-        trainingsetindex=0,
-        model_description="Model in example data: from_top_tracking model",
-        prompt=False
-    )
+            model_name="from_top_tracking_model_test",
+            dlc_config=config_file_rel,
+            shuffle=1,
+            trainingsetindex=0,
+            model_description="Model in example data: from_top_tracking model",
+            prompt=False,
+        )
 
     yield
 
     if _tear_down:
         model.Model.delete()
-    
+
 
 @pytest.fixture(scope="session")
 def insert_pose_estimation_task(pipeline, recording_info, insert_dlc_model):
@@ -139,7 +142,7 @@ def insert_pose_estimation_task(pipeline, recording_info, insert_dlc_model):
         "recording_id": "1",
     }
     task_key = {**recording_key, "model_name": "from_top_tracking_model_test"}
-    
+
     model.PoseEstimationTask.insert1(
         {
             **task_key,
