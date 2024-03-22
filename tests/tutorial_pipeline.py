@@ -56,14 +56,7 @@ def get_dlc_processed_data_dir() -> str:
         return None
 
 
-__all__ = [
-    "lab",
-    "subject",
-    "session",
-    "train",
-    "model",
-    "Device"
-]
+__all__ = ["lab", "subject", "session", "train", "model", "Device"]
 
 # Activate schemas -------------
 
