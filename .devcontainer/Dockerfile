@@ -33,7 +33,7 @@ RUN \
     # pipeline dependencies
     apt-get update && \
     apt-get install -y gcc ffmpeg graphviz && \
-    pip install --no-cache-dir -e /tmp/element-deeplabcut[elements,dlc_default] && \
+    pip install --no-cache-dir -e /tmp/element-deeplabcut[elements,dlc_default,tests] && \
     # clean up
     rm -rf /tmp/element-deeplabcut/ && \
     apt-get clean

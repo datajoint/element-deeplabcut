@@ -57,13 +57,12 @@ def get_dlc_processed_data_dir() -> str:
 
 
 __all__ = [
-    "Subject",
-    "Source",
-    "Lab",
-    "Protocol",
-    "User",
-    "Project",
-    "Session",
+    "lab",
+    "subject",
+    "session",
+    "train",
+    "model",
+    "Device"
 ]
 
 # Activate schemas -------------
