@@ -3,6 +3,7 @@ Code adapted from the Mathis Lab
 MIT License Copyright (c) 2022 Mackenzie Mathis
 DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 """
+
 import datajoint as dj
 import os
 import cv2
@@ -374,6 +375,7 @@ class Model(dj.Manual):
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
         """
+
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
 
         # handle dlc_config being a yaml file

@@ -3,6 +3,7 @@ Portions of code adapted from DeepLabCut/DLC2NWB
 MIT License Copyright (c) 2022 Alexander Mathis
 DataJoint export methods for DeepLabCut 2.x
 """
+
 import logging
 import warnings
 from pathlib import Path
@@ -10,6 +11,7 @@ from collections import abc
 from pynwb import NWBHDF5IO
 from hdmf.build.warnings import DtypeConversionWarning
 from .. import model
+
 
 try:  # Not all users will want NWB export, so dependency not in requirements.
     from dlc2nwb.utils import convert_h5_to_nwb, write_subject_to_nwb
