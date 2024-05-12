@@ -375,6 +375,7 @@ class Model(dj.Manual):
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
         """
+
         from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
 
         # handle dlc_config being a yaml file
