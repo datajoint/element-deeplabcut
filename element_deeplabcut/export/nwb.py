@@ -3,6 +3,7 @@ Portions of code adapted from DeepLabCut/DLC2NWB
 MIT License Copyright (c) 2022 Alexander Mathis
 DataJoint export methods for DeepLabCut 2.x
 """
+
 import logging
 import warnings
 from pathlib import Path
