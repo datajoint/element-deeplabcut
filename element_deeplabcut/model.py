@@ -710,12 +710,14 @@ class PoseEstimation(dj.Computed):
         )
 
         if not output_dir:
-            output_dir = PoseEstimationTask.infer_output_dir(key, relative=True, mkdir=True)
+            output_dir = PoseEstimationTask.infer_output_dir(
+                key, relative=True, mkdir=True
+            )
             PoseEstimationTask.update1(
                 {**key, "pose_estimation_output_dir": output_dir.as_posix()}
             )
-        
-        try: 
+
+        try:
             output_dir = find_full_path(get_dlc_root_data_dir(), output_dir).as_posix()
         except FileNotFoundError as e:
             if task_mode == "trigger":
