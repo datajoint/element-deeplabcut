@@ -557,9 +557,9 @@ class PoseEstimationTask(dj.Manual):
     Attributes:
         VideoRecording (foreign key): Video recording key.
         Model (foreign key): Model name.
-        task_mode (load or trigger): Optional. Default load. Or trigger computation.
-        pose_estimation_output_dir ( varchar(255) ): Optional. Output dir relative to
-                                                     get_dlc_root_data_dir.
+        task_mode (load or trigger): One of 'load' (load computed analysis results) or 'trigger' (trigger computation).
+        pose_estimation_output_dir (str): Output directory of pose estimation results relative to
+                                                     the root data directory.
         pose_estimation_params (longblob): Optional. Params for DLC's analyze_videos
                                            params, if not default."""
 
@@ -567,8 +567,8 @@ class PoseEstimationTask(dj.Manual):
     -> VideoRecording                           # Session -> Recording + File part table
     -> Model                                    # Must specify a DLC project_path
     ---
+    pose_estimation_output_dir: varchar(255)    # Output directory of pose estimation results relative to the root directory
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
-    pose_estimation_output_dir='': varchar(255) # output dir relative to the root dir
     pose_estimation_params=null  : longblob     # analyze_videos params, if not default
     """
 
@@ -709,7 +709,21 @@ class PoseEstimation(dj.Computed):
             "task_mode", "pose_estimation_output_dir"
         )
 
-        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+        if not output_dir:
+            output_dir = PoseEstimationTask.infer_output_dir(key, relative=True, mkdir=True)
+            PoseEstimationTask.update1(
+                {**key, "pose_estimation_output_dir": output_dir.as_posix()}
+            )
+        
+        try: 
+            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir).as_posix()
+        except FileNotFoundError as e:
+            if task_mode == "trigger":
+                processed_dir = Path(get_dlc_processed_data_dir())
+                output_dir = processed_dir / output_dir
+                output_dir.mkdir(parents=True, exist_ok=True)
+            else:
+                raise e
 
         # Triger PoseEstimation
         if task_mode == "trigger":

@@ -3,6 +3,10 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.13] - 2024-05-30
+
++ Add - `infer_output_dir` function to `PoseEstimation` table.
+
 ## [0.2.12] - 2024-03-22
 
 + Add - pytest
@@ -103,6 +107,10 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
   graciously provided by the Mathis Lab.
 + Add - Support for 2d single-animal models
 
+[0.2.13]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.13
+[0.2.12]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.12
+[0.2.11]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.11
+[0.2.10]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.10
 [0.2.9]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.9
 [0.2.8]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.8
 [0.2.7]: https://github.com/datajoint/element-deeplabcut/releases/tag/0.2.7
