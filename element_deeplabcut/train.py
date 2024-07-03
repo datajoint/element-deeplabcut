@@ -344,7 +344,9 @@ class ModelTraining(dj.Computed):
             modified_time = snapshot.stat().st_mtime
             if modified_time > max_modified_time:
                 latest_snapshot_file = snapshot
-                latest_snapshot = int(re.search(r"(\d+)\.index", latest_snapshot_file.name).group(1))
+                latest_snapshot = int(
+                    re.search(r"(\d+)\.index", latest_snapshot_file.name).group(1)
+                )
                 max_modified_time = modified_time
 
         # update snapshotindex in the config
