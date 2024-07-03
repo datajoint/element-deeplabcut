@@ -708,7 +708,14 @@ class PoseEstimation(dj.Computed):
         task_mode, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_output_dir"
         )
-
+        if not output_dir:
+            output_dir = PoseEstimationTask.infer_output_dir(
+                key, relative=True, mkdir=True
+            )
+            # update pose_estimation_output_dir
+            PoseEstimationTask.update1(
+                {**key, "pose_estimation_output_dir": output_dir.as_posix()}
+            )
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
 
         # Triger PoseEstimation
