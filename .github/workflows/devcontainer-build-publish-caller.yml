@@ -7,4 +7,4 @@ jobs:
     uses: datajoint/.github/.github/workflows/devcontainer-build-publish.yaml@main
     secrets:
       DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
-      DOCKERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
+      DOCKERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN_FOR_ELEMENTS}}
