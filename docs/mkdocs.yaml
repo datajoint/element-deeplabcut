@@ -7,16 +7,16 @@ repo_name: datajoint/element-deeplabcut
 nav:
   - Element DeepLabCut: index.md
   - Concepts: concepts.md
-  - Tutorials: 
-    - Overview: tutorials/index.md
-    - Data Download: tutorials/00-DataDownload_Optional.ipynb
-    - Configure: tutorials/01-Configure.ipynb
-    - Workflow Structure: tutorials/02-WorkflowStructure_Optional.ipynb
-    - Process: tutorials/03-Process.ipynb
-    - Automate: tutorials/04-Automate_Optional.ipynb
-    - Visualization: tutorials/05-Visualization_Optional.ipynb
-    - Drop Schemas: tutorials/06-Drop_Optional.ipynb
-    - Alternate Dataset: tutorials/09-AlternateDataset.ipynb
+  - Tutorials:
+      - Overview: tutorials/index.md
+      - Data Download: tutorials/00-DataDownload_Optional.ipynb
+      - Configure: tutorials/01-Configure.ipynb
+      - Workflow Structure: tutorials/02-WorkflowStructure_Optional.ipynb
+      - Process: tutorials/03-Process.ipynb
+      - Automate: tutorials/04-Automate_Optional.ipynb
+      - Visualization: tutorials/05-Visualization_Optional.ipynb
+      - Drop Schemas: tutorials/06-Drop_Optional.ipynb
+      - Alternate Dataset: tutorials/09-AlternateDataset.ipynb
   - Citation: citation.md
   - API: api/ # defer to gen-files + literate-nav
   - Changelog: changelog.md
@@ -25,14 +25,14 @@ nav:
 # Markdown in mkdocs
 # 01. Redering concatenates across single line breaks. This means...
 #     A. We have to be careful to add extra line breaks around paragraphs,
-#        including between the end of a pgf and the beginnign of bullets.
+#        including between the end of a pgf and the beginning of bullets.
 #     B. We can use hard wrapping to make github reviews easier to read.
 #        VSCode Rewrap extension offers a keyboard shortcut for hard wrap
 #        at the ruler, but don't add breaks in [multiword links](example.com)
 # 02. Instead of designating codeblocks with bash, use console. For example..
 #     ```console
 #     cd ../my_dir
-#     ``` 
+#     ```
 # 03. Links across docs should ...
 #     A. Not involve line breaks.
 #     B. Use relative paths to docs in the same repo
@@ -52,15 +52,15 @@ nav:
 #     HOST_UID=$(id -u) docker compose -f docs/docker-compose.yaml up --build
 #     ```
 # 02. The API section will pull docstrings.
-#     A. Follow google styleguide e.g., 
+#     A. Follow google styleguide e.g.,
 #        https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 #        With typing suggestions: https://docs.python.org/3/library/typing.html
 #     B. To pull a specific workflow fork, change ./docs/src/api/make_pages.py#L19
 # 03. To see your fork of the workflow-{element} in this render, change the
 #     URL in ./docs/src/api/make_pages.py#L19 to your fork.
-# 04. To deploy this site on your fork, 
+# 04. To deploy this site on your fork,
 #     A. declare a branch called gh-pages
-#     B. go to the your fork > settings > pages 
+#     B. go to the your fork > settings > pages
 #     C. direct pages to render from the gh-pages branch at root
 #     D. push a tag to your fork with the format test*.*.*
 #
@@ -90,7 +90,6 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-
 plugins:
   - markdownextradata: {}
   - search
@@ -98,13 +97,14 @@ plugins:
       default_handler: python
       handlers:
         python:
+          paths: [../]
           options:
-            members_order: source      
+            members_order: source
             group_by_category: false
             line_length: 88
   - gen-files:
       scripts:
-      - ./src/api/make_pages.py
+        - ./src/api/make_pages.py
   - literate-nav:
       nav_file: navigation.md
   - exclude-search:
@@ -112,10 +112,11 @@ plugins:
         - "*/navigation.md"
   - mkdocs-jupyter:
       ignore_h1_titles: True
-      ignore: ["*make_pages.py"]
+      include: ["*.ipynb"]
   - section-index
 markdown_extensions:
   - attr_list
+  - md_in_html
   - toc:
       permalink: true
   - pymdownx.emoji:
@@ -134,6 +135,8 @@ markdown_extensions:
       linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.magiclink # Displays bare URLs as links
   - pymdownx.tasklist: # Renders check boxes in tasks lists
       custom_checkbox: true
@@ -170,9 +173,11 @@ extra:
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/channel/UCdeCuFOTCXlVMRzh6Wk-lGg
       name: YouTube
-
 extra_css:
   - assets/stylesheets/extra.css
 
 extra_javascript:
-  - https://js-na1.hs-scripts.com/23133402.js  # HubSpot chatbot
+  - https://js-na1.hs-scripts.com/23133402.js # HubSpot chatbot
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
