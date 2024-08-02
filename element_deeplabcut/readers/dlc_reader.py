@@ -6,8 +6,6 @@ from pathlib import Path
 import pickle
 from ruamel.yaml import YAML
 from element_interface.utils import find_root_directory, dict_to_uuid
-from .. import model
-from ..model import get_dlc_root_data_dir
 from datajoint.errors import DataJointError
 
 logger = logging.getLogger("datajoint")
@@ -337,6 +335,8 @@ def do_pose_estimation(
     for video_filepath in video_filepaths:
         if video_filepath not in dlc_config["video_sets"]:
             try:
+                from .. import model
+
                 px_width, px_height = (model.RecordingInfo & key).fetch1(
                     "px_width", "px_height"
                 )
