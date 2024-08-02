@@ -6,7 +6,6 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 
 import datajoint as dj
 import os
-import cv2
 import csv
 from ruamel.yaml import YAML
 import inspect
@@ -177,6 +176,8 @@ class RecordingInfo(dj.Imported):
 
     def make(self, key):
         """Populates table with video metadata using CV2."""
+        import cv2
+
         file_paths = (VideoRecording.File & key).fetch("file_path")
 
         nframes = 0
