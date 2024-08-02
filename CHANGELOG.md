@@ -3,6 +3,10 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.2.13] - 2024-07-03
+
++ Fix - apply formatting with `black` across the repository
+
 ## [0.2.12] - 2024-03-22
 
 + Add - pytest
