@@ -705,7 +705,7 @@ class PoseEstimation(dj.Computed):
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
         # ID model and directories
-        dlc_model = (Model & key).fetch1()
+        dlc_model_ = (Model & key).fetch1()
         task_mode, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_output_dir"
         )
@@ -726,7 +726,7 @@ class PoseEstimation(dj.Computed):
             # - video_filepaths: full paths to the video files for inference
             # - analyze_video_params: optional parameters to analyze video
             project_path = find_full_path(
-                get_dlc_root_data_dir(), dlc_model["project_path"]
+                get_dlc_root_data_dir(), dlc_model_["project_path"]
             )
             video_relpaths = list((VideoRecording.File & key).fetch("file_path"))
             video_filepaths = [
@@ -740,9 +740,9 @@ class PoseEstimation(dj.Computed):
             @memoized_result(
                 uniqueness_dict={
                     **analyze_video_params,
-                    "project_path": dlc_model["project_path"],
-                    "shuffle": dlc_model["shuffle"],
-                    "trainingsetindex": dlc_model["trainingsetindex"],
+                    "project_path": dlc_model_["project_path"],
+                    "shuffle": dlc_model_["shuffle"],
+                    "trainingsetindex": dlc_model_["trainingsetindex"],
                     "video_filepaths": video_relpaths,
                 },
                 output_directory=output_dir,
@@ -751,7 +751,7 @@ class PoseEstimation(dj.Computed):
                 dlc_reader.do_pose_estimation(
                     key,
                     video_filepaths,
-                    dlc_model,
+                    dlc_model_,
                     project_path,
                     output_dir,
                     **analyze_video_params,
