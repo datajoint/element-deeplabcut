@@ -705,7 +705,7 @@ class PoseEstimation(dj.Computed):
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
         # ID model and directories
-        dlc_model = (Model & key).fetch1()
+        dlc_model_ = (Model & key).fetch1()
         task_mode, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_output_dir"
         )
@@ -726,7 +726,7 @@ class PoseEstimation(dj.Computed):
             # - video_filepaths: full paths to the video files for inference
             # - analyze_video_params: optional parameters to analyze video
             project_path = find_full_path(
-                get_dlc_root_data_dir(), dlc_model["project_path"]
+                get_dlc_root_data_dir(), dlc_model_["project_path"]
             )
             video_relpaths = list((VideoRecording.File & key).fetch("file_path"))
             video_filepaths = [
@@ -740,9 +740,9 @@ class PoseEstimation(dj.Computed):
             @memoized_result(
                 uniqueness_dict={
                     **analyze_video_params,
-                    "project_path": dlc_model["project_path"],
-                    "shuffle": dlc_model["shuffle"],
-                    "trainingsetindex": dlc_model["trainingsetindex"],
+                    "project_path": dlc_model_["project_path"],
+                    "shuffle": dlc_model_["shuffle"],
+                    "trainingsetindex": dlc_model_["trainingsetindex"],
                     "video_filepaths": video_relpaths,
                 },
                 output_directory=output_dir,
@@ -751,7 +751,7 @@ class PoseEstimation(dj.Computed):
                 dlc_reader.do_pose_estimation(
                     key,
                     video_filepaths,
-                    dlc_model,
+                    dlc_model_,
                     project_path,
                     output_dir,
                     **analyze_video_params,
@@ -817,6 +817,76 @@ class PoseEstimation(dj.Computed):
             frame = pd.DataFrame(a, columns=pdindex, index=range(0, a.shape[0]))
             df = pd.concat([df, frame], axis=1)
         return df
+
+
+@schema
+class PoseEstimationReport(dj.Computed):
+    definition = """
+    -> PoseEstimation
+    """
+
+    class LabeledVideo(dj.Part):
+        definition = """
+        -> master
+        -> VideoRecording.File
+        ---
+        labeled_video_path: varchar(255)
+        """
+
+    @property
+    def key_source(self):
+        return PoseEstimation & RecordingInfo
+
+    def make(self, key):
+        import deeplabcut
+
+        # some default settings
+        outputframerate = 5  # final labeled video will be 5 Hz
+
+        dlc_model_ = (Model & key).fetch1()
+        fps, nframes = (RecordingInfo & key).fetch1("fps", "nframes")
+        output_dir = (PoseEstimationTask & key).fetch1("pose_estimation_output_dir")
+        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+
+        project_path = find_full_path(
+            get_dlc_root_data_dir(), dlc_model_["project_path"]
+        )
+        dlc_config = project_path / "dj_dlc_config.yaml"
+
+        entries = []
+        for vkey in (VideoRecording.File & key).fetch("KEY"):
+            video_file = (VideoRecording.File & vkey).fetch1("file_path")
+            video_file = find_full_path(get_dlc_root_data_dir(), video_file)
+
+            deeplabcut.create_labeled_video(
+                config=dlc_config.as_posix(),
+                videos=[video_file.as_posix()],
+                shuffle=dlc_model_["shuffle"],
+                trainingsetindex=dlc_model_["trainingsetindex"],
+                destfolder=output_dir,
+                Frames2plot=np.arange(0, nframes, int(fps / outputframerate)),
+                outputframerate=outputframerate,
+                displaycropped=True,
+                draw_skeleton=True,
+                save_frames=False,
+            )
+
+            labeled_video_path = next(
+                output_dir.glob(f"{video_file.stem}*_labeled.mp4")
+            )
+
+            entries.append(
+                {
+                    **key,
+                    **vkey,
+                    "labeled_video_path": labeled_video_path.relative_to(
+                        get_dlc_processed_data_dir()
+                    ).as_posix(),
+                }
+            )
+
+        self.insert1(key)
+        self.LabeledVideo.insert(entries)
 
 
 def str_to_bool(value) -> bool:
