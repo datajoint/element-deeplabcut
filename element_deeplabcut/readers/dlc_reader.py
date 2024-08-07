@@ -332,6 +332,7 @@ def do_pose_estimation(
     dlc_config["project_path"] = dlc_project_path.as_posix()
 
     # ---- Add current video to config ---
+    # FIXME: I don't think the code block below is necessary
     for video_filepath in video_filepaths:
         if video_filepath not in dlc_config["video_sets"]:
             try:

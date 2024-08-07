@@ -15,7 +15,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
-from element_interface.utils import find_full_path, find_root_directory
+from element_interface.utils import find_full_path, find_root_directory, memoized_result
 from .readers import dlc_reader
 
 schema = dj.schema()
@@ -728,22 +728,36 @@ class PoseEstimation(dj.Computed):
             project_path = find_full_path(
                 get_dlc_root_data_dir(), dlc_model["project_path"]
             )
+            video_relpaths = list((VideoRecording.File & key).fetch("file_path"))
             video_filepaths = [
                 find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                for fp in (VideoRecording.File & key).fetch("file_path")
+                for fp in video_relpaths
             ]
             analyze_video_params = (PoseEstimationTask & key).fetch1(
                 "pose_estimation_params"
             ) or {}
 
-            dlc_reader.do_pose_estimation(
-                key,
-                video_filepaths,
-                dlc_model,
-                project_path,
-                output_dir,
-                **analyze_video_params,
+            @memoized_result(
+                uniqueness_dict={
+                    **analyze_video_params,
+                    "project_path": dlc_model["project_path"],
+                    "shuffle": dlc_model["shuffle"],
+                    "trainingsetindex": dlc_model["trainingsetindex"],
+                    "video_filepaths": video_relpaths,
+                },
+                output_directory=output_dir,
             )
+            def do_pose_estimation():
+                dlc_reader.do_pose_estimation(
+                    key,
+                    video_filepaths,
+                    dlc_model,
+                    project_path,
+                    output_dir,
+                    **analyze_video_params,
+                )
+
+            do_pose_estimation()
 
         dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time).strftime(
