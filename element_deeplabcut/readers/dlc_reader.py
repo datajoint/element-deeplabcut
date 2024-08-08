@@ -324,6 +324,12 @@ def do_pose_estimation(
             resulting in constant memory footprint.
 
     """
+    # this function should no longer be used, throw a deprecation warning
+    logger.warning(
+        "This function is deprecated and will be removed in a future release. "
+        + "Its usage is now incorporated into model.PoseEstimation's `make` function"
+    )
+
     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
     # ---- Build and save DLC configuration (yaml) file ----
@@ -332,6 +338,7 @@ def do_pose_estimation(
     dlc_config["project_path"] = dlc_project_path.as_posix()
 
     # ---- Add current video to config ---
+    # FIXME: I don't think the code block below is necessary
     for video_filepath in video_filepaths:
         if video_filepath not in dlc_config["video_sets"]:
             try:
