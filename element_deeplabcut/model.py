@@ -327,8 +327,7 @@ class Model(dj.Manual):
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
     shuffle              : int          # Shuffle (1) or not (0)
     trainingsetindex     : int          # Index of training fraction list in config.yaml
-    engine='tensorflow'  : varchar(16)  # DLC engine
-    unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex, engine)
+    unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
     scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
