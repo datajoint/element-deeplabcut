@@ -889,7 +889,7 @@ class PoseEstimationReport(dj.Computed):
                 destfolder=output_dir,
                 Frames2plot=np.arange(0, nframes, int(fps / outputframerate)),
                 outputframerate=outputframerate,
-                displaycropped=True,
+                displaycropped=False,
                 draw_skeleton=True,
                 save_frames=False,
             )
