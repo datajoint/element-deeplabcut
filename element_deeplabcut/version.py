@@ -2,4 +2,4 @@
 Package metadata
 """
 
-__version__ = "0.2.14"
+__version__ = "0.3.0"

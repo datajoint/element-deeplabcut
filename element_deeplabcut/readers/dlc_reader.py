@@ -324,6 +324,12 @@ def do_pose_estimation(
             resulting in constant memory footprint.
 
     """
+    # this function should no longer be used, throw a deprecation warning
+    logger.warning(
+        "This function is deprecated and will be removed in a future release. "
+        + "Its usage is now incorporated into model.PoseEstimation's `make` function"
+    )
+
     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
     # ---- Build and save DLC configuration (yaml) file ----
