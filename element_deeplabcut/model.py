@@ -733,9 +733,15 @@ class PoseEstimation(dj.Computed):
                 find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                 for fp in video_relpaths
             ]
-            analyze_video_params = (PoseEstimationTask & key).fetch1(
+            pose_estimation_params = (PoseEstimationTask & key).fetch1(
                 "pose_estimation_params"
             ) or {}
+
+            # expect a nested dictionary with "analyze_videos" params
+            # if not, assume "pose_estimation_params" as a flat dictionary that include relevant "analyze_videos" params
+            analyze_video_params = (
+                pose_estimation_params.get("analyze_videos") or pose_estimation_params
+            )
 
             @memoized_result(
                 uniqueness_dict={
@@ -885,6 +891,20 @@ class PoseEstimationReport(dj.Computed):
     def make(self, key):
         import deeplabcut
 
+        pose_estimation_params = (PoseEstimationTask & key).fetch1(
+            "pose_estimation_params"
+        ) or {}
+
+        # expect a nested dictionary with "create_labeled_video" and "extract_outlier_frames" params
+        # if not, assume "pose_estimation_params" as a flat dictionary
+        create_labeled_video_params = (
+            pose_estimation_params.get("create_labeled_video") or pose_estimation_params
+        )
+        extract_outlier_frames_params = (
+            pose_estimation_params.get("extract_outlier_frames")
+            or pose_estimation_params
+        )
+
         # some default settings
         outputframerate = 5  # final labeled video will be 5 Hz
 
@@ -903,18 +923,43 @@ class PoseEstimationReport(dj.Computed):
             video_file = (VideoRecording.File & vkey).fetch1("file_path")
             video_file = find_full_path(get_dlc_root_data_dir(), video_file)
 
-            deeplabcut.create_labeled_video(
-                config=dlc_config.as_posix(),
-                videos=[video_file.as_posix()],
-                shuffle=dlc_model_["shuffle"],
-                trainingsetindex=dlc_model_["trainingsetindex"],
-                destfolder=output_dir,
-                Frames2plot=np.arange(0, nframes, int(fps / outputframerate)),
-                outputframerate=outputframerate,
-                displaycropped=False,
-                draw_skeleton=True,
-                save_frames=False,
+            # -- create labeled video --
+            create_labeled_video_kwargs = {
+                k: v
+                for k, v in create_labeled_video_params.items()
+                if k in inspect.signature(deeplabcut.create_labeled_video).parameters
+            }
+            create_labeled_video_kwargs.update(
+                dict(
+                    config=dlc_config.as_posix(),
+                    videos=[video_file.as_posix()],
+                    shuffle=dlc_model_["shuffle"],
+                    trainingsetindex=dlc_model_["trainingsetindex"],
+                    modelprefix=dlc_model_["model_prefix"],
+                    destfolder=output_dir,
+                    Frames2plot=np.arange(0, nframes, int(fps / outputframerate)),
+                    outputframerate=outputframerate,
+                )
             )
+            deeplabcut.create_labeled_video(**create_labeled_video_kwargs)
+
+            # -- extract outlier frames --
+            extract_outlier_frames_kwargs = {
+                k: v
+                for k, v in extract_outlier_frames_params.items()
+                if k in inspect.signature(deeplabcut.extract_outlier_frames).parameters
+            }
+            extract_outlier_frames_kwargs.update(
+                dict(
+                    config=dlc_config.as_posix(),
+                    videos=[video_file.as_posix()],
+                    shuffle=dlc_model_["shuffle"],
+                    trainingsetindex=dlc_model_["trainingsetindex"],
+                    modelprefix=dlc_model_["model_prefix"],
+                    destfolder=output_dir,
+                )
+            )
+            deeplabcut.extract_outlier_frames(**create_labeled_video_kwargs)
 
             labeled_video_path = next(
                 output_dir.glob(f"{video_file.stem}*_labeled.mp4")
