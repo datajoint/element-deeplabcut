@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from element_interface.utils import find_full_path, find_root_directory, memoized_result
 from .readers import dlc_reader
 
@@ -755,12 +755,34 @@ class PoseEstimation(dj.Computed):
                 dlc_project_path = Path(project_path)
                 dlc_config["project_path"] = dlc_project_path.as_posix()
 
+                # ---- Special handling for "cropping" ----
+                # `analyze_videos` behavior:
+                #   i) if is None, use the "cropping" from the config file
+                #   ii) if defined, use the specified "cropping" values but not updating the config file
+                # new behavior: if defined as "False", overwrite "cropping" to False in config file
+                cropping = analyze_video_params.get("cropping", None)
+                if cropping is not None:
+                    if cropping:
+                        dlc_config["cropping"] = True
+                        (
+                            dlc_config["x1"],
+                            dlc_config["x2"],
+                            dlc_config["y1"],
+                            dlc_config["y2"],
+                        ) = cropping
+                    else:  # cropping is False
+                        dlc_config["cropping"] = False
+
                 # ---- Write config files ----
                 # To output dir: Important for loading/parsing output in datajoint
                 _ = dlc_reader.save_yaml(output_dir, dlc_config)
                 # To project dir: Required by DLC to run the analyze_videos
                 if dlc_project_path != output_dir:
-                    config_filepath = dlc_reader.save_yaml(dlc_project_path, dlc_config)
+                    config_filepath = dlc_reader.save_yaml(
+                        dlc_project_path,
+                        dlc_config,
+                        filename=f"config_{datetime.now(tz=timezone.utc).strftime('%Y%m%d_%H%M%S')}.yaml",
+                    )
 
                 # ---- Take valid parameters for analyze_videos ----
                 kwargs = {
