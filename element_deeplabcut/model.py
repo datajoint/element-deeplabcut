@@ -871,17 +871,17 @@ class PoseEstimation(dj.Computed):
 
 
 @schema
-class PoseEstimationReport(dj.Computed):
+class LabeledVideo(dj.Computed):
     definition = """
     -> PoseEstimation
     """
 
-    class LabeledVideo(dj.Part):
+    class File(dj.Part):
         definition = """
         -> master
         -> VideoRecording.File
         ---
-        labeled_video_path: varchar(255)
+        labeled_video_path: varchar(255)  # relative path to labeled video
         """
 
     @property
@@ -900,13 +900,10 @@ class PoseEstimationReport(dj.Computed):
         create_labeled_video_params = (
             pose_estimation_params.get("create_labeled_video") or pose_estimation_params
         )
-        extract_outlier_frames_params = (
-            pose_estimation_params.get("extract_outlier_frames")
-            or pose_estimation_params
-        )
 
-        # some default settings
-        outputframerate = 5  # final labeled video will be 5 Hz
+        outputframerate = create_labeled_video_params.pop(
+            "outputframerate", 5
+        )  # final labeled video FPS defaults to 5 Hz
 
         dlc_model_ = (Model & key).fetch1()
         fps, nframes = (RecordingInfo & key).fetch1("fps", "nframes")
@@ -936,35 +933,16 @@ class PoseEstimationReport(dj.Computed):
                     shuffle=dlc_model_["shuffle"],
                     trainingsetindex=dlc_model_["trainingsetindex"],
                     modelprefix=dlc_model_["model_prefix"],
-                    destfolder=output_dir,
+                    destfolder=output_dir.as_posix(),
                     Frames2plot=np.arange(0, nframes, int(fps / outputframerate)),
                     outputframerate=outputframerate,
                 )
             )
             deeplabcut.create_labeled_video(**create_labeled_video_kwargs)
 
-            # -- extract outlier frames --
-            extract_outlier_frames_kwargs = {
-                k: v
-                for k, v in extract_outlier_frames_params.items()
-                if k in inspect.signature(deeplabcut.extract_outlier_frames).parameters
-            }
-            extract_outlier_frames_kwargs.update(
-                dict(
-                    config=dlc_config.as_posix(),
-                    videos=[video_file.as_posix()],
-                    shuffle=dlc_model_["shuffle"],
-                    trainingsetindex=dlc_model_["trainingsetindex"],
-                    modelprefix=dlc_model_["model_prefix"],
-                    destfolder=output_dir,
-                )
-            )
-            deeplabcut.extract_outlier_frames(**create_labeled_video_kwargs)
-
             labeled_video_path = next(
                 output_dir.glob(f"{video_file.stem}*_labeled.mp4")
             )
-
             entries.append(
                 {
                     **key,
@@ -976,7 +954,7 @@ class PoseEstimationReport(dj.Computed):
             )
 
         self.insert1(key)
-        self.LabeledVideo.insert(entries)
+        self.File.insert(entries)
 
 
 def str_to_bool(value) -> bool:
