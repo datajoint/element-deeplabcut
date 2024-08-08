@@ -19,6 +19,8 @@ from element_interface.utils import find_full_path, find_root_directory, memoize
 from .readers import dlc_reader
 
 schema = dj.schema()
+logger = dj.logger
+
 _linking_module = None
 
 
@@ -916,7 +918,16 @@ class LabeledVideo(dj.Computed):
         project_path = find_full_path(
             get_dlc_root_data_dir(), dlc_model_["project_path"]
         )
-        dlc_config = project_path / "dj_dlc_config.yaml"
+
+        try:
+            dlc_config = next(output_dir.glob("dj_dlc_config*.yaml"))
+            dlc_config = project_path / dlc_config.name
+            assert dlc_config.exists()
+        except (StopIteration, AssertionError):
+            dlc_config = next(project_path.glob("dj_dlc_config*.yaml"))
+            logger.warning(
+                f"No dj_dlc_config*.yaml file found in {output_dir} - this is unexpected.\nUsing {dlc_config}"
+            )
 
         entries = []
         for vkey in (VideoRecording.File & key).fetch("KEY"):
