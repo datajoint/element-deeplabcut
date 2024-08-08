@@ -750,7 +750,6 @@ class PoseEstimation(dj.Computed):
             )
             def do_analyze_videos():
                 from deeplabcut.pose_estimation_tensorflow import analyze_videos
-                from .readers import save_yaml
 
                 # ---- Build and save DLC configuration (yaml) file ----
                 dlc_config = dlc_model_["config_template"]
@@ -759,10 +758,10 @@ class PoseEstimation(dj.Computed):
 
                 # ---- Write config files ----
                 # To output dir: Important for loading/parsing output in datajoint
-                _ = save_yaml(output_dir, dlc_config)
+                _ = dlc_reader.save_yaml(output_dir, dlc_config)
                 # To project dir: Required by DLC to run the analyze_videos
                 if dlc_project_path != output_dir:
-                    config_filepath = save_yaml(dlc_project_path, dlc_config)
+                    config_filepath = dlc_reader.save_yaml(dlc_project_path, dlc_config)
 
                 # ---- Take valid parameters for analyze_videos ----
                 kwargs = {
