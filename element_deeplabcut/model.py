@@ -719,7 +719,7 @@ class PoseEstimation(dj.Computed):
             )
         output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
 
-        # Triger PoseEstimation
+        # Trigger PoseEstimation
         if task_mode == "trigger":
             # Triggering dlc for pose estimation required:
             # - project_path: full path to the directory containing the trained model
@@ -747,17 +747,40 @@ class PoseEstimation(dj.Computed):
                 },
                 output_directory=output_dir,
             )
-            def do_pose_estimation():
-                dlc_reader.do_pose_estimation(
-                    key,
-                    video_filepaths,
-                    dlc_model_,
-                    project_path,
-                    output_dir,
-                    **analyze_video_params,
+            def do_analyze_videos():
+                from deeplabcut.pose_estimation_tensorflow import analyze_videos
+
+                # ---- Build and save DLC configuration (yaml) file ----
+                dlc_config = dlc_model_["config_template"]
+                dlc_project_path = Path(project_path)
+                dlc_config["project_path"] = dlc_project_path.as_posix()
+
+                # ---- Write config files ----
+                # To output dir: Important for loading/parsing output in datajoint
+                _ = dlc_reader.save_yaml(output_dir, dlc_config)
+                # To project dir: Required by DLC to run the analyze_videos
+                if dlc_project_path != output_dir:
+                    config_filepath = dlc_reader.save_yaml(dlc_project_path, dlc_config)
+
+                # ---- Take valid parameters for analyze_videos ----
+                kwargs = {
+                    k: v
+                    for k, v in analyze_video_params.items()
+                    if k in inspect.signature(analyze_videos).parameters
+                }
+
+                # ---- Trigger DLC prediction job ----
+                analyze_videos(
+                    config=config_filepath,
+                    videos=video_filepaths,
+                    shuffle=dlc_model_["shuffle"],
+                    trainingsetindex=dlc_model_["trainingsetindex"],
+                    destfolder=output_dir,
+                    modelprefix=dlc_model_["model_prefix"],
+                    **kwargs,
                 )
 
-            do_pose_estimation()
+            do_analyze_videos()
 
         dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time).strftime(
