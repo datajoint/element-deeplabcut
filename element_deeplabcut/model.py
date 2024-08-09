@@ -376,9 +376,6 @@ class Model(dj.Manual):
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
         """
-
-        from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
-
         # handle dlc_config being a yaml file
         dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
         assert dlc_config_fp.exists(), (
@@ -407,16 +404,30 @@ class Model(dj.Manual):
         for attribute in needed_attributes:
             assert attribute in dlc_config, f"Couldn't find {attribute} in config"
 
-        # ---- Get scorer name ----
-        # "or 'f'" below covers case where config returns None. str_to_bool handles else
-        scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
+        if dlc_config["engine"] == "tensorflow":
+            from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
+            
+            # ---- Get scorer name ----
+            # "or 'f'" below covers case where config returns None. str_to_bool handles else
+            scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
 
-        dlc_scorer = GetScorerName(
-            cfg=dlc_config,
-            shuffle=shuffle,
-            trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
-            modelprefix=model_prefix,
-        )[scorer_legacy]
+            dlc_scorer = GetScorerName(
+                cfg=dlc_config,
+                shuffle=shuffle,
+                trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
+                modelprefix=model_prefix,
+            )[scorer_legacy]
+        
+        elif dlc_config["engine"] == "pytorch":
+            from deeplabcut.pose_estimation_pytorch.apis.utils import get_scorer_name
+
+            dlc_scorer = get_scorer_name(
+                cfg=dlc_config,
+                shuffle=shuffle,
+                train_fraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
+                modelprefix=model_prefix,
+            )
+
         if dlc_config["snapshotindex"] == -1:
             dlc_scorer = "".join(dlc_scorer.split("_")[:-1])
 
@@ -757,7 +768,11 @@ class PoseEstimation(dj.Computed):
                 output_directory=output_dir,
             )
             def do_analyze_videos():
-                from deeplabcut.pose_estimation_tensorflow import analyze_videos
+                if dlc_model_["config_template"]["engine"] == "pytorch":
+                    from deeplabcut.pose_estimation_pytorch import analyze_videos
+                    
+                elif dlc_model_["config_template"]["engine"] == "tensorflow":
+                    from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
                 # ---- Build and save DLC configuration (yaml) file ----
                 dlc_config = dlc_model_["config_template"]

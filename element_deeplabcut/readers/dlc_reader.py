@@ -238,7 +238,7 @@ def save_yaml(
     if "config_template" in config_dict:  # if passed full model.Model dict
         config_dict = config_dict["config_template"]
     if mkdir:
-        output_dir.mkdir(exist_ok=True)
+        Path(output_dir).mkdir(exist_ok=True)
     if "." in filename:  # if user provided extension, remove
         filename = filename.split(".")[0]
 
@@ -383,3 +383,67 @@ def do_pose_estimation(
         allow_growth=allow_growth,
         use_shelve=use_shelve,
     )
+
+
+def do_pytorch_pose_estimation(
+    key: dict,
+    video_filepaths: list,
+    dlc_model: dict,
+    project_path: str,
+    output_dir: str,
+    videotype="",
+    save_as_csv=False,
+    batchsize=None,
+    auto_track=True,
+    identity_only=False,
+    overwrite=False
+    ):
+    
+    from deeplabcut.pose_estimation_pytorch import analyze_videos as analyze_videos_pytorch
+
+    # ---- Build and save DLC configuration (yaml) file ----
+    dlc_config = dlc_model["config_template"]
+    dlc_project_path = Path(project_path)
+    dlc_config["project_path"] = dlc_project_path.as_posix()
+
+    # ---- Add current video to config ---
+    for video_filepath in video_filepaths:
+        if video_filepath not in dlc_config["video_sets"]:
+            try:
+                px_width, px_height = (model.RecordingInfo & key).fetch1(
+                    "px_width", "px_height"
+                )
+            except DataJointError:
+                logger.warn(
+                    f"Could not find RecordingInfo for {video_filepath.stem}"
+                    + "\n\tUsing zeros for crop value in config."
+                )
+                px_height, px_width = 0, 0
+            dlc_config["video_sets"].update(
+                {str(video_filepath): {"crop": f"0, {px_width}, 0, {px_height}"}}
+            )
+
+    # ---- Write config files ----
+    # To output dir: Important for loading/parsing output in datajoint
+    _ = save_yaml(output_dir, dlc_config)
+    # To project dir: Required by DLC to run the analyze_videos
+    if dlc_project_path != output_dir:
+        config_filepath = save_yaml(dlc_project_path, dlc_config)
+
+    # ---- Trigger DLC prediction job ----
+    analyze_videos_pytorch(
+        config=config_filepath,
+        videos=video_filepaths,
+        shuffle=dlc_model["shuffle"],
+        trainingsetindex=dlc_model["trainingsetindex"],
+        save_as_csv=save_as_csv,
+        snapshot_index=-1,
+        destfolder=output_dir,
+        modelprefix=dlc_model["model_prefix"],
+        videotype=videotype,
+        batchsize=batchsize,
+        auto_track=auto_track,
+        identity_only=identity_only,
+        overwrite=overwrite
+    )
+
