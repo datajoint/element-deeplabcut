@@ -1,0 +1,7 @@
+name: semantic-release
+on:
+  workflow_dispatch:
+
+jobs:
+  call_semantic_release:
+    uses: datajoint/.github/.github/workflows/semantic-release.yaml@main

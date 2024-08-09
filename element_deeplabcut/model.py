@@ -6,7 +6,6 @@ DataJoint Schema for DeepLabCut 2.x, Supports 2D and 3D DLC via triangulation.
 
 import datajoint as dj
 import os
-import cv2
 import csv
 from ruamel.yaml import YAML
 import inspect
@@ -15,8 +14,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Optional
-from datetime import datetime
-from element_interface.utils import find_full_path, find_root_directory
+from datetime import datetime, timezone
+from element_interface.utils import find_full_path, find_root_directory, memoized_result
 from .readers import dlc_reader
 
 schema = dj.schema()
@@ -177,6 +176,8 @@ class RecordingInfo(dj.Imported):
 
     def make(self, key):
         """Populates table with video metadata using CV2."""
+        import cv2
+
         file_paths = (VideoRecording.File & key).fetch("file_path")
 
         nframes = 0
@@ -704,7 +705,7 @@ class PoseEstimation(dj.Computed):
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
         # ID model and directories
-        dlc_model = (Model & key).fetch1()
+        dlc_model_ = (Model & key).fetch1()
         task_mode, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_output_dir"
         )
@@ -727,31 +728,93 @@ class PoseEstimation(dj.Computed):
             else:
                 raise e
 
-        # Triger PoseEstimation
+        # Trigger PoseEstimation
         if task_mode == "trigger":
             # Triggering dlc for pose estimation required:
             # - project_path: full path to the directory containing the trained model
             # - video_filepaths: full paths to the video files for inference
             # - analyze_video_params: optional parameters to analyze video
             project_path = find_full_path(
-                get_dlc_root_data_dir(), dlc_model["project_path"]
+                get_dlc_root_data_dir(), dlc_model_["project_path"]
             )
+            video_relpaths = list((VideoRecording.File & key).fetch("file_path"))
             video_filepaths = [
                 find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                for fp in (VideoRecording.File & key).fetch("file_path")
+                for fp in video_relpaths
             ]
             analyze_video_params = (PoseEstimationTask & key).fetch1(
                 "pose_estimation_params"
             ) or {}
 
-            dlc_reader.do_pose_estimation(
-                key,
-                video_filepaths,
-                dlc_model,
-                project_path,
-                output_dir,
-                **analyze_video_params,
+            @memoized_result(
+                uniqueness_dict={
+                    **analyze_video_params,
+                    "project_path": dlc_model_["project_path"],
+                    "shuffle": dlc_model_["shuffle"],
+                    "trainingsetindex": dlc_model_["trainingsetindex"],
+                    "video_filepaths": video_relpaths,
+                },
+                output_directory=output_dir,
             )
+            def do_analyze_videos():
+                from deeplabcut.pose_estimation_tensorflow import analyze_videos
+
+                # ---- Build and save DLC configuration (yaml) file ----
+                dlc_config = dlc_model_["config_template"]
+                dlc_project_path = Path(project_path)
+                dlc_config["project_path"] = dlc_project_path.as_posix()
+
+                # ---- Special handling for "cropping" ----
+                # `analyze_videos` behavior:
+                #   i) if is None, use the "cropping" from the config file
+                #   ii) if defined, use the specified "cropping" values but not updating the config file
+                # new behavior: if defined as "False", overwrite "cropping" to False in config file
+                cropping = analyze_video_params.get("cropping", None)
+                if cropping is not None:
+                    if cropping:
+                        dlc_config["cropping"] = True
+                        (
+                            dlc_config["x1"],
+                            dlc_config["x2"],
+                            dlc_config["y1"],
+                            dlc_config["y2"],
+                        ) = cropping
+                    else:  # cropping is False
+                        dlc_config["cropping"] = False
+
+                # ---- Write config files ----
+                config_filename = f"dj_dlc_config_{datetime.now(tz=timezone.utc).strftime('%Y%m%d_%H%M%S')}.yaml"
+                # To output dir: Important for loading/parsing output in datajoint
+                _ = dlc_reader.save_yaml(
+                    output_dir, dlc_config, filename=config_filename
+                )
+                # To project dir: Required by DLC to run the analyze_videos
+                if dlc_project_path != output_dir:
+                    config_filepath = dlc_reader.save_yaml(
+                        dlc_project_path,
+                        dlc_config,
+                        filename=config_filename,
+                    )
+
+                # ---- Take valid parameters for analyze_videos ----
+                kwargs = {
+                    k: v
+                    for k, v in analyze_video_params.items()
+                    if k in inspect.signature(analyze_videos).parameters
+                }
+
+                # ---- Trigger DLC prediction job ----
+                analyze_videos(
+                    config=config_filepath,
+                    videos=video_filepaths,
+                    shuffle=dlc_model_["shuffle"],
+                    trainingsetindex=dlc_model_["trainingsetindex"],
+                    destfolder=output_dir,
+                    modelprefix=dlc_model_["model_prefix"],
+                    **kwargs,
+                )
+
+            do_analyze_videos()
 
         dlc_result = dlc_reader.PoseEstimation(output_dir)
         creation_time = datetime.fromtimestamp(dlc_result.creation_time).strftime(

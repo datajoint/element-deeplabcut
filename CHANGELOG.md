@@ -3,9 +3,13 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [0.2.13] - 2024-05-30
+## [0.2.14] - 2024-08-02
 
-+ Add - `infer_output_dir` function to `PoseEstimation` table.
++ Fix - improve imports, avoid circular dependencies
+
+## [0.2.13] - 2024-07-03
+
++ Fix - apply formatting with `black` across the repository
 
 ## [0.2.12] - 2024-03-22
 
