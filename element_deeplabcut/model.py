@@ -331,7 +331,7 @@ class Model(dj.Manual):
     shuffle              : int          # Shuffle (1) or not (0)
     trainingsetindex     : int          # Index of training fraction list in config.yaml
     engine               : varchar(16)  # Engine used for model. Either 'tensorflow' or 'pytorch'
-    unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
+    unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex, engine)
     scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
