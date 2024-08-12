@@ -48,6 +48,6 @@ setup(
         "tests": ["pytest", "pytest-cov", "shutils"],
         "dlc-pytorch": [
             "deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
-        ]
+        ],
     },
 )
