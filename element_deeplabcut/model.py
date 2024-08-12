@@ -579,8 +579,8 @@ class PoseEstimationTask(dj.Manual):
     -> VideoRecording                           # Session -> Recording + File part table
     -> Model                                    # Must specify a DLC project_path
     ---
-    pose_estimation_output_dir: varchar(255)    # Output directory of pose estimation results relative to the root directory
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
+    pose_estimation_output_dir='': varchar(255)    # Output directory of pose estimation results relative to the root directory
     pose_estimation_params=null  : longblob     # analyze_videos params, if not default
     """
 
