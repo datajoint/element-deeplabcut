@@ -781,7 +781,7 @@ class PoseEstimation(dj.Computed):
                 output_directory=output_dir,
             )
             def do_analyze_videos():
-                engine = dlc_model_["engine"]
+                engine = dlc_model_.get("engine")
                 if engine is None:
                     logger.warning(
                         "DLC engine not specified in config file. Defaulting to TensorFlow."
