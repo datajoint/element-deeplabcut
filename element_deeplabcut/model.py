@@ -931,6 +931,7 @@ class LabeledVideo(dj.Computed):
         -> VideoRecording.File
         ---
         labeled_video_path: varchar(255)  # relative path to labeled video
+        labeled_video_file=null: filepath@dlc-processed 
         """
 
     @property
@@ -1008,6 +1009,7 @@ class LabeledVideo(dj.Computed):
                     "labeled_video_path": labeled_video_path.relative_to(
                         get_dlc_processed_data_dir()
                     ).as_posix(),
+                    "labeled_video_file": labeled_video_path.as_posix(),
                 }
             )
 
