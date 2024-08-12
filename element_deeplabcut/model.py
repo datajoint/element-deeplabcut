@@ -18,8 +18,10 @@ from datetime import datetime, timezone
 from element_interface.utils import find_full_path, find_root_directory, memoized_result
 from .readers import dlc_reader
 
+
 schema = dj.schema()
 _linking_module = None
+logger = dj.logger
 
 
 def activate(
@@ -306,6 +308,7 @@ class Model(dj.Manual):
         snapshotindex (int): Which snapshot for prediction (if -1, latest).
         shuffle (int): Which shuffle of the training dataset.
         trainingsetindex (int): Which training set fraction to generate model.
+        engine (str): Engine used for model. Either 'tensorflow' or 'pytorch'.
         scorer ( varchar(64) ): Scorer/network name - DLC's GetScorerName().
         config_template (longblob): Dictionary of the config for analyze_videos().
         project_path ( varchar(255) ): DLC's project_path in config relative to root.
@@ -327,6 +330,7 @@ class Model(dj.Manual):
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
     shuffle              : int          # Shuffle (1) or not (0)
     trainingsetindex     : int          # Index of training fraction list in config.yaml
+    engine               : varchar(16)  # Engine used for model. Either 'tensorflow' or 'pytorch'
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
     scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # Dictionary of the config for analyze_videos()
@@ -404,9 +408,16 @@ class Model(dj.Manual):
         for attribute in needed_attributes:
             assert attribute in dlc_config, f"Couldn't find {attribute} in config"
 
-        if dlc_config["engine"] == "tensorflow":
+        engine = dlc_config.get("engine")
+        if engine is None:
+            logger.warning(
+                "DLC engine not specified in config file. Defaulting to TensorFlow."
+            )
+            engine = "tensorflow"
+
+        if engine == "tensorflow":
             from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
-            
+
             # ---- Get scorer name ----
             # "or 'f'" below covers case where config returns None. str_to_bool handles else
             scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
@@ -417,8 +428,7 @@ class Model(dj.Manual):
                 trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
                 modelprefix=model_prefix,
             )[scorer_legacy]
-        
-        elif dlc_config["engine"] == "pytorch":
+        if engine == "pytorch":
             from deeplabcut.pose_estimation_pytorch.apis.utils import get_scorer_name
 
             dlc_scorer = get_scorer_name(
@@ -427,6 +437,9 @@ class Model(dj.Manual):
                 train_fraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
                 modelprefix=model_prefix,
             )
+
+        else:
+            raise ValueError(f"Unknow engine type {engine}")
 
         if dlc_config["snapshotindex"] == -1:
             dlc_scorer = "".join(dlc_scorer.split("_")[:-1])
@@ -442,6 +455,7 @@ class Model(dj.Manual):
             "snapshotindex": dlc_config["snapshotindex"],
             "shuffle": shuffle,
             "trainingsetindex": int(trainingsetindex),
+            "engine": engine,
             "project_path": project_path.relative_to(root_dir).as_posix(),
             "paramset_idx": paramset_idx,
             "config_template": dlc_config,
@@ -767,13 +781,15 @@ class PoseEstimation(dj.Computed):
                 output_directory=output_dir,
             )
             def do_analyze_videos():
-                engine = dlc_model_["config_template"].get("engine")
+                engine = dlc_model_["engine"]
                 if engine is None:
-                    logger.warning("DLC engine not specified in config file. Defaulting to TensorFlow.")
+                    logger.warning(
+                        "DLC engine not specified in config file. Defaulting to TensorFlow."
+                    )
                     engine = "tensorflow"
-                if engine  == "pytorch":
+                if engine == "pytorch":
                     from deeplabcut.pose_estimation_pytorch import analyze_videos
-                elif engine  == "tensorflow":
+                elif engine == "tensorflow":
                     from deeplabcut.pose_estimation_tensorflow import analyze_videos
                 else:
                     raise ValueError(f"Unknow engine type {engine}")
