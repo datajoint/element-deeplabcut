@@ -767,16 +767,16 @@ class PoseEstimation(dj.Computed):
                 output_directory=output_dir,
             )
             def do_analyze_videos():
-                try:
-                    if dlc_model_["config_template"]["engine"] == "pytorch":
-                        from deeplabcut.pose_estimation_pytorch import analyze_videos
-                        
-                    elif dlc_model_["config_template"]["engine"] == "tensorflow":
-                        from deeplabcut.pose_estimation_tensorflow import analyze_videos
-                except KeyError:
+                engine = dlc_model_["config_template"].get("engine")
+                if engine is None:
                     logger.warning("DLC engine not specified in config file. Defaulting to TensorFlow.")
-                    
+                    engine = "tensorflow"
+                if engine  == "pytorch":
+                    from deeplabcut.pose_estimation_pytorch import analyze_videos
+                elif engine  == "tensorflow":
                     from deeplabcut.pose_estimation_tensorflow import analyze_videos
+                else:
+                    raise ValueError(f"Unknow engine type {engine}")
 
                 # ---- Build and save DLC configuration (yaml) file ----
                 dlc_config = dlc_model_["config_template"]
