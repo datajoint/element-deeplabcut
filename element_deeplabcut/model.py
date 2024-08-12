@@ -720,7 +720,6 @@ class PoseEstimation(dj.Computed):
         task_mode, output_dir = (PoseEstimationTask & key).fetch1(
             "task_mode", "pose_estimation_output_dir"
         )
-
         if not output_dir:
             output_dir = PoseEstimationTask.infer_output_dir(
                 key, relative=True, mkdir=True
@@ -768,10 +767,15 @@ class PoseEstimation(dj.Computed):
                 output_directory=output_dir,
             )
             def do_analyze_videos():
-                if dlc_model_["config_template"]["engine"] == "pytorch":
-                    from deeplabcut.pose_estimation_pytorch import analyze_videos
+                try:
+                    if dlc_model_["config_template"]["engine"] == "pytorch":
+                        from deeplabcut.pose_estimation_pytorch import analyze_videos
+                        
+                    elif dlc_model_["config_template"]["engine"] == "tensorflow":
+                        from deeplabcut.pose_estimation_tensorflow import analyze_videos
+                except KeyError:
+                    logger.warning("DLC engine not specified in config file. Defaulting to TensorFlow.")
                     
-                elif dlc_model_["config_template"]["engine"] == "tensorflow":
                     from deeplabcut.pose_estimation_tensorflow import analyze_videos
 
                 # ---- Build and save DLC configuration (yaml) file ----
