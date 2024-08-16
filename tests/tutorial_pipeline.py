@@ -10,8 +10,12 @@ from element_animal.subject import Subject
 from element_lab.lab import Source, Lab, Protocol, User, Project
 
 
-if "custom" not in dj.config:
-    dj.config["custom"] = {}
+os.environ["DJ_SUPPORT_FILEPATH_MANAGEMENT"] = "TRUE"
+dj.config["filepath_checksum_size_limit"] = 10 * 1024 * 1024  # 10 MB
+
+for key in ("custom", "stores"):
+    if key not in dj.config:
+        dj.config[key] = {}
 
 # overwrite dj.config['custom'] values with environment variables if available
 
