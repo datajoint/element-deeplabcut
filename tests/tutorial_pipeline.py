@@ -96,6 +96,12 @@ class Device(dj.Lookup):
 
 # Activate DeepLabCut schema -----------------------------------
 
+# Configure external storage -------------
+dj.config["stores"]["dlc-processed"] = dict(
+    protocol="file",
+    location=get_dlc_processed_data_dir(),
+    stage=get_dlc_processed_data_dir(),
+)
 
 train.activate(db_prefix + "train", linking_module=__name__)
 model.activate(db_prefix + "model", linking_module=__name__)
