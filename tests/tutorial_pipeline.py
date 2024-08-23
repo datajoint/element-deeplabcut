@@ -10,8 +10,12 @@ from element_animal.subject import Subject
 from element_lab.lab import Source, Lab, Protocol, User, Project
 
 
-if "custom" not in dj.config:
-    dj.config["custom"] = {}
+os.environ["DJ_SUPPORT_FILEPATH_MANAGEMENT"] = "TRUE"
+dj.config["filepath_checksum_size_limit"] = 10 * 1024 * 1024  # 10 MB
+
+for key in ("custom", "stores"):
+    if key not in dj.config:
+        dj.config[key] = {}
 
 # overwrite dj.config['custom'] values with environment variables if available
 
@@ -95,7 +99,12 @@ class Device(dj.Lookup):
 
 
 # Activate DeepLabCut schema -----------------------------------
-
+# Configure external storage -------------
+dj.config["stores"]["dlc-processed"] = dict(
+    protocol="file",
+    location=get_dlc_processed_data_dir(),
+    stage=get_dlc_processed_data_dir(),
+)
 
 train.activate(db_prefix + "train", linking_module=__name__)
 model.activate(db_prefix + "model", linking_module=__name__)
