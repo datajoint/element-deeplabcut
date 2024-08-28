@@ -3,6 +3,15 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+
+## [0.3.1] - 2024-08-16
+
++ Add - add new table `LabeledVideo` to generate/store labeled video data after PoseEstimation
+
+## [0.3.0] - 2024-08-08
+
++ Add - add support for inference (PoseEstimation) using pytorch model
+
 ## [0.2.14] - 2024-08-02
 
 + Fix - improve imports, avoid circular dependencies

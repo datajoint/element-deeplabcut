@@ -729,6 +729,14 @@ class PoseEstimation(dj.Computed):
         likelihood  : longblob
         """
 
+    class File(dj.Part):
+        definition = """
+        -> master
+        file_name: varchar(255)
+        ---
+        file: filepath@dlc-processed
+        """
+
     def make(self, key):
         """.populate() method will launch training for each PoseEstimationTask"""
         # ID model and directories
@@ -879,6 +887,18 @@ class PoseEstimation(dj.Computed):
 
         self.insert1({**key, "pose_estimation_time": creation_time})
         self.BodyPartPosition.insert(body_parts)
+        # Insert result files
+        self.File.insert(
+            [
+                {
+                    **key,
+                    "file_name": f.relative_to(output_dir).as_posix(),
+                    "file": f,
+                }
+                for f in output_dir.rglob("*")
+                if f.is_file()
+            ]
+        )
 
     @classmethod
     def get_trajectory(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
