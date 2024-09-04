@@ -753,7 +753,7 @@ class PoseEstimation(dj.Computed):
             )
 
         try:
-            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir).as_posix()
+            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         except FileNotFoundError as e:
             if task_mode == "trigger":
                 processed_dir = Path(get_dlc_processed_data_dir())
