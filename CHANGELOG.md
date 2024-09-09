@@ -3,6 +3,9 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.3.2] - 2024-09-09
+
++ Fix - Save config file to output directory as `dj_dlc_config`
 
 ## [0.3.1] - 2024-08-16
 
