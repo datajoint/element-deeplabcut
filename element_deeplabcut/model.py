@@ -792,9 +792,7 @@ class PoseEstimation(dj.Computed):
                 # ---- Write config files ----
                 config_filename = f"dj_dlc_config_{datetime.now(tz=timezone.utc).strftime('%Y%m%d_%H%M%S')}.yaml"
                 # To output dir: Important for loading/parsing output in datajoint
-                _ = dlc_reader.save_yaml(
-                    output_dir, dlc_config, filename=config_filename
-                )
+                _ = dlc_reader.save_yaml(output_dir, dlc_config)
                 # To project dir: Required by DLC to run the analyze_videos
                 if dlc_project_path != output_dir:
                     config_filepath = dlc_reader.save_yaml(
