@@ -15,7 +15,8 @@ def plotting_results(pose_estimation_key: dict):
         plots_dir (Path): Path to the folder containing the plots
     """
     import deeplabcut
-    from element_deeplabcut import dlc_reader, model
+    from element_deeplabcut import model
+    from element_deeplabcut.readers import dlc_reader
 
     # fetch result files
     try:
@@ -30,7 +31,7 @@ def plotting_results(pose_estimation_key: dict):
     )
     output_dir = model.find_full_path(model.get_dlc_root_data_dir(), output_dir)
 
-    dlc_result = dlc_reader.PoseEstimation(output_dir)
+    dlc_result = dlc_reader.PoseEstimation(output_dir.as_posix())
 
     plots_dir = output_dir / "plots"
     plots_dir.mkdir(exist_ok=True)
