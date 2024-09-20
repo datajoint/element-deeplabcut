@@ -753,7 +753,7 @@ class PoseEstimation(dj.Computed):
             )
 
         try:
-            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir).as_posix()
+            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
         except FileNotFoundError as e:
             if task_mode == "trigger":
                 processed_dir = Path(get_dlc_processed_data_dir())
@@ -836,7 +836,9 @@ class PoseEstimation(dj.Computed):
                 # ---- Write config files ----
                 config_filename = f"dj_dlc_config_{datetime.now(tz=timezone.utc).strftime('%Y%m%d_%H%M%S')}.yaml"
                 # To output dir: Important for loading/parsing output in datajoint
-                _ = dlc_reader.save_yaml(output_dir, dlc_config)
+                _ = dlc_reader.save_yaml(
+                    output_dir, dlc_config
+                )
                 # To project dir: Required by DLC to run the analyze_videos
                 if dlc_project_path != output_dir:
                     config_filepath = dlc_reader.save_yaml(
