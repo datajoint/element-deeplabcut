@@ -238,7 +238,7 @@ def save_yaml(
     if "config_template" in config_dict:  # if passed full model.Model dict
         config_dict = config_dict["config_template"]
     if mkdir:
-        output_dir.mkdir(exist_ok=True)
+        Path(output_dir).mkdir(exist_ok=True)
     if "." in filename:  # if user provided extension, remove
         filename = filename.split(".")[0]
 
