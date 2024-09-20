@@ -1,3 +1,9 @@
+import datajoint as dj
+
+
+logger = dj.logger
+
+
 def plotting_results(pose_estimation_key: dict):
     """
     Wrapper for deeplabcut.utils.plotting.PlottingResults,
@@ -10,6 +16,14 @@ def plotting_results(pose_estimation_key: dict):
     """
     import deeplabcut
     from element_deeplabcut import dlc_reader, model
+
+    # fetch result files
+    try:
+        (model.PoseEstimation.File & pose_estimation_key).fetch("file")
+    except Exception as e:
+        logger.warning(
+            f"Error downloading PoseEstimation files - assuming all files are available locally\n{e}"
+        )
 
     output_dir = (model.PoseEstimationTask & pose_estimation_key).fetch1(
         "pose_estimation_output_dir"
