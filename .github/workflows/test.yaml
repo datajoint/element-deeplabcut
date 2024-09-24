@@ -1,13 +1,15 @@
 name: Test
 on:
   push:
+    paths:
+      - element_deeplabcut/**
+      - notebooks/**
+      - tests/**
   pull_request:
   workflow_dispatch:
   schedule:
     - cron: "0 8 * * 1"
 jobs:
-  devcontainer-build:
-    uses: datajoint/.github/.github/workflows/devcontainer-build.yaml@main
   tests:
     runs-on: ubuntu-latest
     strategy:
