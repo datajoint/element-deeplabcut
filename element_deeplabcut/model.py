@@ -1027,7 +1027,7 @@ class LabeledVideo(dj.Computed):
                     **key,
                     **vkey,
                     "labeled_video_path": labeled_video_path.relative_to(
-                        get_dlc_processed_data_dir()
+                        output_dir
                     ).as_posix(),
                     "labeled_video_file": labeled_video_path.as_posix(),
                 }
