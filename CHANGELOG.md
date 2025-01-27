@@ -3,9 +3,11 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and 
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
-## [0.3.3] - TBD
-
-+ Add - Plotting with `deeplabcut.utils.plotting.PlottingResults`
+## [0.3.3] - 2024-09-24
++ Add - add plotting function to call dlc `PlottingResults` on `PoseEstimation` results
++ Fix - `dlc_plots`:bugfix import errors
++ Fix - `pose_estimation`: Save config to outbox as dj_dlc_config
++ Fix - Added and then reverted the use of GHA Semantic Release for automatic Changelog updates and versioning
 
 ## [0.3.2] - 2024-09-09
 
