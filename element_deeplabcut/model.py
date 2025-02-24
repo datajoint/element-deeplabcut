@@ -308,6 +308,7 @@ class Model(dj.Manual):
         snapshotindex (int): Which snapshot for prediction (if -1, latest).
         shuffle (int): Which shuffle of the training dataset.
         trainingsetindex (int): Which training set fraction to generate model.
+        engine (str): Engine used for model. Either 'tensorflow' or 'pytorch'.
         scorer ( varchar(64) ): Scorer/network name - DLC's GetScorerName().
         config_template (longblob): Dictionary of the config for analyze_videos().
         project_path ( varchar(255) ): DLC's project_path in config relative to root.
@@ -329,7 +330,8 @@ class Model(dj.Manual):
     snapshotindex        : int          # which snapshot for prediction (if -1, latest)
     shuffle              : int          # Shuffle (1) or not (0)
     trainingsetindex     : int          # Index of training fraction list in config.yaml
-    unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex)
+    engine='tensorflow'  : varchar(16)  # Engine used for model. Either 'tensorflow' or 'pytorch'
+    unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex, engine)
     scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
     config_template      : longblob     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
@@ -378,9 +380,6 @@ class Model(dj.Manual):
             prompt (bool): Optional. Prompt the user with all info before inserting.
             params (dict): Optional. If dlc_config is path, dict of override items
         """
-
-        from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
-
         # handle dlc_config being a yaml file
         dlc_config_fp = find_full_path(get_dlc_root_data_dir(), Path(dlc_config))
         assert dlc_config_fp.exists(), (
@@ -409,16 +408,37 @@ class Model(dj.Manual):
         for attribute in needed_attributes:
             assert attribute in dlc_config, f"Couldn't find {attribute} in config"
 
-        # ---- Get scorer name ----
-        # "or 'f'" below covers case where config returns None. str_to_bool handles else
-        scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
+        engine = dlc_config.get("engine")
+        if engine is None:
+            logger.warning(
+                "DLC engine not specified in config file. Defaulting to TensorFlow."
+            )
+            engine = "tensorflow"
 
-        dlc_scorer = GetScorerName(
-            cfg=dlc_config,
-            shuffle=shuffle,
-            trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
-            modelprefix=model_prefix,
-        )[scorer_legacy]
+        if engine == "tensorflow":
+            from deeplabcut.utils.auxiliaryfunctions import GetScorerName  # isort:skip
+
+            # ---- Get scorer name ----
+            # "or 'f'" below covers case where config returns None. str_to_bool handles else
+            scorer_legacy = str_to_bool(dlc_config.get("scorer_legacy", "f"))
+            dlc_scorer = GetScorerName(
+                cfg=dlc_config,
+                shuffle=shuffle,
+                trainFraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
+                modelprefix=model_prefix,
+            )[scorer_legacy]
+        elif engine == "pytorch":
+            from deeplabcut.pose_estimation_pytorch.apis.utils import get_scorer_name
+
+            dlc_scorer = get_scorer_name(
+                cfg=dlc_config,
+                shuffle=shuffle,
+                train_fraction=dlc_config["TrainingFraction"][int(trainingsetindex)],
+                modelprefix=model_prefix,
+            )
+        else:
+            raise ValueError(f"Unknow engine type {engine}")
+
         if dlc_config["snapshotindex"] == -1:
             dlc_scorer = "".join(dlc_scorer.split("_")[:-1])
 
@@ -433,6 +453,7 @@ class Model(dj.Manual):
             "snapshotindex": dlc_config["snapshotindex"],
             "shuffle": shuffle,
             "trainingsetindex": int(trainingsetindex),
+            "engine": engine,
             "project_path": project_path.relative_to(root_dir).as_posix(),
             "paramset_idx": paramset_idx,
             "config_template": dlc_config,
@@ -719,7 +740,16 @@ class PoseEstimation(dj.Computed):
             PoseEstimationTask.update1(
                 {**key, "pose_estimation_output_dir": output_dir.as_posix()}
             )
-        output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+
+        try:
+            output_dir = find_full_path(get_dlc_root_data_dir(), output_dir)
+        except FileNotFoundError as e:
+            if task_mode == "trigger":
+                processed_dir = Path(get_dlc_processed_data_dir())
+                output_dir = processed_dir / output_dir
+                output_dir.mkdir(parents=True, exist_ok=True)
+            else:
+                raise e
 
         # Trigger PoseEstimation
         if task_mode == "trigger":
@@ -756,7 +786,18 @@ class PoseEstimation(dj.Computed):
                 output_directory=output_dir,
             )
             def do_analyze_videos():
-                from deeplabcut.pose_estimation_tensorflow import analyze_videos
+                engine = dlc_model_.get("engine")
+                if engine is None:
+                    logger.warning(
+                        "DLC engine not specified in config file. Defaulting to TensorFlow."
+                    )
+                    engine = "tensorflow"
+                if engine == "pytorch":
+                    from deeplabcut.pose_estimation_pytorch import analyze_videos
+                elif engine == "tensorflow":
+                    from deeplabcut.pose_estimation_tensorflow import analyze_videos
+                else:
+                    raise ValueError(f"Unknow engine type {engine}")
 
                 # ---- Build and save DLC configuration (yaml) file ----
                 dlc_config = dlc_model_["config_template"]
