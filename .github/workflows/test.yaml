@@ -1,24 +1,19 @@
 name: Test
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
-  schedule:
-    - cron: "0 8 * * 1"
 jobs:
-  devcontainer-build:
-    uses: datajoint/.github/.github/workflows/devcontainer-build.yaml@main
   tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         py_ver: ["3.9", "3.10"]
-        mysql_ver: ["8.0", "5.7"]
-        include:
-          - py_ver: "3.8"
-            mysql_ver: "5.7"
-          - py_ver: "3.7"
-            mysql_ver: "5.7"
+        mysql_ver: ["8.0"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{matrix.py_ver}}
