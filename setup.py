@@ -24,21 +24,25 @@ setup(
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
     install_requires=[
-        "datajoint>=0.13.0",
+        "datajoint>=0.14.0",
         "graphviz",
         "pydot",
         "ipykernel",
         "ipywidgets",
     ],
     extras_require={
-        "dlc_default": ["deeplabcut[tf]>=2.2.1.1"],
+        "dlc_default": [
+            "deeplabcut[tf] @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
+        ],
         "dlc_apple_mchips": [
             "tensorflow-macos==2.12.0",
             "tensorflow-metal",
             "tables==3.7.0",
             "deeplabcut",
         ],
-        "dlc_gui": ["deeplabcut[gui]"],
+        "dlc_gui": [
+            "deeplabcut[gui] @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
+        ],
         "elements": [
             "element-lab @ git+https://github.com/datajoint/element-lab.git",
             "element-animal @ git+https://github.com/datajoint/element-animal.git",
@@ -46,8 +50,5 @@ setup(
             "element-interface @ git+https://github.com/datajoint/element-interface.git",
         ],
         "tests": ["pytest", "pytest-cov", "shutils"],
-        "dlc-pytorch": [
-            "deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
-        ],
     },
 )
