@@ -32,7 +32,7 @@ setup(
     ],
     extras_require={
         "dlc_default": [
-            "deeplabcut[tf] @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
+            "deeplabcut[tf] @ git+https://github.com/DeepLabCut/DeepLabCut.git"
         ],
         "dlc_apple_mchips": [
             "tensorflow-macos==2.12.0",
@@ -41,7 +41,7 @@ setup(
             "deeplabcut",
         ],
         "dlc_gui": [
-            "deeplabcut[gui] @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
+            "deeplabcut[gui] @ git+https://github.com/DeepLabCut/DeepLabCut.git"
         ],
         "elements": [
             "element-lab @ git+https://github.com/datajoint/element-lab.git",
