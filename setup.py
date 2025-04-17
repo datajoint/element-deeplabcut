@@ -50,5 +50,8 @@ setup(
             "element-interface @ git+https://github.com/datajoint/element-interface.git",
         ],
         "tests": ["pytest", "pytest-cov", "shutils"],
+        "dlc-pytorch": [
+            "deeplabcut @ git+https://github.com/DeepLabCut/DeepLabCut.git@pytorch_dlc"
+        ],
     },
 )

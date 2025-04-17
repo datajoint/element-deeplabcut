@@ -18,10 +18,12 @@ from datetime import datetime, timezone
 from element_interface.utils import find_full_path, find_root_directory, memoized_result
 from .readers import dlc_reader
 
+
 schema = dj.schema()
 logger = dj.logger
 
 _linking_module = None
+logger = dj.logger
 
 
 def activate(
@@ -581,9 +583,9 @@ class PoseEstimationTask(dj.Manual):
     Attributes:
         VideoRecording (foreign key): Video recording key.
         Model (foreign key): Model name.
-        task_mode (load or trigger): Optional. Default load. Or trigger computation.
-        pose_estimation_output_dir ( varchar(255) ): Optional. Output dir relative to
-                                                     get_dlc_root_data_dir.
+        task_mode (load or trigger): One of 'load' (load computed analysis results) or 'trigger' (trigger computation).
+        pose_estimation_output_dir (str): Output directory of pose estimation results relative to
+                                                     the root data directory.
         pose_estimation_params (longblob): Optional. Params for DLC's analyze_videos
                                            params, if not default."""
 
@@ -592,7 +594,7 @@ class PoseEstimationTask(dj.Manual):
     -> Model                                    # Must specify a DLC project_path
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
-    pose_estimation_output_dir='': varchar(255) # output dir relative to the root dir
+    pose_estimation_output_dir='': varchar(255)    # Output directory of pose estimation results relative to the root directory
     pose_estimation_params=null  : longblob     # analyze_videos params, if not default
     """
 
@@ -744,7 +746,6 @@ class PoseEstimation(dj.Computed):
             output_dir = PoseEstimationTask.infer_output_dir(
                 key, relative=True, mkdir=True
             )
-            # update pose_estimation_output_dir
             PoseEstimationTask.update1(
                 {**key, "pose_estimation_output_dir": output_dir.as_posix()}
             )
@@ -833,7 +834,9 @@ class PoseEstimation(dj.Computed):
                 # ---- Write config files ----
                 config_filename = f"dj_dlc_config_{datetime.now(tz=timezone.utc).strftime('%Y%m%d_%H%M%S')}.yaml"
                 # To output dir: Important for loading/parsing output in datajoint
-                _ = dlc_reader.save_yaml(output_dir, dlc_config)
+                _ = dlc_reader.save_yaml(
+                    output_dir, dlc_config
+                )
                 # To project dir: Required by DLC to run the analyze_videos
                 if dlc_project_path != output_dir:
                     config_filepath = dlc_reader.save_yaml(
@@ -1022,7 +1025,7 @@ class LabeledVideo(dj.Computed):
                     **key,
                     **vkey,
                     "labeled_video_path": labeled_video_path.relative_to(
-                        get_dlc_processed_data_dir()
+                        output_dir
                     ).as_posix(),
                     "labeled_video_file": labeled_video_path.as_posix(),
                 }
