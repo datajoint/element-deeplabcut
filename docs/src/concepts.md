@@ -96,7 +96,7 @@ documentation on each table, see the API docs for the respective schemas.
 | --- | --- |
 | Device | Camera metadata |
 
-### `subject` schema ([API docs](https://datajoint.com/docs/elements/element-animal/api/element_animal/subject))
+### `subject` schema ([API docs](https://docs.datajoint.com/elements/element-animal/latest/api/element_animal/subject/))
 
 - Although not required, most choose to connect the `Session` table to a `Subject` table.
 
@@ -104,7 +104,7 @@ documentation on each table, see the API docs for the respective schemas.
 | --- | --- |
 | Subject | Basic information of the research subject |
 
-### `session` schema ([API docs](https://datajoint.com/docs/elements/element-session/api/element_session/session_with_datetime))
+### `session` schema ([API docs](https://docs.datajoint.com/elements/element-session/latest/api/element_session/session_with_datetime/))
 
 | Table | Description |
 | --- | --- |
@@ -121,7 +121,7 @@ documentation on each table, see the API docs for the respective schemas.
 | TrainingTask | A set of tasks specifying model training methods. |
 | ModelTraining | A record of training iterations launched by `TrainingTask`. |
 
-### `model` schema ([API](../api/element_deeplabcut/model))
+### `model` schema ([API docs](../api/element_deeplabcut/model))
 
 - Tables related to DeepLabCut models and pose estimation. The `model` schema can be
   used without the `train` schema.

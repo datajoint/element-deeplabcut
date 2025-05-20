@@ -34,7 +34,7 @@ tables that can be combined with other Elements to assemble a fully functional p
 
 + [Interactive tutorial on GitHub Codespaces](https://github.com/datajoint/element-deeplabcut#interactive-tutorial)
 
-+ [Documentation](https://datajoint.com/docs/elements/element-deeplabcut)
++ [Documentation](https://docs.datajoint.com/elements/element-deeplabcut/)
 
 ## Support
 
