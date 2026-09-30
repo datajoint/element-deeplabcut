@@ -35,7 +35,7 @@ def plotting_results(pose_estimation_key: dict):
             "pose_estimation_folder"
         )
         if pose_estimation_folder is not None:
-            pose_estimation_folder.download(output_dir)
+            download_folder_contents(pose_estimation_folder, output_dir)
     except Exception as e:
         logger.warning(
             f"Error downloading PoseEstimation files - assuming all files are available locally\n{e}"
@@ -59,3 +59,17 @@ def plotting_results(pose_estimation_key: dict):
     )
 
     return plots_dir
+
+
+def download_folder_contents(folder_ref, destination):
+    """Download the contents of a stored `<object@>` folder into `destination`.
+
+    `ObjectRef.download(directory)` places the stored folder itself inside `directory`;
+    this reproduces the original layout directly under `destination`.
+    """
+    destination = Path(destination)
+    for root, _, files in folder_ref.walk():
+        for name in files:
+            subpath = f"{root}/{name}".lstrip("/")
+            folder_ref.download(destination / subpath, subpath=subpath)
+    return destination
