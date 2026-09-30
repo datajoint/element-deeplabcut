@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import datajoint as dj
 
 
@@ -18,18 +20,26 @@ def plotting_results(pose_estimation_key: dict):
     from element_deeplabcut import model
     from element_deeplabcut.readers import dlc_reader
 
+    output_dir = (model.PoseEstimationTask & pose_estimation_key).fetch1(
+        "pose_estimation_output_dir"
+    )
+    try:
+        output_dir = model.find_full_path(model.get_dlc_root_data_dir(), output_dir)
+    except FileNotFoundError:
+        # not on local disk yet: restore it under the processed-data root
+        output_dir = Path(model.get_dlc_root_data_dir()[-1]) / output_dir
+
     # fetch result files
     try:
-        (model.PoseEstimation.File & pose_estimation_key).to_arrays("file")
+        pose_estimation_folder = (model.PoseEstimation & pose_estimation_key).fetch1(
+            "pose_estimation_folder"
+        )
+        if pose_estimation_folder is not None:
+            pose_estimation_folder.download(output_dir)
     except Exception as e:
         logger.warning(
             f"Error downloading PoseEstimation files - assuming all files are available locally\n{e}"
         )
-
-    output_dir = (model.PoseEstimationTask & pose_estimation_key).fetch1(
-        "pose_estimation_output_dir"
-    )
-    output_dir = model.find_full_path(model.get_dlc_root_data_dir(), output_dir)
 
     dlc_result = dlc_reader.PoseEstimation(output_dir.as_posix())
 

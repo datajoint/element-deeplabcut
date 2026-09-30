@@ -702,6 +702,7 @@ class PoseEstimation(dj.Computed):
     -> PoseEstimationTask
     ---
     pose_estimation_time: datetime  # time of generation of this set of DLC results
+    pose_estimation_folder=null: <object@dlc-processed>  # DLC output folder (pose_estimation_output_dir)
     """
 
     class BodyPartPosition(dj.Part):
@@ -725,14 +726,6 @@ class PoseEstimation(dj.Computed):
         y_pos       : <blob>
         z_pos=null  : <blob>
         likelihood  : <blob>
-        """
-
-    class File(dj.Part):
-        definition = """
-        -> master
-        file_name: varchar(255)
-        ---
-        file: <filepath@dlc-processed>
         """
 
     def make(self, key):
@@ -883,20 +876,14 @@ class PoseEstimation(dj.Computed):
             for k, v in dlc_result.data.items()
         ]
 
-        self.insert1({**key, "pose_estimation_time": creation_time})
-        self.BodyPartPosition.insert(body_parts)
-        # Insert result files
-        self.File.insert(
-            [
-                {
-                    **key,
-                    "file_name": f.relative_to(output_dir).as_posix(),
-                    "file": f,
-                }
-                for f in output_dir.rglob("*")
-                if f.is_file()
-            ]
+        self.insert1(
+            {
+                **key,
+                "pose_estimation_time": creation_time,
+                "pose_estimation_folder": output_dir,
+            }
         )
+        self.BodyPartPosition.insert(body_parts)
 
     @classmethod
     def get_trajectory(cls, key: dict, body_parts: list = "all") -> pd.DataFrame:
@@ -949,7 +936,7 @@ class LabeledVideo(dj.Computed):
         -> VideoRecording.File
         ---
         labeled_video_path: varchar(255)  # relative path to labeled video
-        labeled_video_file=null: <filepath@dlc-processed> 
+        labeled_video_file=null: <object@dlc-processed>
         """
 
     @property
