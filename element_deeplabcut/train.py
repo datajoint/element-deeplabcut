@@ -14,7 +14,7 @@ import yaml
 from element_interface.utils import find_full_path, dict_to_uuid
 from .readers import dlc_reader
 
-schema = dj.schema()
+schema = dj.Schema()
 _linking_module = None
 
 
@@ -112,7 +112,7 @@ class VideoSet(dj.Manual):
         video_set_id (int): Unique ID for collection of videos."""
 
     definition = """ # Set of vids in training set
-    video_set_id: int
+    video_set_id: int32
     """
 
     class File(dj.Part):
@@ -124,7 +124,7 @@ class VideoSet(dj.Manual):
 
         definition = """ # Paths of training files (e.g., labeled pngs, CSV or video)
         -> master
-        file_id: int
+        file_id: int32
         ---
         file_path: varchar(255)
         """
@@ -144,12 +144,12 @@ class TrainingParamSet(dj.Lookup):
     definition = """
     # Parameters to specify a DLC model training instance
     # For DLC ≤ v2.0, include scorer_legacy = True in params
-    paramset_idx                  : smallint
+    paramset_idx                  : int16
     ---
     paramset_desc: varchar(128)
     param_set_hash                : uuid      # hash identifying this parameterset
     unique index (param_set_hash)
-    params                        : longblob  # dictionary of all applicable parameters
+    params                        : <blob>  # dictionary of all applicable parameters
     """
 
     required_parameters = ("shuffle", "trainingsetindex")
@@ -216,7 +216,7 @@ class TrainingTask(dj.Manual):
     definition = """      # Specification for a DLC model training instance
     -> VideoSet           # labeled video(s) for training
     -> TrainingParamSet
-    training_id     : int
+    training_id     : int32
     ---
     model_prefix='' : varchar(32)
     project_path='' : varchar(255) # DLC's project_path in config relative to root
@@ -235,8 +235,8 @@ class ModelTraining(dj.Computed):
     definition = """
     -> TrainingTask
     ---
-    latest_snapshot: int unsigned # latest exact snapshot index (i.e., never -1)
-    config_template: longblob     # stored full config file
+    latest_snapshot: int64 # latest exact snapshot index (i.e., never -1)
+    config_template: <blob>     # stored full config file
     """
 
     # To continue from previous training snapshot, devs suggest editing pose_cfg.yml
@@ -274,7 +274,7 @@ class ModelTraining(dj.Computed):
                 ],
                 "training_filelist_datajoint": [  # don't overwrite origin video_sets
                     find_full_path(get_dlc_root_data_dir(), fp).as_posix()
-                    for fp in (VideoSet.File & key).fetch("file_path")
+                    for fp in (VideoSet.File & key).to_arrays("file_path")
                 ],
             }
         )

@@ -24,7 +24,7 @@ setup(
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
     install_requires=[
-        "datajoint>=0.14.0",
+        "datajoint>=2.3.3",
         "graphviz",
         "pydot",
         "ipykernel",
@@ -44,9 +44,9 @@ setup(
             "deeplabcut[gui] @ git+https://github.com/DeepLabCut/DeepLabCut.git"
         ],
         "elements": [
-            "element-lab @ git+https://github.com/datajoint/element-lab.git",
-            "element-animal @ git+https://github.com/datajoint/element-animal.git",
-            "element-session @ git+https://github.com/datajoint/element-session.git",
+            "element-lab @ git+https://github.com/datajoint/element-lab.git@dj-2.3",
+            "element-animal @ git+https://github.com/datajoint/element-animal.git@dj-2.3",
+            "element-session @ git+https://github.com/datajoint/element-session.git@dj-2.3",
             "element-interface @ git+https://github.com/datajoint/element-interface.git",
         ],
         "tests": ["pytest", "pytest-cov", "shutils"],

@@ -19,7 +19,7 @@ from element_interface.utils import find_full_path, find_root_directory, memoize
 from .readers import dlc_reader
 
 
-schema = dj.schema()
+schema = dj.Schema()
 logger = dj.logger
 
 _linking_module = None
@@ -128,7 +128,7 @@ class VideoRecording(dj.Manual):
 
     definition = """
     -> Session
-    recording_id: int
+    recording_id: int32
     ---
     -> Device
     """
@@ -143,7 +143,7 @@ class VideoRecording(dj.Manual):
 
         definition = """
         -> master
-        file_id: int
+        file_id: int32
         ---
         file_path: varchar(255)  # filepath of video, relative to root data directory
         """
@@ -165,12 +165,12 @@ class RecordingInfo(dj.Imported):
     definition = """
     -> VideoRecording
     ---
-    px_height                 : smallint  # height in pixels
-    px_width                  : smallint  # width in pixels
-    nframes                   : int  # number of frames 
-    fps = NULL                : int       # (Hz) frames per second
+    px_height                 : int16  # height in pixels
+    px_width                  : int16  # width in pixels
+    nframes                   : int32  # number of frames 
+    fps = NULL                : int32       # (Hz) frames per second
     recording_datetime = NULL : datetime  # Datetime for the start of the recording
-    recording_duration        : float     # video duration (s) from nframes / fps
+    recording_duration        : float32     # video duration (s) from nframes / fps
     """
 
     @property
@@ -182,7 +182,7 @@ class RecordingInfo(dj.Imported):
         """Populates table with video metadata using CV2."""
         import cv2
 
-        file_paths = (VideoRecording.File & key).fetch("file_path")
+        file_paths = (VideoRecording.File & key).to_arrays("file_path")
 
         nframes = 0
         px_height, px_width, fps = None, None, None
@@ -250,7 +250,7 @@ class BodyPart(dj.Lookup):
                     dlc_config = yaml.load(f)
         # -- Check and insert new BodyPart --
         assert "bodyparts" in dlc_config, f"Found no bodyparts section in {dlc_config}"
-        tracked_body_parts = cls.fetch("body_part")
+        tracked_body_parts = cls.to_arrays("body_part")
         new_body_parts = np.setdiff1d(dlc_config["bodyparts"], tracked_body_parts)
         if verbose:  # Added to silence duplicate prompt during `insert_new_model`
             print(f"Existing body parts: {tracked_body_parts}")
@@ -328,14 +328,14 @@ class Model(dj.Manual):
     ---
     task                 : varchar(32)  # Task in the config yaml
     date                 : varchar(16)  # Date in the config yaml
-    iteration            : int          # Iteration/version of this model
-    snapshotindex        : int          # which snapshot for prediction (if -1, latest)
-    shuffle              : int          # Shuffle (1) or not (0)
-    trainingsetindex     : int          # Index of training fraction list in config.yaml
+    iteration            : int32          # Iteration/version of this model
+    snapshotindex        : int32          # which snapshot for prediction (if -1, latest)
+    shuffle              : int32          # Shuffle (1) or not (0)
+    trainingsetindex     : int32          # Index of training fraction list in config.yaml
     engine='tensorflow'  : varchar(16)  # Engine used for model. Either 'tensorflow' or 'pytorch'
     unique index (task, date, iteration, shuffle, snapshotindex, trainingsetindex, engine)
     scorer               : varchar(64)  # Scorer/network name - DLC's GetScorerName()
-    config_template      : longblob     # Dictionary of the config for analyze_videos()
+    config_template      : <blob>     # Dictionary of the config for analyze_videos()
     project_path         : varchar(255) # DLC's project_path in config relative to root
     model_prefix=''      : varchar(32)
     model_description='' : varchar(300)
@@ -510,12 +510,12 @@ class ModelEvaluation(dj.Computed):
     definition = """
     -> Model
     ---
-    train_iterations   : int   # Training iterations
-    train_error=null   : float # Train error (px)
-    test_error=null    : float # Test error (px)
-    p_cutoff=null      : float # p-cutoff used
-    train_error_p=null : float # Train error with p-cutoff
-    test_error_p=null  : float # Test error with p-cutoff
+    train_iterations   : int32   # Training iterations
+    train_error=null   : float32 # Train error (px)
+    test_error=null    : float32 # Test error (px)
+    p_cutoff=null      : float32 # p-cutoff used
+    train_error_p=null : float32 # Train error with p-cutoff
+    test_error_p=null  : float32 # Test error with p-cutoff
     """
 
     def make(self, key):
@@ -595,7 +595,7 @@ class PoseEstimationTask(dj.Manual):
     ---
     task_mode='load' : enum('load', 'trigger')  # load results or trigger computation
     pose_estimation_output_dir='': varchar(255)    # Output directory of pose estimation results relative to the root directory
-    pose_estimation_params=null  : longblob     # analyze_videos params, if not default
+    pose_estimation_params=null  : <blob>     # analyze_videos params, if not default
     """
 
     @classmethod
@@ -612,7 +612,7 @@ class PoseEstimationTask(dj.Manual):
         """
         video_filepath = find_full_path(
             get_dlc_root_data_dir(),
-            (VideoRecording.File & key).fetch("file_path", limit=1)[0],
+            (VideoRecording.File & key).to_arrays("file_path", limit=1)[0],
         )
         root_dir = find_root_directory(get_dlc_root_data_dir(), video_filepath.parent)
         recording_key = VideoRecording & key
@@ -720,11 +720,11 @@ class PoseEstimation(dj.Computed):
         -> master
         -> Model.BodyPart
         ---
-        frame_index : longblob     # frame index in model
-        x_pos       : longblob
-        y_pos       : longblob
-        z_pos=null  : longblob
-        likelihood  : longblob
+        frame_index : <blob>     # frame index in model
+        x_pos       : <blob>
+        y_pos       : <blob>
+        z_pos=null  : <blob>
+        likelihood  : <blob>
         """
 
     class File(dj.Part):
@@ -732,7 +732,7 @@ class PoseEstimation(dj.Computed):
         -> master
         file_name: varchar(255)
         ---
-        file: filepath@dlc-processed
+        file: <filepath@dlc-processed>
         """
 
     def make(self, key):
@@ -769,7 +769,7 @@ class PoseEstimation(dj.Computed):
             project_path = find_full_path(
                 get_dlc_root_data_dir(), dlc_model_["project_path"]
             )
-            video_relpaths = list((VideoRecording.File & key).fetch("file_path"))
+            video_relpaths = list((VideoRecording.File & key).to_arrays("file_path"))
             video_filepaths = [
                 find_full_path(get_dlc_root_data_dir(), fp).as_posix()
                 for fp in video_relpaths
@@ -914,7 +914,7 @@ class PoseEstimation(dj.Computed):
         model_name = key["model_name"]
 
         if body_parts == "all":
-            body_parts = (cls.BodyPartPosition & key).fetch("body_part")
+            body_parts = (cls.BodyPartPosition & key).to_arrays("body_part")
         elif not isinstance(body_parts, list):
             body_parts = list(body_parts)
 
@@ -949,7 +949,7 @@ class LabeledVideo(dj.Computed):
         -> VideoRecording.File
         ---
         labeled_video_path: varchar(255)  # relative path to labeled video
-        labeled_video_file=null: filepath@dlc-processed 
+        labeled_video_file=null: <filepath@dlc-processed> 
         """
 
     @property
@@ -993,7 +993,7 @@ class LabeledVideo(dj.Computed):
             )
 
         entries = []
-        for vkey in (VideoRecording.File & key).fetch("KEY"):
+        for vkey in (VideoRecording.File & key).keys():
             video_file = (VideoRecording.File & vkey).fetch1("file_path")
             video_file = find_full_path(get_dlc_root_data_dir(), video_file)
 

@@ -49,7 +49,7 @@ def test_recording_info(pipeline, recording_info):
 def test_pose_estimation(pipeline, pose_estimation):
     model = pipeline["model"]
 
-    body_parts = model.PoseEstimation.BodyPartPosition.fetch("body_part")
+    body_parts = model.PoseEstimation.BodyPartPosition.to_arrays("body_part")
 
     assert set(body_parts) == {"head", "tailbase"}
 

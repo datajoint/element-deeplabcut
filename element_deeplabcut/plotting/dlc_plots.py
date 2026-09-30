@@ -20,7 +20,7 @@ def plotting_results(pose_estimation_key: dict):
 
     # fetch result files
     try:
-        (model.PoseEstimation.File & pose_estimation_key).fetch("file")
+        (model.PoseEstimation.File & pose_estimation_key).to_arrays("file")
     except Exception as e:
         logger.warning(
             f"Error downloading PoseEstimation files - assuming all files are available locally\n{e}"
